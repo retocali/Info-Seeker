@@ -41,6 +41,8 @@ struct GameObject_t1756533147;
 #include "UnityEngine_UnityEngine_Component3819376471.h"
 #include "UnityEngine_UnityEngine_Display3666191348.h"
 #include "UnityEngine_UnityEngine_Keyframe1449471340.h"
+#include "UnityEngine_UnityEngine_ContactPoint1376425630.h"
+#include "UnityEngine_UnityEngine_RaycastHit87180320.h"
 #include "UnityEngine_UnityEngine_Rigidbody2D502193897.h"
 #include "UnityEngine_UnityEngine_RaycastHit2D4063908774.h"
 #include "UnityEngine_UnityEngine_ContactPoint2D3659330976.h"
@@ -269,6 +271,76 @@ public:
 		return m_Items + index;
 	}
 	inline void SetAtUnchecked(il2cpp_array_size_t index, Keyframe_t1449471340  value)
+	{
+		m_Items[index] = value;
+	}
+};
+// UnityEngine.ContactPoint[]
+struct ContactPointU5BU5D_t1084937515  : public Il2CppArray
+{
+public:
+	ALIGN_FIELD (8) ContactPoint_t1376425630  m_Items[1];
+
+public:
+	inline ContactPoint_t1376425630  GetAt(il2cpp_array_size_t index) const
+	{
+		IL2CPP_ARRAY_BOUNDS_CHECK(index, (uint32_t)(this)->max_length);
+		return m_Items[index];
+	}
+	inline ContactPoint_t1376425630 * GetAddressAt(il2cpp_array_size_t index)
+	{
+		IL2CPP_ARRAY_BOUNDS_CHECK(index, (uint32_t)(this)->max_length);
+		return m_Items + index;
+	}
+	inline void SetAt(il2cpp_array_size_t index, ContactPoint_t1376425630  value)
+	{
+		IL2CPP_ARRAY_BOUNDS_CHECK(index, (uint32_t)(this)->max_length);
+		m_Items[index] = value;
+	}
+	inline ContactPoint_t1376425630  GetAtUnchecked(il2cpp_array_size_t index) const
+	{
+		return m_Items[index];
+	}
+	inline ContactPoint_t1376425630 * GetAddressAtUnchecked(il2cpp_array_size_t index)
+	{
+		return m_Items + index;
+	}
+	inline void SetAtUnchecked(il2cpp_array_size_t index, ContactPoint_t1376425630  value)
+	{
+		m_Items[index] = value;
+	}
+};
+// UnityEngine.RaycastHit[]
+struct RaycastHitU5BU5D_t1214023521  : public Il2CppArray
+{
+public:
+	ALIGN_FIELD (8) RaycastHit_t87180320  m_Items[1];
+
+public:
+	inline RaycastHit_t87180320  GetAt(il2cpp_array_size_t index) const
+	{
+		IL2CPP_ARRAY_BOUNDS_CHECK(index, (uint32_t)(this)->max_length);
+		return m_Items[index];
+	}
+	inline RaycastHit_t87180320 * GetAddressAt(il2cpp_array_size_t index)
+	{
+		IL2CPP_ARRAY_BOUNDS_CHECK(index, (uint32_t)(this)->max_length);
+		return m_Items + index;
+	}
+	inline void SetAt(il2cpp_array_size_t index, RaycastHit_t87180320  value)
+	{
+		IL2CPP_ARRAY_BOUNDS_CHECK(index, (uint32_t)(this)->max_length);
+		m_Items[index] = value;
+	}
+	inline RaycastHit_t87180320  GetAtUnchecked(il2cpp_array_size_t index) const
+	{
+		return m_Items[index];
+	}
+	inline RaycastHit_t87180320 * GetAddressAtUnchecked(il2cpp_array_size_t index)
+	{
+		return m_Items + index;
+	}
+	inline void SetAtUnchecked(il2cpp_array_size_t index, RaycastHit_t87180320  value)
 	{
 		m_Items[index] = value;
 	}

@@ -13,6 +13,10 @@
 #include <limits>
 #include <assert.h>
 
+// System.Collections.Generic.GenericComparer`1<System.DateTimeOffset>
+struct GenericComparer_1_t3395931706;
+// System.Collections.Generic.GenericComparer`1<System.Guid>
+struct GenericComparer_1_t271577097;
 // System.Collections.Generic.GenericComparer`1<System.Int32>
 struct GenericComparer_1_t4104820248;
 // System.Collections.Generic.GenericComparer`1<System.Object>
@@ -39,11 +43,21 @@ struct GenericEqualityComparer_1_t2414141085;
 #include "class-internals.h"
 #include "codegen/il2cpp-codegen.h"
 #include "mscorlib_System_Array3829468939.h"
+#include "mscorlib_System_Collections_Generic_GenericCompare3395931706.h"
+#include "mscorlib_System_Collections_Generic_GenericCompare3395931706MethodDeclarations.h"
+#include "mscorlib_System_Void1841601450.h"
+#include "mscorlib_System_Collections_Generic_Comparer_1_gen252998025MethodDeclarations.h"
+#include "mscorlib_System_DateTimeOffset1362988906.h"
+#include "mscorlib_System_Int322071877448.h"
+#include "mscorlib_System_DateTimeOffset1362988906MethodDeclarations.h"
+#include "mscorlib_System_Collections_Generic_GenericComparer271577097.h"
+#include "mscorlib_System_Collections_Generic_GenericComparer271577097MethodDeclarations.h"
+#include "mscorlib_System_Collections_Generic_Comparer_1_gen1423610712MethodDeclarations.h"
+#include "mscorlib_System_Guid2533601593.h"
+#include "mscorlib_System_Guid2533601593MethodDeclarations.h"
 #include "mscorlib_System_Collections_Generic_GenericCompare4104820248.h"
 #include "mscorlib_System_Collections_Generic_GenericCompare4104820248MethodDeclarations.h"
-#include "mscorlib_System_Void1841601450.h"
 #include "mscorlib_System_Collections_Generic_Comparer_1_gen961886567MethodDeclarations.h"
-#include "mscorlib_System_Int322071877448.h"
 #include "mscorlib_System_Int322071877448MethodDeclarations.h"
 #include "mscorlib_System_Collections_Generic_GenericComparer427424799.h"
 #include "mscorlib_System_Collections_Generic_GenericComparer427424799MethodDeclarations.h"
@@ -68,13 +82,9 @@ struct GenericEqualityComparer_1_t2414141085;
 #include "mscorlib_System_Collections_Generic_GenericEquality346871042.h"
 #include "mscorlib_System_Collections_Generic_GenericEquality346871042MethodDeclarations.h"
 #include "mscorlib_System_Collections_Generic_EqualityCompar4231591473MethodDeclarations.h"
-#include "mscorlib_System_DateTimeOffset1362988906.h"
-#include "mscorlib_System_DateTimeOffset1362988906MethodDeclarations.h"
 #include "mscorlib_System_Collections_Generic_GenericEqualit1517483729.h"
 #include "mscorlib_System_Collections_Generic_GenericEqualit1517483729MethodDeclarations.h"
 #include "mscorlib_System_Collections_Generic_EqualityCompar1107236864MethodDeclarations.h"
-#include "mscorlib_System_Guid2533601593.h"
-#include "mscorlib_System_Guid2533601593MethodDeclarations.h"
 #include "mscorlib_System_Collections_Generic_GenericEqualit1055759584.h"
 #include "mscorlib_System_Collections_Generic_GenericEqualit1055759584MethodDeclarations.h"
 #include "mscorlib_System_Collections_Generic_EqualityCompare645512719MethodDeclarations.h"
@@ -90,6 +100,104 @@ struct GenericEqualityComparer_1_t2414141085;
 #pragma clang diagnostic ignored "-Winvalid-offsetof"
 #pragma clang diagnostic ignored "-Wunused-variable"
 #endif
+// System.Void System.Collections.Generic.GenericComparer`1<System.DateTimeOffset>::.ctor()
+extern "C"  void GenericComparer_1__ctor_m4106585959_gshared (GenericComparer_1_t3395931706 * __this, const MethodInfo* method)
+{
+	{
+		IL2CPP_RUNTIME_CLASS_INIT(IL2CPP_RGCTX_DATA(method->declaring_type->rgctx_data, 1));
+		((  void (*) (Comparer_1_t252998025 *, const MethodInfo*))IL2CPP_RGCTX_METHOD_INFO(method->declaring_type->rgctx_data, 0)->methodPointer)((Comparer_1_t252998025 *)__this, /*hidden argument*/IL2CPP_RGCTX_METHOD_INFO(method->declaring_type->rgctx_data, 0));
+		return;
+	}
+}
+// System.Int32 System.Collections.Generic.GenericComparer`1<System.DateTimeOffset>::Compare(T,T)
+extern "C"  int32_t GenericComparer_1_Compare_m2516380588_gshared (GenericComparer_1_t3395931706 * __this, DateTimeOffset_t1362988906  ___x0, DateTimeOffset_t1362988906  ___y1, const MethodInfo* method)
+{
+	int32_t G_B4_0 = 0;
+	{
+		goto IL_001e;
+	}
+	{
+		goto IL_001c;
+	}
+	{
+		G_B4_0 = 0;
+		goto IL_001d;
+	}
+
+IL_001c:
+	{
+		G_B4_0 = (-1);
+	}
+
+IL_001d:
+	{
+		return G_B4_0;
+	}
+
+IL_001e:
+	{
+		goto IL_002b;
+	}
+	{
+		return 1;
+	}
+
+IL_002b:
+	{
+		DateTimeOffset_t1362988906  L_3 = ___y1;
+		int32_t L_4 = DateTimeOffset_CompareTo_m441053436((DateTimeOffset_t1362988906 *)(&___x0), (DateTimeOffset_t1362988906 )L_3, /*hidden argument*/NULL);
+		return L_4;
+	}
+}
+// System.Void System.Collections.Generic.GenericComparer`1<System.Guid>::.ctor()
+extern "C"  void GenericComparer_1__ctor_m3575096182_gshared (GenericComparer_1_t271577097 * __this, const MethodInfo* method)
+{
+	{
+		IL2CPP_RUNTIME_CLASS_INIT(IL2CPP_RGCTX_DATA(method->declaring_type->rgctx_data, 1));
+		((  void (*) (Comparer_1_t1423610712 *, const MethodInfo*))IL2CPP_RGCTX_METHOD_INFO(method->declaring_type->rgctx_data, 0)->methodPointer)((Comparer_1_t1423610712 *)__this, /*hidden argument*/IL2CPP_RGCTX_METHOD_INFO(method->declaring_type->rgctx_data, 0));
+		return;
+	}
+}
+// System.Int32 System.Collections.Generic.GenericComparer`1<System.Guid>::Compare(T,T)
+extern "C"  int32_t GenericComparer_1_Compare_m11267581_gshared (GenericComparer_1_t271577097 * __this, Guid_t2533601593  ___x0, Guid_t2533601593  ___y1, const MethodInfo* method)
+{
+	int32_t G_B4_0 = 0;
+	{
+		goto IL_001e;
+	}
+	{
+		goto IL_001c;
+	}
+	{
+		G_B4_0 = 0;
+		goto IL_001d;
+	}
+
+IL_001c:
+	{
+		G_B4_0 = (-1);
+	}
+
+IL_001d:
+	{
+		return G_B4_0;
+	}
+
+IL_001e:
+	{
+		goto IL_002b;
+	}
+	{
+		return 1;
+	}
+
+IL_002b:
+	{
+		Guid_t2533601593  L_3 = ___y1;
+		int32_t L_4 = Guid_CompareTo_m2203922782((Guid_t2533601593 *)(&___x0), (Guid_t2533601593 )L_3, /*hidden argument*/NULL);
+		return L_4;
+	}
+}
 // System.Void System.Collections.Generic.GenericComparer`1<System.Int32>::.ctor()
 extern "C"  void GenericComparer_1__ctor_m973776669_gshared (GenericComparer_1_t4104820248 * __this, const MethodInfo* method)
 {

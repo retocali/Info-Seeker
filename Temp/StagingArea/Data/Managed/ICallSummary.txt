@@ -37,10 +37,12 @@ UnityEngine.Camera::get_farClipPlane
 UnityEngine.Camera::get_nearClipPlane
 UnityEngine.Camera::INTERNAL_CALL_ScreenPointToRay
 UnityEngine.Camera::INTERNAL_get_pixelRect
+UnityEngine.Camera::get_main
 UnityEngine.Camera::get_clearFlags
 UnityEngine.Camera::INTERNAL_CALL_RaycastTry
 UnityEngine.Camera::INTERNAL_CALL_RaycastTry2D
 UnityEngine.Camera::get_targetTexture
+UnityEngine.Collider::get_attachedRigidbody
 UnityEngine.Component::CompareTag
 UnityEngine.Component::BroadcastMessage
 UnityEngine.Component::GetComponentFastPath
@@ -70,6 +72,8 @@ UnityEngine.Gradient::Init
 UnityEngine.GUILayer::INTERNAL_CALL_HitTest
 UnityEngine.Input::GetMouseButton
 UnityEngine.Input::GetMouseButtonDown
+UnityEngine.Input::get_touchCount
+UnityEngine.Input::INTERNAL_CALL_GetTouch
 UnityEngine.Input::INTERNAL_get_mousePosition
 UnityEngine.MonoBehaviour::Internal_IsInvokingAll
 UnityEngine.MonoBehaviour::IsInvoking
@@ -104,6 +108,9 @@ UnityEngine.Object::Internal_CloneSingleWithParent
 UnityEngine.Object::FindObjectsOfType
 UnityEngine.Object::FindObjectsOfTypeIncludingAssets
 UnityEngine.Object::FindSceneObjectsOfType
+UnityEngine.Physics::INTERNAL_CALL_Internal_Raycast
+UnityEngine.Physics::INTERNAL_CALL_Internal_RaycastTest
+UnityEngine.Physics::INTERNAL_CALL_RaycastAll
 UnityEngine.Physics2D::INTERNAL_CALL_Internal_Raycast
 UnityEngine.Physics2D::INTERNAL_CALL_GetRayIntersectionAll
 UnityEngine.Quaternion::INTERNAL_CALL_Internal_FromEulerRad

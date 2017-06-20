@@ -7368,6 +7368,7 @@ extern "C" void Camera_get_targetTexture_m705925974 ();
 extern "C" void Camera_get_clearFlags_m1743144302 ();
 extern "C" void Camera_ScreenPointToRay_m614889538 ();
 extern "C" void Camera_INTERNAL_CALL_ScreenPointToRay_m2752248646 ();
+extern "C" void Camera_get_main_m475173995 ();
 extern "C" void Camera_get_allCamerasCount_m989474043 ();
 extern "C" void Camera_GetAllCameras_m2922515227 ();
 extern "C" void Camera_FireOnPreCull_m1679634170 ();
@@ -7381,6 +7382,19 @@ extern "C" void CameraCallback__ctor_m2929748071 ();
 extern "C" void CameraCallback_Invoke_m3079065225 ();
 extern "C" void CameraCallback_BeginInvoke_m144217562 ();
 extern "C" void CameraCallback_EndInvoke_m2103705933 ();
+extern "C" void Collider_get_attachedRigidbody_m3279305420 ();
+extern "C" void Collision__ctor_m635081107 ();
+extern "C" void Collision_get_relativeVelocity_m2302609283 ();
+extern "C" void Collision_get_rigidbody_m3671561778 ();
+extern "C" void Collision_get_collider_m3340328360 ();
+extern "C" void Collision_get_transform_m4132935520 ();
+extern "C" void Collision_get_gameObject_m1370363400 ();
+extern "C" void Collision_get_contacts_m266635379 ();
+extern "C" void Collision_GetEnumerator_m4009889947 ();
+extern "C" void Collision_get_impulse_m1836134987 ();
+extern "C" void Collision_get_impactForceSum_m521972354 ();
+extern "C" void Collision_get_frictionForceSum_m3438602686 ();
+extern "C" void Collision_get_other_m4238363497 ();
 extern "C" void Collision2D__ctor_m2559810705 ();
 extern "C" void Collision2D_get_enabled_m1627968529 ();
 extern "C" void Collision2D_get_rigidbody_m4058558226 ();
@@ -7420,6 +7434,18 @@ extern "C" void Component_BroadcastMessage_m2230184532 ();
 extern "C" void Component_BroadcastMessage_m1308086896 ();
 extern "C" void Component_BroadcastMessage_m1706240890 ();
 extern "C" void Component_BroadcastMessage_m444672650 ();
+extern "C" void ControllerColliderHit__ctor_m2990717326 ();
+extern "C" void ControllerColliderHit_get_controller_m531319176 ();
+extern "C" void ControllerColliderHit_get_collider_m3897495767 ();
+extern "C" void ControllerColliderHit_get_rigidbody_m4025380167 ();
+extern "C" void ControllerColliderHit_get_gameObject_m3793104279 ();
+extern "C" void ControllerColliderHit_get_transform_m3183428555 ();
+extern "C" void ControllerColliderHit_get_point_m3573703281 ();
+extern "C" void ControllerColliderHit_get_normal_m1098215280 ();
+extern "C" void ControllerColliderHit_get_moveDirection_m3053186297 ();
+extern "C" void ControllerColliderHit_get_moveLength_m94453726 ();
+extern "C" void ControllerColliderHit_get_push_m2528314697 ();
+extern "C" void ControllerColliderHit_set_push_m3582188484 ();
 extern "C" void Coroutine__ctor_m1253937571 ();
 extern "C" void Coroutine_ReleaseCoroutine_m833118514 ();
 extern "C" void Coroutine_Finalize_m3953619693 ();
@@ -7503,6 +7529,9 @@ extern "C" void Input_GetMouseButton_m464100923 ();
 extern "C" void Input_GetMouseButtonDown_m47917805 ();
 extern "C" void Input_get_mousePosition_m146923508 ();
 extern "C" void Input_INTERNAL_get_mousePosition_m2302165941 ();
+extern "C" void Input_GetTouch_m1463942798 ();
+extern "C" void Input_INTERNAL_CALL_GetTouch_m1737132542 ();
+extern "C" void Input_get_touchCount_m2050827666 ();
 extern "C" void Input__cctor_m829848544 ();
 extern "C" void DefaultValueAttribute__ctor_m4191464344 ();
 extern "C" void DefaultValueAttribute_get_Value_m397428899 ();
@@ -7601,6 +7630,35 @@ extern "C" void Object_FindObjectOfType_m2330404063 ();
 extern "C" void Object_op_Equality_m3764089466 ();
 extern "C" void Object_op_Inequality_m2402264703 ();
 extern "C" void Object__cctor_m2991092887 ();
+extern "C" void Physics_Raycast_m2874007225 ();
+extern "C" void Physics_Raycast_m89212106 ();
+extern "C" void Physics_Raycast_m2667915561 ();
+extern "C" void Physics_Raycast_m3475924638 ();
+extern "C" void Physics_Raycast_m1929115794 ();
+extern "C" void Physics_Raycast_m2994111303 ();
+extern "C" void Physics_Raycast_m4027183840 ();
+extern "C" void Physics_Raycast_m2036777053 ();
+extern "C" void Physics_Raycast_m2691929452 ();
+extern "C" void Physics_Raycast_m780162053 ();
+extern "C" void Physics_Raycast_m2686676054 ();
+extern "C" void Physics_Raycast_m1844392139 ();
+extern "C" void Physics_Raycast_m2009151399 ();
+extern "C" void Physics_Raycast_m2308457076 ();
+extern "C" void Physics_Raycast_m2736931691 ();
+extern "C" void Physics_Raycast_m233619224 ();
+extern "C" void Physics_RaycastAll_m233036521 ();
+extern "C" void Physics_RaycastAll_m3928448900 ();
+extern "C" void Physics_RaycastAll_m1246652201 ();
+extern "C" void Physics_RaycastAll_m410413656 ();
+extern "C" void Physics_RaycastAll_m3908263591 ();
+extern "C" void Physics_RaycastAll_m3256436970 ();
+extern "C" void Physics_RaycastAll_m3484190429 ();
+extern "C" void Physics_RaycastAll_m3650851272 ();
+extern "C" void Physics_INTERNAL_CALL_RaycastAll_m2126789092 ();
+extern "C" void Physics_Internal_Raycast_m1160243045 ();
+extern "C" void Physics_INTERNAL_CALL_Internal_Raycast_m93849932 ();
+extern "C" void Physics_Internal_RaycastTest_m3442924926 ();
+extern "C" void Physics_INTERNAL_CALL_Internal_RaycastTest_m3440840981 ();
 extern "C" void Physics2D_Internal_Raycast_m683685528 ();
 extern "C" void Physics2D_INTERNAL_CALL_Internal_Raycast_m3956067819 ();
 extern "C" void Physics2D_Raycast_m1220041042 ();
@@ -7627,8 +7685,10 @@ extern "C" void Quaternion_Equals_m3730391696_AdjustorThunk ();
 extern "C" void Quaternion_ToString_m2638853272_AdjustorThunk ();
 extern "C" void Random_Range_m694320887 ();
 extern "C" void Random_RandomRangeInt_m374035151 ();
+extern "C" void Ray_get_origin_m3339262500_AdjustorThunk ();
 extern "C" void Ray_get_direction_m4059191533_AdjustorThunk ();
 extern "C" void Ray_ToString_m2019179238_AdjustorThunk ();
+extern "C" void RaycastHit_get_collider_m301198172_AdjustorThunk ();
 extern "C" void Rect_get_x_m1393582490_AdjustorThunk ();
 extern "C" void Rect_get_y_m1393582395_AdjustorThunk ();
 extern "C" void Rect_get_width_m1138015702_AdjustorThunk ();
@@ -7704,6 +7764,8 @@ extern "C" void StateMachineBehaviour_OnStateIK_m726770682 ();
 extern "C" void StateMachineBehaviour_OnStateMachineEnter_m1524239226 ();
 extern "C" void StateMachineBehaviour_OnStateMachineExit_m2213014568 ();
 extern "C" void ThreadAndSerializationSafe__ctor_m84326599 ();
+extern "C" void Touch_get_position_m2079703643_AdjustorThunk ();
+extern "C" void Touch_get_phase_m196706494_AdjustorThunk ();
 extern "C" void Transform_get_rotation_m1033555130 ();
 extern "C" void Transform_set_rotation_m3411284563 ();
 extern "C" void Transform_INTERNAL_get_rotation_m2427701365 ();
@@ -7733,6 +7795,7 @@ extern "C" void Vector2_op_Implicit_m176791411 ();
 extern "C" void Vector3__ctor_m2638739322_AdjustorThunk ();
 extern "C" void Vector3_GetHashCode_m1754570744_AdjustorThunk ();
 extern "C" void Vector3_Equals_m2692262876_AdjustorThunk ();
+extern "C" void Vector3_get_zero_m1527993324 ();
 extern "C" void Vector3_op_Multiply_m1351554733 ();
 extern "C" void Vector3_ToString_m3857189970_AdjustorThunk ();
 extern "C" void WaitForEndOfFrame__ctor_m3062480170 ();
@@ -7785,7 +7848,7 @@ extern "C" void BasicTileScript_OnMouseDown_m170811996 ();
 extern "C" void MapScript__ctor_m3548366692 ();
 extern "C" void MapScript_Start_m1219296372 ();
 extern "C" void MapScript_Update_m3835513785 ();
-extern const Il2CppMethodPointer g_MethodPointers[7774] = 
+extern const Il2CppMethodPointer g_MethodPointers[7837] = 
 {
 	Locale_GetText_m1954433032,
 	Locale_GetText_m2553164138,
@@ -15144,6 +15207,7 @@ extern const Il2CppMethodPointer g_MethodPointers[7774] =
 	Camera_get_clearFlags_m1743144302,
 	Camera_ScreenPointToRay_m614889538,
 	Camera_INTERNAL_CALL_ScreenPointToRay_m2752248646,
+	Camera_get_main_m475173995,
 	Camera_get_allCamerasCount_m989474043,
 	Camera_GetAllCameras_m2922515227,
 	Camera_FireOnPreCull_m1679634170,
@@ -15157,6 +15221,19 @@ extern const Il2CppMethodPointer g_MethodPointers[7774] =
 	CameraCallback_Invoke_m3079065225,
 	CameraCallback_BeginInvoke_m144217562,
 	CameraCallback_EndInvoke_m2103705933,
+	Collider_get_attachedRigidbody_m3279305420,
+	Collision__ctor_m635081107,
+	Collision_get_relativeVelocity_m2302609283,
+	Collision_get_rigidbody_m3671561778,
+	Collision_get_collider_m3340328360,
+	Collision_get_transform_m4132935520,
+	Collision_get_gameObject_m1370363400,
+	Collision_get_contacts_m266635379,
+	Collision_GetEnumerator_m4009889947,
+	Collision_get_impulse_m1836134987,
+	Collision_get_impactForceSum_m521972354,
+	Collision_get_frictionForceSum_m3438602686,
+	Collision_get_other_m4238363497,
 	Collision2D__ctor_m2559810705,
 	Collision2D_get_enabled_m1627968529,
 	Collision2D_get_rigidbody_m4058558226,
@@ -15196,6 +15273,18 @@ extern const Il2CppMethodPointer g_MethodPointers[7774] =
 	Component_BroadcastMessage_m1308086896,
 	Component_BroadcastMessage_m1706240890,
 	Component_BroadcastMessage_m444672650,
+	ControllerColliderHit__ctor_m2990717326,
+	ControllerColliderHit_get_controller_m531319176,
+	ControllerColliderHit_get_collider_m3897495767,
+	ControllerColliderHit_get_rigidbody_m4025380167,
+	ControllerColliderHit_get_gameObject_m3793104279,
+	ControllerColliderHit_get_transform_m3183428555,
+	ControllerColliderHit_get_point_m3573703281,
+	ControllerColliderHit_get_normal_m1098215280,
+	ControllerColliderHit_get_moveDirection_m3053186297,
+	ControllerColliderHit_get_moveLength_m94453726,
+	ControllerColliderHit_get_push_m2528314697,
+	ControllerColliderHit_set_push_m3582188484,
 	Coroutine__ctor_m1253937571,
 	Coroutine_ReleaseCoroutine_m833118514,
 	Coroutine_Finalize_m3953619693,
@@ -15279,6 +15368,9 @@ extern const Il2CppMethodPointer g_MethodPointers[7774] =
 	Input_GetMouseButtonDown_m47917805,
 	Input_get_mousePosition_m146923508,
 	Input_INTERNAL_get_mousePosition_m2302165941,
+	Input_GetTouch_m1463942798,
+	Input_INTERNAL_CALL_GetTouch_m1737132542,
+	Input_get_touchCount_m2050827666,
 	Input__cctor_m829848544,
 	DefaultValueAttribute__ctor_m4191464344,
 	DefaultValueAttribute_get_Value_m397428899,
@@ -15377,6 +15469,35 @@ extern const Il2CppMethodPointer g_MethodPointers[7774] =
 	Object_op_Equality_m3764089466,
 	Object_op_Inequality_m2402264703,
 	Object__cctor_m2991092887,
+	Physics_Raycast_m2874007225,
+	Physics_Raycast_m89212106,
+	Physics_Raycast_m2667915561,
+	Physics_Raycast_m3475924638,
+	Physics_Raycast_m1929115794,
+	Physics_Raycast_m2994111303,
+	Physics_Raycast_m4027183840,
+	Physics_Raycast_m2036777053,
+	Physics_Raycast_m2691929452,
+	Physics_Raycast_m780162053,
+	Physics_Raycast_m2686676054,
+	Physics_Raycast_m1844392139,
+	Physics_Raycast_m2009151399,
+	Physics_Raycast_m2308457076,
+	Physics_Raycast_m2736931691,
+	Physics_Raycast_m233619224,
+	Physics_RaycastAll_m233036521,
+	Physics_RaycastAll_m3928448900,
+	Physics_RaycastAll_m1246652201,
+	Physics_RaycastAll_m410413656,
+	Physics_RaycastAll_m3908263591,
+	Physics_RaycastAll_m3256436970,
+	Physics_RaycastAll_m3484190429,
+	Physics_RaycastAll_m3650851272,
+	Physics_INTERNAL_CALL_RaycastAll_m2126789092,
+	Physics_Internal_Raycast_m1160243045,
+	Physics_INTERNAL_CALL_Internal_Raycast_m93849932,
+	Physics_Internal_RaycastTest_m3442924926,
+	Physics_INTERNAL_CALL_Internal_RaycastTest_m3440840981,
 	Physics2D_Internal_Raycast_m683685528,
 	Physics2D_INTERNAL_CALL_Internal_Raycast_m3956067819,
 	Physics2D_Raycast_m1220041042,
@@ -15403,8 +15524,10 @@ extern const Il2CppMethodPointer g_MethodPointers[7774] =
 	Quaternion_ToString_m2638853272_AdjustorThunk,
 	Random_Range_m694320887,
 	Random_RandomRangeInt_m374035151,
+	Ray_get_origin_m3339262500_AdjustorThunk,
 	Ray_get_direction_m4059191533_AdjustorThunk,
 	Ray_ToString_m2019179238_AdjustorThunk,
+	RaycastHit_get_collider_m301198172_AdjustorThunk,
 	Rect_get_x_m1393582490_AdjustorThunk,
 	Rect_get_y_m1393582395_AdjustorThunk,
 	Rect_get_width_m1138015702_AdjustorThunk,
@@ -15480,6 +15603,8 @@ extern const Il2CppMethodPointer g_MethodPointers[7774] =
 	StateMachineBehaviour_OnStateMachineEnter_m1524239226,
 	StateMachineBehaviour_OnStateMachineExit_m2213014568,
 	ThreadAndSerializationSafe__ctor_m84326599,
+	Touch_get_position_m2079703643_AdjustorThunk,
+	Touch_get_phase_m196706494_AdjustorThunk,
 	Transform_get_rotation_m1033555130,
 	Transform_set_rotation_m3411284563,
 	Transform_INTERNAL_get_rotation_m2427701365,
@@ -15509,6 +15634,7 @@ extern const Il2CppMethodPointer g_MethodPointers[7774] =
 	Vector3__ctor_m2638739322_AdjustorThunk,
 	Vector3_GetHashCode_m1754570744_AdjustorThunk,
 	Vector3_Equals_m2692262876_AdjustorThunk,
+	Vector3_get_zero_m1527993324,
 	Vector3_op_Multiply_m1351554733,
 	Vector3_ToString_m3857189970_AdjustorThunk,
 	WaitForEndOfFrame__ctor_m3062480170,

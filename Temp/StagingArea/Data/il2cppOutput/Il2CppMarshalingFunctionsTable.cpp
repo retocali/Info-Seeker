@@ -110,12 +110,18 @@ extern "C" void AssetBundleRequest_t2674559435_marshal_pinvoke_cleanup ();
 extern "C" void AsyncOperation_t3814632279_marshal_pinvoke ();
 extern "C" void AsyncOperation_t3814632279_marshal_pinvoke_back ();
 extern "C" void AsyncOperation_t3814632279_marshal_pinvoke_cleanup ();
+extern "C" void Collision_t2876846408_marshal_pinvoke ();
+extern "C" void Collision_t2876846408_marshal_pinvoke_back ();
+extern "C" void Collision_t2876846408_marshal_pinvoke_cleanup ();
 extern "C" void Collision2D_t1539500754_marshal_pinvoke ();
 extern "C" void Collision2D_t1539500754_marshal_pinvoke_back ();
 extern "C" void Collision2D_t1539500754_marshal_pinvoke_cleanup ();
 extern "C" void ContactPoint2D_t3659330976_marshal_pinvoke ();
 extern "C" void ContactPoint2D_t3659330976_marshal_pinvoke_back ();
 extern "C" void ContactPoint2D_t3659330976_marshal_pinvoke_cleanup ();
+extern "C" void ControllerColliderHit_t4070855101_marshal_pinvoke ();
+extern "C" void ControllerColliderHit_t4070855101_marshal_pinvoke_back ();
+extern "C" void ControllerColliderHit_t4070855101_marshal_pinvoke_cleanup ();
 extern "C" void Coroutine_t2299508840_marshal_pinvoke ();
 extern "C" void Coroutine_t2299508840_marshal_pinvoke_back ();
 extern "C" void Coroutine_t2299508840_marshal_pinvoke_cleanup ();
@@ -128,6 +134,9 @@ extern "C" void Gradient_t3600583008_marshal_pinvoke_cleanup ();
 extern "C" void Object_t1021602117_marshal_pinvoke ();
 extern "C" void Object_t1021602117_marshal_pinvoke_back ();
 extern "C" void Object_t1021602117_marshal_pinvoke_cleanup ();
+extern "C" void RaycastHit_t87180320_marshal_pinvoke ();
+extern "C" void RaycastHit_t87180320_marshal_pinvoke_back ();
+extern "C" void RaycastHit_t87180320_marshal_pinvoke_cleanup ();
 extern "C" void RaycastHit2D_t4063908774_marshal_pinvoke ();
 extern "C" void RaycastHit2D_t4063908774_marshal_pinvoke_back ();
 extern "C" void RaycastHit2D_t4063908774_marshal_pinvoke_cleanup ();
@@ -146,7 +155,7 @@ extern "C" void WaitForSeconds_t3839502067_marshal_pinvoke_cleanup ();
 extern "C" void YieldInstruction_t3462875981_marshal_pinvoke ();
 extern "C" void YieldInstruction_t3462875981_marshal_pinvoke_back ();
 extern "C" void YieldInstruction_t3462875981_marshal_pinvoke_cleanup ();
-extern const Il2CppMarshalingFunctions g_MarshalingFunctions[46] = 
+extern const Il2CppMarshalingFunctions g_MarshalingFunctions[49] = 
 {
 	{ Context_t2636657155_marshal_pinvoke, Context_t2636657155_marshal_pinvoke_back, Context_t2636657155_marshal_pinvoke_cleanup },
 	{ Escape_t169451053_marshal_pinvoke, Escape_t169451053_marshal_pinvoke_back, Escape_t169451053_marshal_pinvoke_cleanup },
@@ -181,12 +190,15 @@ extern const Il2CppMarshalingFunctions g_MarshalingFunctions[46] =
 	{ AnimationCurve_t3306541151_marshal_pinvoke, AnimationCurve_t3306541151_marshal_pinvoke_back, AnimationCurve_t3306541151_marshal_pinvoke_cleanup },
 	{ AssetBundleRequest_t2674559435_marshal_pinvoke, AssetBundleRequest_t2674559435_marshal_pinvoke_back, AssetBundleRequest_t2674559435_marshal_pinvoke_cleanup },
 	{ AsyncOperation_t3814632279_marshal_pinvoke, AsyncOperation_t3814632279_marshal_pinvoke_back, AsyncOperation_t3814632279_marshal_pinvoke_cleanup },
+	{ Collision_t2876846408_marshal_pinvoke, Collision_t2876846408_marshal_pinvoke_back, Collision_t2876846408_marshal_pinvoke_cleanup },
 	{ Collision2D_t1539500754_marshal_pinvoke, Collision2D_t1539500754_marshal_pinvoke_back, Collision2D_t1539500754_marshal_pinvoke_cleanup },
 	{ ContactPoint2D_t3659330976_marshal_pinvoke, ContactPoint2D_t3659330976_marshal_pinvoke_back, ContactPoint2D_t3659330976_marshal_pinvoke_cleanup },
+	{ ControllerColliderHit_t4070855101_marshal_pinvoke, ControllerColliderHit_t4070855101_marshal_pinvoke_back, ControllerColliderHit_t4070855101_marshal_pinvoke_cleanup },
 	{ Coroutine_t2299508840_marshal_pinvoke, Coroutine_t2299508840_marshal_pinvoke_back, Coroutine_t2299508840_marshal_pinvoke_cleanup },
 	{ CullingGroup_t1091689465_marshal_pinvoke, CullingGroup_t1091689465_marshal_pinvoke_back, CullingGroup_t1091689465_marshal_pinvoke_cleanup },
 	{ Gradient_t3600583008_marshal_pinvoke, Gradient_t3600583008_marshal_pinvoke_back, Gradient_t3600583008_marshal_pinvoke_cleanup },
 	{ Object_t1021602117_marshal_pinvoke, Object_t1021602117_marshal_pinvoke_back, Object_t1021602117_marshal_pinvoke_cleanup },
+	{ RaycastHit_t87180320_marshal_pinvoke, RaycastHit_t87180320_marshal_pinvoke_back, RaycastHit_t87180320_marshal_pinvoke_cleanup },
 	{ RaycastHit2D_t4063908774_marshal_pinvoke, RaycastHit2D_t4063908774_marshal_pinvoke_back, RaycastHit2D_t4063908774_marshal_pinvoke_cleanup },
 	{ ResourceRequest_t2560315377_marshal_pinvoke, ResourceRequest_t2560315377_marshal_pinvoke_back, ResourceRequest_t2560315377_marshal_pinvoke_cleanup },
 	{ ScriptableObject_t1975622470_marshal_pinvoke, ScriptableObject_t1975622470_marshal_pinvoke_back, ScriptableObject_t1975622470_marshal_pinvoke_cleanup },

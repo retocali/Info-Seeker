@@ -182,6 +182,10 @@ void RegisterAllStrippedInternalCalls()
 		void Register_UnityEngine_Camera_INTERNAL_get_pixelRect();
 		Register_UnityEngine_Camera_INTERNAL_get_pixelRect();
 
+		//UnityEngine.Camera UnityEngine.Camera::get_main()
+		void Register_UnityEngine_Camera_get_main();
+		Register_UnityEngine_Camera_get_main();
+
 		//UnityEngine.CameraClearFlags UnityEngine.Camera::get_clearFlags()
 		void Register_UnityEngine_Camera_get_clearFlags();
 		Register_UnityEngine_Camera_get_clearFlags();
@@ -199,6 +203,14 @@ void RegisterAllStrippedInternalCalls()
 		Register_UnityEngine_Camera_get_targetTexture();
 
 	//End Registrations for type : UnityEngine.Camera
+
+	//Start Registrations for type : UnityEngine.Collider
+
+		//UnityEngine.Rigidbody UnityEngine.Collider::get_attachedRigidbody()
+		void Register_UnityEngine_Collider_get_attachedRigidbody();
+		Register_UnityEngine_Collider_get_attachedRigidbody();
+
+	//End Registrations for type : UnityEngine.Collider
 
 	//Start Registrations for type : UnityEngine.Component
 
@@ -354,6 +366,14 @@ void RegisterAllStrippedInternalCalls()
 		void Register_UnityEngine_Input_GetMouseButtonDown();
 		Register_UnityEngine_Input_GetMouseButtonDown();
 
+		//System.Int32 UnityEngine.Input::get_touchCount()
+		void Register_UnityEngine_Input_get_touchCount();
+		Register_UnityEngine_Input_get_touchCount();
+
+		//System.Void UnityEngine.Input::INTERNAL_CALL_GetTouch(System.Int32,UnityEngine.Touch&)
+		void Register_UnityEngine_Input_INTERNAL_CALL_GetTouch();
+		Register_UnityEngine_Input_INTERNAL_CALL_GetTouch();
+
 		//System.Void UnityEngine.Input::INTERNAL_get_mousePosition(UnityEngine.Vector3&)
 		void Register_UnityEngine_Input_INTERNAL_get_mousePosition();
 		Register_UnityEngine_Input_INTERNAL_get_mousePosition();
@@ -499,6 +519,22 @@ void RegisterAllStrippedInternalCalls()
 		Register_UnityEngine_Object_FindSceneObjectsOfType();
 
 	//End Registrations for type : UnityEngine.Object
+
+	//Start Registrations for type : UnityEngine.Physics
+
+		//System.Boolean UnityEngine.Physics::INTERNAL_CALL_Internal_Raycast(UnityEngine.Vector3&,UnityEngine.Vector3&,UnityEngine.RaycastHit&,System.Single,System.Int32,UnityEngine.QueryTriggerInteraction)
+		void Register_UnityEngine_Physics_INTERNAL_CALL_Internal_Raycast();
+		Register_UnityEngine_Physics_INTERNAL_CALL_Internal_Raycast();
+
+		//System.Boolean UnityEngine.Physics::INTERNAL_CALL_Internal_RaycastTest(UnityEngine.Vector3&,UnityEngine.Vector3&,System.Single,System.Int32,UnityEngine.QueryTriggerInteraction)
+		void Register_UnityEngine_Physics_INTERNAL_CALL_Internal_RaycastTest();
+		Register_UnityEngine_Physics_INTERNAL_CALL_Internal_RaycastTest();
+
+		//UnityEngine.RaycastHit[] UnityEngine.Physics::INTERNAL_CALL_RaycastAll(UnityEngine.Vector3&,UnityEngine.Vector3&,System.Single,System.Int32,UnityEngine.QueryTriggerInteraction)
+		void Register_UnityEngine_Physics_INTERNAL_CALL_RaycastAll();
+		Register_UnityEngine_Physics_INTERNAL_CALL_RaycastAll();
+
+	//End Registrations for type : UnityEngine.Physics
 
 	//Start Registrations for type : UnityEngine.Physics2D
 

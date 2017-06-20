@@ -15,7 +15,7 @@ public class MapScript : MonoBehaviour {
 	void Start () {
 		for (int x = 0; x < width; x++) {
 			for (int y = 0; y < length; y++) {
-				Vector2 pos = new Vector2(1.4f*x,1.4f*y);
+				Vector2 pos = new Vector2(3f*x,3f*y);
 				Instantiate(tilesArray[(int)Random.Range(0,tilesArray.Length)],pos, Quaternion.identity, this.gameObject.transform);
 			}
 		}

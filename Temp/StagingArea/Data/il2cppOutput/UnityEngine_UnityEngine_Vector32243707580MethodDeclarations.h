@@ -27,6 +27,8 @@ extern "C"  void Vector3__ctor_m2638739322 (Vector3_t2243707580 * __this, float 
 extern "C"  int32_t Vector3_GetHashCode_m1754570744 (Vector3_t2243707580 * __this, const MethodInfo* method) IL2CPP_METHOD_ATTR;
 // System.Boolean UnityEngine.Vector3::Equals(System.Object)
 extern "C"  bool Vector3_Equals_m2692262876 (Vector3_t2243707580 * __this, Il2CppObject * ___other0, const MethodInfo* method) IL2CPP_METHOD_ATTR;
+// UnityEngine.Vector3 UnityEngine.Vector3::get_zero()
+extern "C"  Vector3_t2243707580  Vector3_get_zero_m1527993324 (Il2CppObject * __this /* static, unused */, const MethodInfo* method) IL2CPP_METHOD_ATTR;
 // UnityEngine.Vector3 UnityEngine.Vector3::op_Multiply(UnityEngine.Vector3,System.Single)
 extern "C"  Vector3_t2243707580  Vector3_op_Multiply_m1351554733 (Il2CppObject * __this /* static, unused */, Vector3_t2243707580  ___a0, float ___d1, const MethodInfo* method) IL2CPP_METHOD_ATTR;
 // System.String UnityEngine.Vector3::ToString()

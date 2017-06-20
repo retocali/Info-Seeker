@@ -491,6 +491,12 @@ static const Il2CppType* GenInst_Scene_t1684909666_0_0_0_Types[] = { &Scene_t168
 extern const Il2CppGenericInst GenInst_Scene_t1684909666_0_0_0 = { 1, GenInst_Scene_t1684909666_0_0_0_Types };
 static const Il2CppType* GenInst_Scene_t1684909666_0_0_0_Scene_t1684909666_0_0_0_Types[] = { &Scene_t1684909666_0_0_0, &Scene_t1684909666_0_0_0 };
 extern const Il2CppGenericInst GenInst_Scene_t1684909666_0_0_0_Scene_t1684909666_0_0_0 = { 2, GenInst_Scene_t1684909666_0_0_0_Scene_t1684909666_0_0_0_Types };
+extern const Il2CppType ContactPoint_t1376425630_0_0_0;
+static const Il2CppType* GenInst_ContactPoint_t1376425630_0_0_0_Types[] = { &ContactPoint_t1376425630_0_0_0 };
+extern const Il2CppGenericInst GenInst_ContactPoint_t1376425630_0_0_0 = { 1, GenInst_ContactPoint_t1376425630_0_0_0_Types };
+extern const Il2CppType RaycastHit_t87180320_0_0_0;
+static const Il2CppType* GenInst_RaycastHit_t87180320_0_0_0_Types[] = { &RaycastHit_t87180320_0_0_0 };
+extern const Il2CppGenericInst GenInst_RaycastHit_t87180320_0_0_0 = { 1, GenInst_RaycastHit_t87180320_0_0_0_Types };
 extern const Il2CppType Rigidbody2D_t502193897_0_0_0;
 static const Il2CppType* GenInst_Rigidbody2D_t502193897_0_0_0_Types[] = { &Rigidbody2D_t502193897_0_0_0 };
 extern const Il2CppGenericInst GenInst_Rigidbody2D_t502193897_0_0_0 = { 1, GenInst_Rigidbody2D_t502193897_0_0_0_Types };
@@ -850,7 +856,7 @@ static const Il2CppType* GenInst_KeyValuePair_2_t38854645_0_0_0_KeyValuePair_2_t
 extern const Il2CppGenericInst GenInst_KeyValuePair_2_t38854645_0_0_0_KeyValuePair_2_t38854645_0_0_0 = { 2, GenInst_KeyValuePair_2_t38854645_0_0_0_KeyValuePair_2_t38854645_0_0_0_Types };
 static const Il2CppType* GenInst_KeyValuePair_2_t38854645_0_0_0_Il2CppObject_0_0_0_Types[] = { &KeyValuePair_2_t38854645_0_0_0, &Il2CppObject_0_0_0 };
 extern const Il2CppGenericInst GenInst_KeyValuePair_2_t38854645_0_0_0_Il2CppObject_0_0_0 = { 2, GenInst_KeyValuePair_2_t38854645_0_0_0_Il2CppObject_0_0_0_Types };
-extern const Il2CppGenericInst* const g_Il2CppGenericInstTable[288] = 
+extern const Il2CppGenericInst* const g_Il2CppGenericInstTable[290] = 
 {
 	&GenInst_Il2CppObject_0_0_0,
 	&GenInst_Int32_t2071877448_0_0_0,
@@ -1017,6 +1023,8 @@ extern const Il2CppGenericInst* const g_Il2CppGenericInstTable[288] =
 	&GenInst_Scene_t1684909666_0_0_0_LoadSceneMode_t2981886439_0_0_0,
 	&GenInst_Scene_t1684909666_0_0_0,
 	&GenInst_Scene_t1684909666_0_0_0_Scene_t1684909666_0_0_0,
+	&GenInst_ContactPoint_t1376425630_0_0_0,
+	&GenInst_RaycastHit_t87180320_0_0_0,
 	&GenInst_Rigidbody2D_t502193897_0_0_0,
 	&GenInst_RaycastHit2D_t4063908774_0_0_0,
 	&GenInst_ContactPoint2D_t3659330976_0_0_0,

@@ -49,6 +49,8 @@ extern "C"  int32_t Camera_get_clearFlags_m1743144302 (Camera_t189460977 * __thi
 extern "C"  Ray_t2469606224  Camera_ScreenPointToRay_m614889538 (Camera_t189460977 * __this, Vector3_t2243707580  ___position0, const MethodInfo* method) IL2CPP_METHOD_ATTR;
 // System.Void UnityEngine.Camera::INTERNAL_CALL_ScreenPointToRay(UnityEngine.Camera,UnityEngine.Vector3&,UnityEngine.Ray&)
 extern "C"  void Camera_INTERNAL_CALL_ScreenPointToRay_m2752248646 (Il2CppObject * __this /* static, unused */, Camera_t189460977 * ___self0, Vector3_t2243707580 * ___position1, Ray_t2469606224 * ___value2, const MethodInfo* method) IL2CPP_METHOD_ATTR;
+// UnityEngine.Camera UnityEngine.Camera::get_main()
+extern "C"  Camera_t189460977 * Camera_get_main_m475173995 (Il2CppObject * __this /* static, unused */, const MethodInfo* method) IL2CPP_METHOD_ATTR;
 // System.Int32 UnityEngine.Camera::get_allCamerasCount()
 extern "C"  int32_t Camera_get_allCamerasCount_m989474043 (Il2CppObject * __this /* static, unused */, const MethodInfo* method) IL2CPP_METHOD_ATTR;
 // System.Int32 UnityEngine.Camera::GetAllCameras(UnityEngine.Camera[])
