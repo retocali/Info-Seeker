@@ -1,0 +1,9 @@
+<linker>
+<assembly fullname="Assembly-CSharp">
+<type fullname="BasicTileScript" preserve="all"/>
+<type fullname="MapScript" preserve="all"/>
+</assembly>
+<assembly fullname="UnityEngine.Analytics">
+<type fullname="UnityEngine.Analytics.AnalyticsTracker" preserve="all"/>
+</assembly>
+</linker>
