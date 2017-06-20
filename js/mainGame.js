@@ -1,7 +1,7 @@
 var game = new Phaser.Game(800, 600, Phaser.CANVAS, 'phaser-example', { preload: preload, create: create });
 var width = 3;
 var length = 3;
-var tileSize = 130;
+var tileSize = 140;
 
 function preload() {
 
