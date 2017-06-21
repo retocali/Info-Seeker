@@ -12,8 +12,10 @@ var tiles = [];
 
 
 function preload() {
+    // Used to load menu icons
     game.load.image('rotateClock',"assets/sprites/Rotate_Clockwise.png");
     game.load.image('rotateCounter',"assets/sprites/Rotate_Counter_Clockwise.png");
+
     // Used to load the images as sprites to randomly access
     for (var i = 0; i < tileNames.length; i++) {
     
@@ -24,12 +26,17 @@ function preload() {
 
 function create() {
     
+    var board = [[],[],[]];
+
     game.stage.backgroundColor = 'rgba(125,125,0,0)';
+    
+    
 
     // Creates the board
     for (let x = 0; x < width; x++) {
         
         for (let y = 0; y < length; y++) {
+            
             
             // TODO: Tweak this to actually center it
             // Finds the centered placement of the tiles 
@@ -37,11 +44,13 @@ function create() {
             let yLoc = game.world.centerY+y*tileSize-length/2*tileSize;
 
             // Creates the actual sprites and adds a handler to rotate it
-            let s = game.add.sprite(xLoc, yLoc, tiles[Math.floor(Math.random()*tiles.length)]);
-            
-            s.anchor.setTo(0.5,0.5);
-            s.inputEnabled = true;
-            s.events.onInputDown.add(menuCreate(s), this);
+            let tileName = tiles[Math.floor(Math.random()*tiles.length)];
+            let s = new BasicTile(findExits(tileName), 0, xLoc, yLoc, tileName);
+            board[x][y] = s; 
+
+            s.image.anchor.setTo(0.5,0.5);
+            s.image.inputEnabled = true;
+            s.image.events.onInputDown.add(menuCreate(s), this);
         }
     }
 }
@@ -50,14 +59,16 @@ function menuCreate(s) {
 
         let group = game.add.group();
 
-        let button1 = game.make.button(0, 450, 'rotateClock', removeGroup, this, 20, 10, 0);
-        let button2 = game.make.button(128, 450, 'rotateCounter', removeGroup, this, 20, 10, 0);
+        let button1 = game.make.button( 0 ,450, 'rotateClock'  , removeGroup, this, 20, 10, 0);
+        let button2 = game.make.button(128,450, 'rotateCounter', removeGroup, this, 20, 10, 0);
 
         function removeGroup() {
+            button1.destroy();
+            button2.destroy();
             game.world.remove(group);
         }
-        button1.onInputDown.add(function() {s.angle += 90;}, this);
-        button2.onInputDown.add(function() {s.angle -= 90;}, this);
+        button1.onInputDown.add(function() {s.rotateClockWise();}, this);
+        button2.onInputDown.add(function() {s.rotateCounterClockWise()}, this);
 
         group.add(button1);
         group.add(button2);  
@@ -70,11 +81,63 @@ function update() {
     
 }
 
+function findExits(tileName) {
+    // 4 being the length of the word tile
+    let index = tileName.slice(4, tileName.length);
+    switch(tileNames[index]) {
+        case "Corner_Tile.png":
+            return [1,1,0,0];
+        case "Cross_Tile.png":
+            return [1,1,1,1];
+        case "DeadEnd_Tile.png":
+            return [1,0,0,0];
+        case "Line_Tile.png":
+            return [1,0,1,0];
+        case "Tetris_Tile.png":
+            return [1,1,1,0];
+        default:
+            return [0,0,0,0];
+    }
+
+}
 
 class BasicTile {
-    constructor(exits, rotation) {
+    // exits : represent as an array of length 4
+    //          North: Index 0,
+    //          West:  Index 1,
+    //          South: Index 2,
+    //          East:  Index 3,
+    //          With Value 1 at the index meaning there is an exit
+    //               Value 0 meaning there isn't
+    // rotation: keeps track of the rotation of the tile and is between 0 <= x <= 360
+
+    constructor(exits, rotation, xLoc, yLoc, tileName) {
+        this.image = game.add.sprite(xLoc, yLoc, tileName);
         this.exits = exits;
-        this.rotation = rotation
+        this.rotation = rotation;
     }
-    
+    canGoNorth () {
+        return this.exits[(this.rotation/90)];
+    }
+    canGoWest () {
+        return this.exits[(1+(this.rotation/90)) % 4];
+    }
+    canGoSouth () {
+        return this.exits[(2+(this.rotation/90)) % 4];
+    }
+    canGoEast () {
+        return this.exits[(3+(this.rotation/90)) % 4];
+    }
+    rotateClockWise() {
+        this.rotation = (this.rotation + 90) % 360;
+        this.image.angle += 90;
+        console.log(this.canGoNorth());
+        
+    }
+    rotateCounterClockWise() {
+        this.rotation = (this.rotation + 270) % 360;
+        this.image.angle -= 90;
+        console.log(this.canGoNorth());
+    }
+
 }
