@@ -1,5 +1,5 @@
 
-var game = new Phaser.Game(1000, 800, Phaser.CANVAS, 'phaser-example', { preload: preload, create: create });
+var game = new Phaser.Game(1000, 900, Phaser.CANVAS, 'phaser-example', { preload: preload, create: create });
 var board;
 var player;
 var playerPos;
@@ -70,17 +70,38 @@ function create() {
 function addHighlight(s) {
     s.events.onInputOver.add(highlights(s), this);
     s.events.onInputOut.add(normalize(s),this);
+    s.events.onInputDown.add(color(s), this);
 }
 
+//the dark blue (pressed down)
+function color(s) {
+    return function() {
+        s.tint = 0x0000ff;
+    }
+}
+
+//the light blue highlight
 function highlights(s) {
     return function() {
-        s.tint = Math.random() * 0xffffff;
+        if (s.tint == 0xffffff) {
+        s.tint = 0x009fff;
+        }
     }
 }
 
 function normalize(s) {
     return function() {
+        if (s.tint == 0x009fff){ 
         s.tint = 0xffffff;
+        }
+    }
+}
+
+function reset() {
+    for (let x = 0;  x < width; x++) {
+        for (let y = 0; y < length; y++) {
+            board[x][y].image.tint = 0xffffff
+        }
     }
 }
 
@@ -95,6 +116,7 @@ function menuCreate(s) {
             button3.destroy();
         }
 
+        reset();
 
         group = game.add.group();
 
@@ -105,12 +127,14 @@ function menuCreate(s) {
             button1.destroy();
             button2.destroy();
             button3.destroy();
+            reset();
             game.world.remove(group);
 
         }
         button1.onInputDown.add(function() {s.rotateClockWise();}, this);
         button2.onInputDown.add(function() {s.rotateCounterClockWise()}, this);
         button3.onInputDown.add(function() {movePlayer(s)}, this);
+
 
         addHighlight(button1);
         addHighlight(button2);
