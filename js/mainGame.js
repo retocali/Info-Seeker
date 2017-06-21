@@ -42,9 +42,24 @@ function create() {
             s.anchor.setTo(0.5,0.5);
             s.inputEnabled = true;
             s.events.onInputDown.add(menuCreate(s), this);
+            s.events.onInputOver.add(highlights(s), this);
+            s.events.onInputOut.add(highlight2(s),this);
         }
     }
 }
+
+function highlights(s) {
+    return function() {
+        s.tint = Math.random() * 0xffffff;
+    }
+}
+
+function highlight2(s) {
+    return function() {
+        s.tint = 0xffffff;
+    }
+}
+
 function menuCreate(s) {
     return function() {
 
@@ -54,17 +69,23 @@ function menuCreate(s) {
         let button2 = game.make.button(128, 450, 'rotateCounter', removeGroup, this, 20, 10, 0);
 
         function removeGroup() {
+            game.world.remove(button1);
+            game.world.remove(button2);
             game.world.remove(group);
+
         }
         button1.onInputDown.add(function() {s.angle += 90;}, this);
         button2.onInputDown.add(function() {s.angle -= 90;}, this);
+
+        button1.events.onInputOver.add(highlights(button1),this);
+        button2.events.onInputOver.add(highlights(button2),this);
+        button1.events.onInputOut.add(highlight2(button1),this);
+        button2.events.onInputOut.add(highlight2(button2),this);
 
         group.add(button1);
         group.add(button2);  
     }
 }
-
-
 
 function update() {
     
