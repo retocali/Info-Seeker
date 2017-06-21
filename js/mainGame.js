@@ -1,5 +1,5 @@
 
-var game = new Phaser.Game(1000, 800, Phaser.CANVAS, 'phaser-example', { preload: preload, create: create });
+var game = new Phaser.Game(1000, 900, Phaser.CANVAS, 'phaser-example', { preload: preload, create: create });
 var board;
 var player;
 var guard;
@@ -14,6 +14,7 @@ var tileSize = 140;
 
 
 // TODO: Maybe have a function to search through folder for filenames?
+var entrix = "EntranceExit.png";
 var tileNames = ["Corner_Tile.png","Cross_Tile.png","DeadEnd_Tile.png","Line_Tile.png","Tetris_Tile.png"];
 var tiles = [];
 
@@ -30,35 +31,35 @@ function preload() {
     game.load.image('rotateCounter',"assets/sprites/Rotate_Counter_Clockwise.png");
 
     // Used to load the images as sprites to randomly access
+    game.load.image('entrix',"assets/sprites/tiles/EntranceExit.png")
     for (var i = 0; i < tileNames.length; i++) {
-    
         game.load.image('tile'+i, 'assets/sprites/tiles/' + tileNames[i]);
         tiles.push('tile'+i);
     }
 }
 
 function create() {
-    
+    game.scale.pageAlignHorizontally = true; game.scale.pageAlignVeritcally = true; game.scale.refresh();
     board = [[],[],[],[],[]];
 
     game.stage.backgroundColor = 'rgba(125,125,0,0)';
     
     
     // Creates the board
-    for (let x = 0; x < width; x++) {
+    for (let x = -1; x < width-1; x++) {
         
-        for (let y = 0; y < length; y++) {
+        for (let y = -1; y < length-1; y++) {
             
             
             // TODO: Tweak this to actually center it
             // Finds the centered placement of the tiles 
-            let xLoc = game.world.centerX+x*tileSize-width/2*tileSize;
-            let yLoc = game.world.centerY+y*tileSize-length/2*tileSize;
+            let xLoc = game.world.centerX+x*tileSize;
+            let yLoc = game.world.centerY+y*tileSize;
 
             // Creates the actual sprites and adds a handler to rotate it
             let tileName = tiles[Math.floor(Math.random()*tiles.length)];
             let s = new BasicTile(findExits(tileName), 0, xLoc, yLoc, tileName, x, y);
-            board[x][y] = s; 
+            board[x+1][y+1] = s; 
 
             s.image.anchor.setTo(0.5,0.5);
             s.image.inputEnabled = true;
@@ -67,11 +68,11 @@ function create() {
         }
     }
     // Creates the Guard
-    guard = game.add.sprite(game.world.centerX+2*tileSize-width/2*tileSize, game.world.centerY+2*tileSize-length/2*tileSize, 'guard');
+    guard = game.add.sprite(game.world.centerX+tileSize, game.world.centerY+tileSize, 'guard');
     guardPos = {x:2, y:2}
     guard.anchor.setTo(0.5,0.5);
     // Creates the player
-    player = game.add.sprite(game.world.centerX-width/2*tileSize, game.world.centerY-length/2*tileSize, 'player');
+    player = game.add.sprite(game.world.centerX-tileSize, game.world.centerY-tileSize, 'player');
     playerPos = {x:0, y:0}
     player.anchor.setTo(0.5,0.5);
     player.inputEnabled = true;
@@ -81,23 +82,46 @@ function create() {
 function addHighlight(s) {
     s.events.onInputOver.add(highlights(s), this);
     s.events.onInputOut.add(normalize(s),this);
+    s.events.onInputDown.add(color(s), this);
 }
 
+//the dark blue (pressed down)
+function color(s) {
+    return function() {
+        s.tint = 0x0000ff;
+    }
+}
+
+//the light blue highlight
 function highlights(s) {
     return function() {
-        s.tint = Math.random() * 0xffffff;
+        if (s.tint == 0xffffff) {
+        s.tint = 0x009fff;
+        }
     }
 }
 
 function normalize(s) {
     return function() {
+        if (s.tint == 0x009fff){ 
         s.tint = 0xffffff;
+        }
+    }
+}
+
+function reset() {
+    for (let x = 0;  x < width; x++) {
+        for (let y = 0; y < length; y++) {
+            board[x][y].image.tint = 0xffffff
+        }
     }
 }
 
 var button1;
 var button2;
 var group;
+var box_size = 128; // for the menu item or tiles later on
+
 function menuCreate(s) {
     return function() {
         if (group) {
@@ -106,22 +130,25 @@ function menuCreate(s) {
             button3.destroy();
         }
 
+        reset();
 
         group = game.add.group();
 
-        button1 = game.make.button( 0 ,450, 'rotateClock'  , removeGroup, this, 20, 10, 0);
-        button2 = game.make.button(128,450, 'rotateCounter', removeGroup, this, 20, 10, 0);
-        button3 = game.make.button(256,450, 'move', removeGroup, this, 20, 10, 0);
+        button1 = game.make.button( 10 , 700, 'rotateClock' , removeGroup, this, 20, 10, 0);
+        button2 = game.make.button(140, 700, 'rotateCounter', removeGroup, this, 20, 10, 0);
+        button3 = game.make.button(270, 700, 'move', removeGroup, this, 20, 10, 0)
         function removeGroup() {
             button1.destroy();
             button2.destroy();
             button3.destroy();
+            reset();
             game.world.remove(group);
 
         }
         button1.onInputDown.add(function() {s.rotateClockWise();}, this);
         button2.onInputDown.add(function() {s.rotateCounterClockWise();}, this);
         button3.onInputDown.add(function() {movePlayer(s);}, this);
+
 
         addHighlight(button1);
         addHighlight(button2);
@@ -156,8 +183,8 @@ function movePlayer(tile) {
             playerPos.x -= 1;
         }
     }
-    player.x = game.world.centerX+playerPos.x*tileSize-width/2*tileSize;
-    player.y = game.world.centerY+playerPos.y*tileSize-length/2*tileSize;
+    player.x = game.world.centerX+(playerPos.x)*tileSize;
+    player.y = game.world.centerY+(playerPos.y-1)*tileSize;
     player.bringToTop;
     moveGuard();
 }
