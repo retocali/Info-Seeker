@@ -12,7 +12,8 @@ var tiles = [];
 
 
 function preload() {
-    
+    game.load.image('rotateClock',"assets/sprites/Rotate_Clockwise.png");
+    game.load.image('rotateCounter',"assets/sprites/Rotate_Counter_Clockwise.png");
     // Used to load the images as sprites to randomly access
     for (var i = 0; i < tileNames.length; i++) {
     
@@ -26,9 +27,9 @@ function create() {
     game.stage.backgroundColor = 'rgba(125,125,0,0)';
 
     // Creates the board
-    for (var x = 0; x < width; x++) {
+    for (let x = 0; x < width; x++) {
         
-        for (var y = 0; y < length; y++) {
+        for (let y = 0; y < length; y++) {
             
             // TODO: Tweak this to actually center it
             // Finds the centered placement of the tiles 
@@ -40,11 +41,40 @@ function create() {
             
             s.anchor.setTo(0.5,0.5);
             s.inputEnabled = true;
-            s.events.onInputDown.add(function () { s.angle += 90;}, s)
+            s.events.onInputDown.add(menuCreate(s), this);
         }
     }
 }
+function menuCreate(s) {
+    return function() {
+
+        let group = game.add.group();
+
+        let button1 = game.make.button(0, 450, 'rotateClock', removeGroup, this, 20, 10, 0);
+        let button2 = game.make.button(128, 450, 'rotateCounter', removeGroup, this, 20, 10, 0);
+
+        function removeGroup() {
+            game.world.remove(group);
+        }
+        button1.onInputDown.add(function() {s.angle += 90;}, this);
+        button2.onInputDown.add(function() {s.angle -= 90;}, this);
+
+        group.add(button1);
+        group.add(button2);  
+    }
+}
+
+
 
 function update() {
+    
+}
+
+
+class BasicTile {
+    constructor(exits, rotation) {
+        this.exits = exits;
+        this.rotation = rotation
+    }
     
 }
