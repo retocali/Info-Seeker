@@ -3,6 +3,8 @@ var game = new Phaser.Game(1000, 900, Phaser.CANVAS, 'phaser-example', { preload
 var board;
 var player;
 var playerPos;
+var entrance;
+var exit;
 
 
 // Constants to for the map 
@@ -18,7 +20,7 @@ var tiles = [];
 
 function preload() {
     // Used to load menu icons
-    game.load.image('entrix',"assets/sprites/EntranceExit.png")
+    game.load.image('entrix',"assets/sprites/tiles/EntranceExit.png");
     game.load.image('player', "assets/sprites/Player.png");
     game.load.image('move', "assets/sprites/Move.png");
     game.load.image('rotateClock',"assets/sprites/Rotate_Clockwise.png");
@@ -66,7 +68,12 @@ function create() {
     playerPos = {x:0, y:0}
     player.anchor.setTo(0.5,0.5);
     player.inputEnabled = true;
-    
+
+    //Creates the entrance and exit
+    entrance = game.add.sprite(230,25,"entrix");
+    exit = game.add.sprite(500,25,"entrix");
+    exit.anchor.setTo(0.5,0.5);
+    exit.scale.y *= -1;
 }
 
 function addHighlight(s) {
