@@ -11,12 +11,14 @@ var length = 3;
 var tileSize = 140;
 
 // TODO: Maybe have a function to search through folder for filenames?
+var entrix = "EntranceExit.png"
 var tileNames = ["Corner_Tile.png","Cross_Tile.png","DeadEnd_Tile.png","Line_Tile.png","Tetris_Tile.png"];
 var tiles = [];
 
 
 function preload() {
     // Used to load menu icons
+    game.load.image('entrix',"assets/sprites/EntranceExit.png")
     game.load.image('player', "assets/sprites/Player.png");
     game.load.image('move', "assets/sprites/Move.png");
     game.load.image('rotateClock',"assets/sprites/Rotate_Clockwise.png");
@@ -108,6 +110,8 @@ function reset() {
 var button1;
 var button2;
 var group;
+var box_size = 128; // for the menu item or tiles later on
+
 function menuCreate(s) {
     return function() {
         if (group) {
@@ -120,9 +124,9 @@ function menuCreate(s) {
 
         group = game.add.group();
 
-        button1 = game.make.button( 0 ,450, 'rotateClock'  , removeGroup, this, 20, 10, 0);
-        button2 = game.make.button(128,450, 'rotateCounter', removeGroup, this, 20, 10, 0);
-        button3 = game.make.button(256,450, 'move', removeGroup, this, 20, 10, 0)
+        button1 = game.make.button( 10 , 700, 'rotateClock'  , removeGroup, this, 20, 10, 0);
+        button2 = game.make.button(140, 700, 'rotateCounter', removeGroup, this, 20, 10, 0);
+        button3 = game.make.button(270, 700, 'move', removeGroup, this, 20, 10, 0)
         function removeGroup() {
             button1.destroy();
             button2.destroy();
