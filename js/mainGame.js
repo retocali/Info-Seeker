@@ -2,7 +2,9 @@
 var game = new Phaser.Game(1000, 800, Phaser.CANVAS, 'phaser-example', { preload: preload, create: create });
 var board;
 var player;
+var guard;
 var playerPos;
+var guardPos;
 
 
 // Constants to for the map 
@@ -10,14 +12,19 @@ var width = 3;
 var length = 3;
 var tileSize = 140;
 
+
 // TODO: Maybe have a function to search through folder for filenames?
 var tileNames = ["Corner_Tile.png","Cross_Tile.png","DeadEnd_Tile.png","Line_Tile.png","Tetris_Tile.png"];
 var tiles = [];
 
 
 function preload() {
-    // Used to load menu icons
+    
+    // The sprite for the player
     game.load.image('player', "assets/sprites/Player.png");
+    game.load.image('guard', "assets/sprites/Guard.png");
+
+    // Used to load menu icons
     game.load.image('move', "assets/sprites/Move.png");
     game.load.image('rotateClock',"assets/sprites/Rotate_Clockwise.png");
     game.load.image('rotateCounter',"assets/sprites/Rotate_Counter_Clockwise.png");
@@ -32,7 +39,7 @@ function preload() {
 
 function create() {
     
-    board = [[],[],[]];
+    board = [[],[],[],[],[]];
 
     game.stage.backgroundColor = 'rgba(125,125,0,0)';
     
@@ -59,6 +66,10 @@ function create() {
             addHighlight(s.image);
         }
     }
+    // Creates the Guard
+    guard = game.add.sprite(game.world.centerX+2*tileSize-width/2*tileSize, game.world.centerY+2*tileSize-length/2*tileSize, 'guard');
+    guardPos = {x:2, y:2}
+    guard.anchor.setTo(0.5,0.5);
     // Creates the player
     player = game.add.sprite(game.world.centerX-width/2*tileSize, game.world.centerY-length/2*tileSize, 'player');
     playerPos = {x:0, y:0}
@@ -100,7 +111,7 @@ function menuCreate(s) {
 
         button1 = game.make.button( 0 ,450, 'rotateClock'  , removeGroup, this, 20, 10, 0);
         button2 = game.make.button(128,450, 'rotateCounter', removeGroup, this, 20, 10, 0);
-        button3 = game.make.button(256,450, 'move', removeGroup, this, 20, 10, 0)
+        button3 = game.make.button(256,450, 'move', removeGroup, this, 20, 10, 0);
         function removeGroup() {
             button1.destroy();
             button2.destroy();
@@ -109,8 +120,8 @@ function menuCreate(s) {
 
         }
         button1.onInputDown.add(function() {s.rotateClockWise();}, this);
-        button2.onInputDown.add(function() {s.rotateCounterClockWise()}, this);
-        button3.onInputDown.add(function() {movePlayer(s)}, this);
+        button2.onInputDown.add(function() {s.rotateCounterClockWise();}, this);
+        button3.onInputDown.add(function() {movePlayer(s);}, this);
 
         addHighlight(button1);
         addHighlight(button2);
@@ -132,7 +143,6 @@ function movePlayer(tile) {
     if (xMove == 0) {
         if (yMove == -1 && tile.canGoNorth() && board[playerPos.x][playerPos.y].canGoSouth()) {
             playerPos.y += 1;
-            console.log("Moved down");
         }
         if (yMove == 1  && tile.canGoSouth() && board[playerPos.x][playerPos.y].canGoNorth()) {
             playerPos.y -= 1;
@@ -149,8 +159,41 @@ function movePlayer(tile) {
     player.x = game.world.centerX+playerPos.x*tileSize-width/2*tileSize;
     player.y = game.world.centerY+playerPos.y*tileSize-length/2*tileSize;
     player.bringToTop;
+    moveGuard();
 }
 
+function moveGuard() {
+    let possibleMoves = [];
+    if (guardPos.y < length-1) {
+        if (board[guardPos.x][guardPos.y+1].canGoNorth() && board[guardPos.x][guardPos.y].canGoSouth()) {
+            possibleMoves.push([0,1]);
+        }
+    }
+    if (guardPos.y > 0) {
+        if (board[guardPos.x][guardPos.y-1].canGoSouth() && board[guardPos.x][guardPos.y].canGoNorth()) {
+            possibleMoves.push([0,-1]);
+        }
+    }
+    if (guardPos.x < width-1) {
+        if (board[guardPos.x+1][guardPos.y].canGoWest() && board[guardPos.x][guardPos.y].canGoEast()) {
+            possibleMoves.push([1,0]);
+        }
+    }
+    if (guardPos.x > 0) {
+        if (board[guardPos.x-1][guardPos.y].canGoEast() && board[guardPos.x][guardPos.y].canGoWest()) {
+            possibleMoves.push([-1,0]);
+        }
+    }
+    if (possibleMoves.length != 0) {
+        let pickedMove = possibleMoves[Math.floor(Math.random()*possibleMoves.length)];
+        guardPos.x += pickedMove[0];
+        guardPos.y += pickedMove[1];
+    }
+    
+    guard.x = game.world.centerX+guardPos.x*tileSize-width/2*tileSize;
+    guard.y = game.world.centerY+guardPos.y*tileSize-length/2*tileSize;
+    guard.bringToTop;
+}
 function findExits(tileName) {
     // 4 being the length of the word tile
     let index = tileName.slice(4, tileName.length);
