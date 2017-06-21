@@ -30,7 +30,6 @@ function create() {
 
     game.stage.backgroundColor = 'rgba(125,125,0,0)';
     
-    
 
     // Creates the board
     for (let x = 0; x < width; x++) {
@@ -51,8 +50,8 @@ function create() {
             s.image.anchor.setTo(0.5,0.5);
             s.image.inputEnabled = true;
             s.image.events.onInputDown.add(menuCreate(s), this);
-            s.image.events.onInputOver.add(highlights(s), this);
-            s.image.events.onInputOut.add(normalize(s),this);
+            s.image.events.onInputOver.add(highlights(s.image), this);
+            s.image.events.onInputOut.add(normalize(s.image),this);
         }
     }
 }
@@ -86,10 +85,10 @@ function menuCreate(s) {
         button1.onInputDown.add(function() {s.rotateClockWise();}, this);
         button2.onInputDown.add(function() {s.rotateCounterClockWise()}, this);
 
-        button1.events.onInputOver.add(highlights(button1),this);
-        button2.events.onInputOver.add(highlights(button2),this);
-        button1.events.onInputOut.add(highlight2(button1),this);
-        button2.events.onInputOut.add(highlight2(button2),this);
+        button1.onInputOver.add(highlights(button1),this);
+        button2.onInputOver.add(highlights(button2),this);
+        button1.onInputOut.add(normalize(button1),this);
+        button2.onInputOut.add(normalize(button2),this);
 
         group.add(button1);
         group.add(button2);  
