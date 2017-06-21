@@ -68,13 +68,21 @@ function normalize(s) {
     }
 }
 
+var button1;
+var button2;
+var group;
 function menuCreate(s) {
     return function() {
+        if (group) {
+            button1.destroy();
+            button2.destroy();
+        }
 
-        let group = game.add.group();
 
-        let button1 = game.make.button( 0 ,450, 'rotateClock'  , removeGroup, this, 20, 10, 0);
-        let button2 = game.make.button(128,450, 'rotateCounter', removeGroup, this, 20, 10, 0);
+        group = game.add.group();
+
+        button1 = game.make.button( 0 ,450, 'rotateClock'  , removeGroup, this, 20, 10, 0);
+        button2 = game.make.button(128,450, 'rotateCounter', removeGroup, this, 20, 10, 0);
 
         function removeGroup() {
             button1.destroy();
@@ -149,13 +157,11 @@ class BasicTile {
     rotateClockWise() {
         this.rotation = (this.rotation + 90) % 360;
         this.image.angle += 90;
-        console.log(this.canGoNorth());
         
     }
     rotateCounterClockWise() {
         this.rotation = (this.rotation + 270) % 360;
         this.image.angle -= 90;
-        console.log(this.canGoNorth());
     }
 
 }
