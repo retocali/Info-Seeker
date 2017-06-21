@@ -1,5 +1,9 @@
 
-var game = new Phaser.Game(800, 600, Phaser.CANVAS, 'phaser-example', { preload: preload, create: create });
+var game = new Phaser.Game(1000, 800, Phaser.CANVAS, 'phaser-example', { preload: preload, create: create });
+var board;
+var player;
+var playerPos;
+
 
 // Constants to for the map 
 var width = 3;
@@ -13,6 +17,8 @@ var tiles = [];
 
 function preload() {
     // Used to load menu icons
+    game.load.image('player', "assets/sprites/Player.png");
+    game.load.image('move', "assets/sprites/Move.png");
     game.load.image('rotateClock',"assets/sprites/Rotate_Clockwise.png");
     game.load.image('rotateCounter',"assets/sprites/Rotate_Counter_Clockwise.png");
 
@@ -26,11 +32,11 @@ function preload() {
 
 function create() {
     
-    var board = [[],[],[]];
+    board = [[],[],[]];
 
     game.stage.backgroundColor = 'rgba(125,125,0,0)';
     
-
+    
     // Creates the board
     for (let x = 0; x < width; x++) {
         
@@ -44,16 +50,26 @@ function create() {
 
             // Creates the actual sprites and adds a handler to rotate it
             let tileName = tiles[Math.floor(Math.random()*tiles.length)];
-            let s = new BasicTile(findExits(tileName), 0, xLoc, yLoc, tileName);
+            let s = new BasicTile(findExits(tileName), 0, xLoc, yLoc, tileName, x, y);
             board[x][y] = s; 
 
             s.image.anchor.setTo(0.5,0.5);
             s.image.inputEnabled = true;
             s.image.events.onInputDown.add(menuCreate(s), this);
-            s.image.events.onInputOver.add(highlights(s.image), this);
-            s.image.events.onInputOut.add(normalize(s.image),this);
+            addHighlight(s.image);
         }
     }
+    // Creates the player
+    player = game.add.sprite(game.world.centerX-width/2*tileSize, game.world.centerY-length/2*tileSize, 'player');
+    playerPos = {x:0, y:0}
+    player.anchor.setTo(0.5,0.5);
+    player.inputEnabled = true;
+    
+}
+
+function addHighlight(s) {
+    s.events.onInputOver.add(highlights(s), this);
+    s.events.onInputOut.add(normalize(s),this);
 }
 
 function highlights(s) {
@@ -76,6 +92,7 @@ function menuCreate(s) {
         if (group) {
             button1.destroy();
             button2.destroy();
+            button3.destroy();
         }
 
 
@@ -83,28 +100,55 @@ function menuCreate(s) {
 
         button1 = game.make.button( 0 ,450, 'rotateClock'  , removeGroup, this, 20, 10, 0);
         button2 = game.make.button(128,450, 'rotateCounter', removeGroup, this, 20, 10, 0);
-
+        button3 = game.make.button(256,450, 'move', removeGroup, this, 20, 10, 0)
         function removeGroup() {
             button1.destroy();
             button2.destroy();
+            button3.destroy();
             game.world.remove(group);
 
         }
         button1.onInputDown.add(function() {s.rotateClockWise();}, this);
         button2.onInputDown.add(function() {s.rotateCounterClockWise()}, this);
+        button3.onInputDown.add(function() {movePlayer(s)}, this);
 
-        button1.onInputOver.add(highlights(button1),this);
-        button2.onInputOver.add(highlights(button2),this);
-        button1.onInputOut.add(normalize(button1),this);
-        button2.onInputOut.add(normalize(button2),this);
+        addHighlight(button1);
+        addHighlight(button2);
+        addHighlight(button3);
 
         group.add(button1);
         group.add(button2);  
+        group.add(button3);
     }
 }
 
 function update() {
     
+}
+
+function movePlayer(tile) {
+    let xMove = playerPos.x - tile.x;
+    let yMove = playerPos.y - tile.y;
+    if (xMove == 0) {
+        if (yMove == -1 && tile.canGoNorth() && board[playerPos.x][playerPos.y].canGoSouth()) {
+            playerPos.y += 1;
+            console.log("Moved down");
+        }
+        if (yMove == 1  && tile.canGoSouth() && board[playerPos.x][playerPos.y].canGoNorth()) {
+            playerPos.y -= 1;
+        }
+    }
+    else if (yMove == 0) {
+        if (xMove == -1 && tile.canGoWest() && board[playerPos.x][playerPos.y].canGoEast()) {
+            playerPos.x += 1;
+        }
+        if (xMove == 1  && tile.canGoEast() && board[playerPos.x][playerPos.y].canGoWest()) {
+            playerPos.x -= 1;
+        }
+    }
+    player.x = game.world.centerX+playerPos.x*tileSize-width/2*tileSize;
+    player.y = game.world.centerY+playerPos.y*tileSize-length/2*tileSize;
+    player.bringToTop;
 }
 
 function findExits(tileName) {
@@ -137,7 +181,9 @@ class BasicTile {
     //               Value 0 meaning there isn't
     // rotation: keeps track of the rotation of the tile and is between 0 <= x <= 360
 
-    constructor(exits, rotation, xLoc, yLoc, tileName) {
+    constructor(exits, rotation, xLoc, yLoc, tileName, x, y) {
+        this.x = x;
+        this.y = y;
         this.image = game.add.sprite(xLoc, yLoc, tileName);
         this.exits = exits;
         this.rotation = rotation;
