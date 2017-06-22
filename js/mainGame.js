@@ -74,10 +74,10 @@ function preload() {
 
 function create() {
 
+    game.stage.backgroundColor = "#4488AA";
+
     game.scale.pageAlignHorizontally = true; game.scale.pageAlignVeritcally = true; game.scale.refresh();
     board = [[],[],[]];
-
-    game.stage.backgroundColor = 'rgba(125,125,0,0)';
 
     // Creates the board
     for (let x = 0; x < width; x++) {
@@ -134,7 +134,7 @@ function create() {
 
     //Splash screen
     logo = game.add.sprite(0, 0, "logo");
-    logo.scale.setTo(0.175,0.25);
+    logo.scale.setTo(0.18,0.25);
     logo.fixedtoCamera = true;
     game.input.onDown.add(removeLogo, this);
 }
@@ -143,6 +143,8 @@ function create() {
 //used with the splash screen
 function removeLogo () {
     game.input.onDown.remove(removeLogo, this);
+    //tried to use this to fade in/fade out the welcome...
+    // game.add.tween(sprite).to( { alpha: 1 }, 2000, Phaser.Easing.Linear.None, true, 0, 1000, true);
     logo.kill();
 }
 
