@@ -22,7 +22,7 @@ var rotated = false
 var width = 3;
 var length = 3;
 var tileSize = 140;
-var comboSpawn = 0.5;
+var comboSpawn = 0.1;
 
 
 // TODO: Maybe have a function to search through folder for filenames?
@@ -98,13 +98,13 @@ function create() {
                 } else {
                     s = new BasicTile([0,0,0,0], 0, xLoc, yLoc, "", x, y);
                 }
-            } else if (Math.random() > comboSpawn){
+            } else if (x == 1 && y == 2){
+                let tileName = comboTiles[Math.floor(Math.random()*comboTiles.length)];
+                s = new ComboTile(findComboExits(tileName), 0, xLoc, yLoc, tileName, x, y);
+            } else {
                 // Creates the actual sprites and adds a handler to rotate it
                 let tileName = tiles[Math.floor(Math.random()*tiles.length)];
                 s = new BasicTile(findExits(tileName), 0, xLoc, yLoc, tileName, x, y);
-            } else {
-                let tileName = comboTiles[Math.floor(Math.random()*comboTiles.length)];
-                s = new ComboTile(findComboExits(tileName), 0, xLoc, yLoc, tileName, x, y);
             }
             board[x][y] = s; 
         }
@@ -197,6 +197,7 @@ var box_size = 128; // for the menu item or tiles later on
 
 function menuCreate(s) {
     return function() {
+        console.log("Clicked:",s.x,s.y)
     
         if (group) {
             button1.destroy();
@@ -532,31 +533,36 @@ class ComboTile {
 
     moveTo(character, x, y) {
          if (x == 0 && y == 1) { //Went to North Side
-            if (this.exits[0] == 1) {
+            if (this.exits[(0+(this.rotation/90)) % 4] == 1) {
                 this.zone1.push(character);
             } else {
                 this.zone2.push(character);
             }
          } else if (x == 0 && y == -1) { //Went to South
-            if (this.exits[2] == 1) {
+            if (this.exits[(2+(this.rotation/90)) % 4] == 1) {
                 this.zone1.push(character);
             } else {
                 this.zone2.push(character);
             }
         } else if (x == 1 && y == 0) {//Moved East
-            if (this.exits[3] == 1) {
+            if (this.exits[(1+(this.rotation/90)) % 4] == 1) {
                 this.zone1.push(character);
             } else {
                 this.zone2.push(character);
             }
         } else if (x == -1 && y == 0) { //Moved West
-            if (this.exits[1] == 1) {
+            if (this.exits[(3+(this.rotation/90)) % 4] == 1) {
                 this.zone1.push(character);
             } else {
                 this.zone2.push(character);
             }
         } else {
                 console.log("Error, Player moved too much");
+        }
+        console.log(this.zone1);
+        console.log(this.zone2);
+        for (var x =0; x < 4; x++) {
+            console.log(x, this.canGoDirection(player, playerPos, x))
         }
     }
     moveAway(character) {
@@ -566,6 +572,8 @@ class ComboTile {
         else {
             this.zone2.splice(this.zone2.indexOf(character), 1);
         }
+        console.log(this.zone1);
+        console.log(this.zone2);
     }
 }
 
