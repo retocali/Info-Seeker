@@ -1,5 +1,5 @@
 
-var game = new Phaser.Game(1000, 900, Phaser.CANVAS, 'phaser-example', { preload: preload, create: create });
+var game = new Phaser.Game(1000, 850, Phaser.CANVAS, 'phaser-example', { preload: preload, create: create });
 var board;
 var player;
 var guard;
@@ -20,15 +20,17 @@ var tileSize = 140;
 
 
 // TODO: Maybe have a function to search through folder for filenames?
+var replayImage = "button_restart.png"
 var entrix = "EntranceExit.png";
 var tileNames = ["Corner_Tile.png","Cross_Tile.png","DeadEnd_Tile.png","Line_Tile.png","Tetris_Tile.png"];
 var tiles = [];
-
+var comboTiles = ["Dead_End_2.png","Line_Combo.png","Loop_Tile_2.png"];
 
 function preload() {
-    
-    // Used to load entrance/exit
+
+    // Used to load entrance/exit and restart button
     game.load.image('entrix',"assets/sprites/tiles/EntranceExit.png");
+    game.load.image('replayImage',"assets/sprites/button_restart.png");
     
     // The sprite for the player
     game.load.image('player', "assets/sprites/Player.png");
@@ -43,6 +45,12 @@ function preload() {
     for (var i = 0; i < tileNames.length; i++) {
         game.load.image('tile'+i, 'assets/sprites/tiles/' + tileNames[i]);
         tiles.push('tile'+i);
+    }
+
+    // same as above but for the combo tiles
+    for (var m = 0; m < comboTiles.length; m++) {
+        game.load.image('combotile'+m, 'assets/sprites/tiles/' + comboTiles[m]);
+        // comboTiles.push('combotile'+m); //something buggy happened lol
     }
 }
 
@@ -95,6 +103,10 @@ function create() {
     playerPos = {x:0, y:0}
     player.anchor.setTo(0.5,0.5);
     player.inputEnabled = true;
+
+    //Creates the restart button
+    restartButton = game.add.sprite(800,150,"replayImage");
+    restartButton = restartButton.scale.setTo(0.41,0.41);
 }
 
 function addHighlight(s) {
@@ -133,6 +145,11 @@ function reset() {
             board[x][y].image.tint = 0xffffff
         }
     }
+}
+
+//to restart the game
+function replay() {
+
 }
 
 var button1;
@@ -203,14 +220,10 @@ function menuCreate(s) {
 }
 
 function update() {
-    
-    console.log(rotated, moved);
     if (rotated && moved) {
-        console.log("Guard turn!");
         moveGuard();
         rotated = false;
         moved = false;
-        console.log("Player Turn!");
     }
 }
 
@@ -353,5 +366,10 @@ class BasicTile {
         this.image.angle -= 90;
         return true;
     }
+}
+
+class ComboTile {
 
 }
+
+
