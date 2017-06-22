@@ -1,4 +1,3 @@
-
 var game = new Phaser.Game(1000, 850, Phaser.CANVAS, 'phaser-example', { preload: preload, create: create, update: update });
 var board;
 var player;
@@ -31,7 +30,7 @@ var replayImage = "button_restart.png"
 var entrix = "EntranceExit.png";
 var tileNames = ["Corner_Tile.png","Cross_Tile.png","DeadEnd_Tile.png","Line_Tile.png","Tetris_Tile.png"];
 var tiles = [];
-var comboTileNames = ["Dead_End_2.png"] //,"Line_Combo.png","Loop_Tile_2.png"];
+var comboTileNames = ["Dead_End_2.png","Line_Combo.png","Loop_Tile_2.png"];
 var comboTiles = []
 
 function preload() {
@@ -112,11 +111,11 @@ function create() {
     }
     // Creates the Guard
     guard = game.add.sprite(game.world.centerX+tileSize, game.world.centerY+tileSize, 'guard');
-    guardPos = {x:2, y:3}
+    guardPos = {x:exit.x, y:exit.y}
     guard.anchor.setTo(0.5,0.5);
     // Creates the player
     player = game.add.sprite(game.world.centerX-tileSize, game.world.centerY-(length-1)*tileSize, 'player');
-    playerPos = {x:0, y:0}
+    playerPos = {x:entrance.x, y:entrance.y}
     player.anchor.setTo(0.5,0.5);
     player.inputEnabled = true;
 
@@ -131,8 +130,14 @@ function create() {
 
 // used with the restart button
 function actionOnClick () {
-    //player.resetposition of some form
-    //tiles need to either RANDOMIZE or restart (?)
+    playerPos = {x:entrance.x, y:entrance.y};
+    guardPos = {x:exit.x, y:exit.y}
+     for (let x = 0;  x < board.length; x++) {
+        for (let y = 0; y < board[x].length; y++) {
+            board[x][y].rotation = 0;
+            board[x][y].image.angle = 0;
+        }
+    }
 }
 
 //call this function when the player loses
@@ -247,10 +252,21 @@ function menuCreate(s) {
         group.add(button3);
     }
 }
+function checkGameStatus() {
+    if (player.x == exit.x && player.y == exit.y) {
+        console.log("You Win!");
+    }
+    if (playerPos.x == guardPos.x && playerPos.y == guardPos.y) {
+        console.log("You Lose!");
+        GameOver();
+    }
+}
 
 function update() {
+    checkGameStatus();
     if (rotated && moved) {
         moveGuard();
+        checkGameStatus();
         rotated = false;
         moved = false;
     }
@@ -263,13 +279,6 @@ function update() {
     guard.y = game.world.centerY+(guardPos.y-2)*tileSize;
     guard.bringToTop;
 
-    if (playerPos == guardPos) {
-        console.log("You Lose!");
-        //call GameOver
-    }
-    if (player.x == exit.x && player.y == exit.y) {
-        console.log("You Win!");
-    }
 }
 
 function movePlayer(tile) {
