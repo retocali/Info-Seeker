@@ -75,7 +75,7 @@ function create() {
 
     game.stage.backgroundColor = "#4488AA";
 
-    game.scale.pageAlignHorizontally = true; game.scale.pageAlignVeritcally = true; game.scale.refresh();
+    game.scale.pageAlignHorizontally = true; game.scale.pageAlignVertically = true; game.scale.refresh();
     board = [[],[],[]];
 
     // Creates the board
@@ -154,18 +154,19 @@ function actionOnClick () {
      for (let x = 0;  x < board.length; x++) {
         for (let y = 0; y < board[x].length; y++) {
             board[x][y].rotation = 0;
-            board[x][y].image.angle = 0;
+            board[x][y].image.angle = a0;
         }
     }
     rotated = false;
     moved = false;
+    gameDone.events.onInputDown.add(destroySprite,);
     reset();
 }
 
 //call this function when the player loses
 function GameOver () {
     gameDone = game.add.sprite(200, 80, 'gameover');
-    gameDone = gameDone.scale.setTo(2.2,2.7);
+    gameDone.scale.setTo(2.2,2.7);
 }
 
 function addHighlight(s) {
