@@ -1,5 +1,5 @@
 
-var game = new Phaser.Game(1000, 850, Phaser.CANVAS, 'phaser-example', { preload: preload, create: create });
+var game = new Phaser.Game(1000, 850, Phaser.CANVAS, 'phaser-example', { preload: preload, create: create, update: update});
 var board;
 var player;
 var guard;
@@ -74,6 +74,7 @@ function create() {
                 if (x == 0) {
                     //Creates the entrance
                     s = new BasicTile([0,0,1,0], 0, xLoc, yLoc, "entrix", x, y);
+                    entrance = s;
                 } else {
                     s = new BasicTile([0,0,0,0], 0, xLoc, yLoc, "", x, y);
                 }
@@ -83,6 +84,7 @@ function create() {
                 if (x == width - 1) {
                     s = new BasicTile([0,0,1,0], 180, xLoc, yLoc, "entrix",x, y);
                     s.image.scale.y *= -1;
+                    exit = s
                 } else {
                     s = new BasicTile([0,0,0,0], 0, xLoc, yLoc, "", x, y);
                 }
@@ -126,7 +128,7 @@ function color(s) {
 function highlights(s) {
     return function() {
         if (s.tint == 0xffffff) {
-        s.tint = 0x009fff;
+            s.tint = 0x009fff;
         }
     }
 }
@@ -134,7 +136,7 @@ function highlights(s) {
 function normalize(s) {
     return function() {
         if (s.tint == 0x009fff){ 
-        s.tint = 0xffffff;
+            s.tint = 0xffffff;
         }
     }
 }
@@ -178,7 +180,6 @@ function menuCreate(s) {
             if (!rotated) {
                 rotated = s.rotateClockWise();
             }
-            update();
             removeGroup();
 
         }
@@ -186,7 +187,6 @@ function menuCreate(s) {
             if (!rotated) {
                 rotated = s.rotateCounterClockWise();
             }
-            update();
             removeGroup();
         }
         function move() {
@@ -194,7 +194,6 @@ function menuCreate(s) {
             if (!moved && rotated) {
                 moved = movePlayer(s);
             }
-            update();
             removeGroup();
         }
 
@@ -225,70 +224,78 @@ function update() {
         rotated = false;
         moved = false;
     }
+
+    player.x = game.world.centerX+(playerPos.x-1)*tileSize;
+    player.y = game.world.centerY+(playerPos.y-2)*tileSize;
+    player.bringToTop;
+
+    guard.x = game.world.centerX+(guardPos.x-1)*tileSize;
+    guard.y = game.world.centerY+(guardPos.y-2)*tileSize;
+    guard.bringToTop;
+
+    if (playerPos == guardPos) {
+        console.log("You Lose!");
+    }
+    if (player.x == exit.x && player.y == exit.y) {
+        console.log("You Win!");
+    }
 }
 
 function movePlayer(tile) {
-    console.log(tile.exits);
-    let xMove = playerPos.x - tile.x;
-    let yMove = playerPos.y - tile.y;
+    let xMove = tile.x - playerPos.x;
+    let yMove = tile.y - playerPos.y;
     let changed = false;
     if (xMove == 0) {
-        if (yMove == -1 && tile.canGoNorth() && board[playerPos.x][playerPos.y].canGoSouth()) {
-            playerPos.y += 1;
+        if (yMove == 1 && tile.canGoNorth() && board[playerPos.x][playerPos.y].canGoSouth()) {
+            playerPos.y += yMove;
             changed = true;
         }
-        if (yMove == 1  && tile.canGoSouth() && board[playerPos.x][playerPos.y].canGoNorth()) {
-            playerPos.y -= 1;
+        if (yMove == -1 && tile.canGoSouth() && board[playerPos.x][playerPos.y].canGoNorth()) {
+            playerPos.y += yMove;
             changed = true;
         }
     }
     else if (yMove == 0) {
-        if (xMove == -1 && tile.canGoWest() && board[playerPos.x][playerPos.y].canGoEast()) {
-            playerPos.x += 1;
+        if (xMove == 1 && tile.canGoWest() && board[playerPos.x][playerPos.y].canGoEast()) {
+            playerPos.x += xMove;
             changed = true;
         }
-        if (xMove == 1  && tile.canGoEast() && board[playerPos.x][playerPos.y].canGoWest()) {
-            playerPos.x -= 1;
+        if (xMove == -1 && tile.canGoEast() && board[playerPos.x][playerPos.y].canGoWest()) {
+            playerPos.x += xMove;
             changed = true;
         }
     }
-    player.x = game.world.centerX+(playerPos.x-1)*tileSize;
-    player.y = game.world.centerY+(playerPos.y-2)*tileSize;
-    player.bringToTop;
     return changed;
 }
 
 function moveGuard() {
     let possibleMoves = [];
-    if (guardPos.y < length-1) {
+    if (guardPos.y < board[guardPos.x].length-1) {
         if (board[guardPos.x][guardPos.y+1].canGoNorth() && board[guardPos.x][guardPos.y].canGoSouth()) {
-            possibleMoves.push([0,1]);
+            possibleMoves.push({x:0,y:1});
         }
     }
     if (guardPos.y > 0) {
         if (board[guardPos.x][guardPos.y-1].canGoSouth() && board[guardPos.x][guardPos.y].canGoNorth()) {
-            possibleMoves.push([0,-1]);
+            possibleMoves.push({x:0,y:-1});
         }
     }
-    if (guardPos.x < width-1) {
+    if (guardPos.x < board.length-1) {
         if (board[guardPos.x+1][guardPos.y].canGoWest() && board[guardPos.x][guardPos.y].canGoEast()) {
-            possibleMoves.push([1,0]);
+            possibleMoves.push({x:1,y:0});
         }
     }
     if (guardPos.x > 0) {
         if (board[guardPos.x-1][guardPos.y].canGoEast() && board[guardPos.x][guardPos.y].canGoWest()) {
-            possibleMoves.push([-1,0]);
+            possibleMoves.push({x:-1,y:0});
         }
     }
     if (possibleMoves.length != 0) {
         let pickedMove = possibleMoves[Math.floor(Math.random()*possibleMoves.length)];
-        guardPos.x += pickedMove[0];
-        guardPos.y += pickedMove[1];
+        guardPos.x += pickedMove.x;
+        guardPos.y += pickedMove.y;
     }
     
-    guard.x = game.world.centerX+(guardPos.x-1)*tileSize;
-    guard.y = game.world.centerY+(guardPos.y-2)*tileSize;
-    guard.bringToTop;
 }
 function findExits(tileName) {
     // 4 being the length of the word tile
