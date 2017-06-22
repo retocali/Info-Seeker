@@ -1,5 +1,5 @@
 
-var game = new Phaser.Game(1000, 900, Phaser.CANVAS, 'phaser-example', { preload: preload, create: create });
+var game = new Phaser.Game(1000, 850, Phaser.CANVAS, 'phaser-example', { preload: preload, create: create });
 var board;
 var player;
 var guard;
@@ -8,7 +8,6 @@ var entrance;
 var exit;
 var guardPos;
 
-
 // Constants to for the map 
 var width = 3;
 var length = 3;
@@ -16,15 +15,17 @@ var tileSize = 140;
 
 
 // TODO: Maybe have a function to search through folder for filenames?
+var replayImage = "button_restart.png"
 var entrix = "EntranceExit.png";
 var tileNames = ["Corner_Tile.png","Cross_Tile.png","DeadEnd_Tile.png","Line_Tile.png","Tetris_Tile.png"];
 var tiles = [];
-
+var comboTiles = ["Dead_End_2.png","Line_Combo.png","Loop_Tile_2.png"];
 
 function preload() {
-    
-    // Used to load entrance/exit
+
+    // Used to load entrance/exit and restart button
     game.load.image('entrix',"assets/sprites/tiles/EntranceExit.png");
+    game.load.image('replayImage',"assets/sprites/button_restart.png");
     
     // The sprite for the player
     game.load.image('player', "assets/sprites/Player.png");
@@ -39,6 +40,12 @@ function preload() {
     for (var i = 0; i < tileNames.length; i++) {
         game.load.image('tile'+i, 'assets/sprites/tiles/' + tileNames[i]);
         tiles.push('tile'+i);
+    }
+
+    // same as above but for the combo tiles
+    for (var m = 0; m < comboTiles.length; m++) {
+        game.load.image('combotile'+m, 'assets/sprites/tiles/' + comboTiles[m]);
+        // comboTiles.push('combotile'+m); //something buggy happened lol
     }
 }
 
@@ -82,10 +89,13 @@ function create() {
     player.inputEnabled = true;
 
     //Creates the entrance and exit
-    entrance = game.add.sprite(230,25,"entrix");
+    entrance = game.add.sprite(280,78,"entrix");
     exit = game.add.sprite(500,25,"entrix");
     exit.anchor.setTo(0.5,0.5);
     exit.scale.y *= -1;
+
+    //Creates the restart button
+    restartButton = game.add.sprite(400,78,"replayImage");
 }
 
 function addHighlight(s) {
@@ -124,6 +134,11 @@ function reset() {
             board[x][y].image.tint = 0xffffff
         }
     }
+}
+
+//to restart the game
+function replay() {
+
 }
 
 var button1;
@@ -170,7 +185,7 @@ function menuCreate(s) {
 }
 
 function update() {
-    
+
 }
 
 function movePlayer(tile) {
@@ -288,5 +303,10 @@ class BasicTile {
         this.rotation = (this.rotation + 270) % 360;
         this.image.angle -= 90;
     }
+}
+
+class ComboTile {
 
 }
+
+
