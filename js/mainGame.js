@@ -51,48 +51,53 @@ function preload() {
 
 function create() {
     game.scale.pageAlignHorizontally = true; game.scale.pageAlignVeritcally = true; game.scale.refresh();
-    board = [[],[],[],[],[]];
+    board = [[],[],[]];
 
     game.stage.backgroundColor = 'rgba(125,125,0,0)';
-    
-    
+
     // Creates the board
-    for (let x = -1; x < width-1; x++) {
+    for (let x = 0; x < width; x++) {
         
-        for (let y = -1; y < length-1; y++) {
-            
+        for (let y = 0; y <= length + 1; y++) {
             
             // TODO: Tweak this to actually center it
             // Finds the centered placement of the tiles 
-            let xLoc = game.world.centerX+x*tileSize;
-            let yLoc = game.world.centerY+y*tileSize;
-
-            // Creates the actual sprites and adds a handler to rotate it
-            let tileName = tiles[Math.floor(Math.random()*tiles.length)];
-            let s = new BasicTile(findExits(tileName), 0, xLoc, yLoc, tileName, x, y);
-            board[x+1][y+1] = s; 
-
-            s.image.anchor.setTo(0.5,0.5);
-            s.image.inputEnabled = true;
-            s.image.events.onInputDown.add(menuCreate(s), this);
-            addHighlight(s.image);
+            let xLoc = game.world.centerX+(x-1)*tileSize;
+            let yLoc = game.world.centerY+(y-2)*tileSize;
+            let s;
+            if (y == 0) {
+                if (x == 0) {
+                    //Creates the entrance
+                    s = new BasicTile([0,0,1,0], 0, xLoc, yLoc, "entrix", x, y);
+                } else {
+                    s = new BasicTile([0,0,0,0], 0, xLoc, yLoc, "", x, y);
+                }
+            }
+            else if (y == length + 1) {
+                // Creates the exit
+                if (x == width - 1) {
+                    s = new BasicTile([0,0,1,0], 180, xLoc, yLoc, "entrix",x, y);
+                    s.image.scale.y *= -1;
+                } else {
+                    s = new BasicTile([0,0,0,0], 0, xLoc, yLoc, "", x, y);
+                }
+            } else {
+                // Creates the actual sprites and adds a handler to rotate it
+                let tileName = tiles[Math.floor(Math.random()*tiles.length)];
+                s = new BasicTile(findExits(tileName), 0, xLoc, yLoc, tileName, x, y);
+            }
+            board[x][y] = s; 
         }
     }
     // Creates the Guard
     guard = game.add.sprite(game.world.centerX+tileSize, game.world.centerY+tileSize, 'guard');
-    guardPos = {x:2, y:2}
+    guardPos = {x:2, y:3}
     guard.anchor.setTo(0.5,0.5);
     // Creates the player
-    player = game.add.sprite(game.world.centerX-tileSize, game.world.centerY-tileSize, 'player');
+    player = game.add.sprite(game.world.centerX-tileSize, game.world.centerY-(length-1)*tileSize, 'player');
     playerPos = {x:0, y:0}
     player.anchor.setTo(0.5,0.5);
     player.inputEnabled = true;
-
-    //Creates the entrance and exit
-    entrance = game.add.sprite(280,78,"entrix");
-    exit = game.add.sprite(500,25,"entrix");
-    exit.anchor.setTo(0.5,0.5);
-    exit.scale.y *= -1;
 
     //Creates the restart button
     restartButton = game.add.sprite(400,78,"replayImage");
@@ -129,8 +134,8 @@ function normalize(s) {
 }
 
 function reset() {
-    for (let x = 0;  x < width; x++) {
-        for (let y = 0; y < length; y++) {
+    for (let x = 0;  x < board.length; x++) {
+        for (let y = 0; y < board[x].length; y++) {
             board[x][y].image.tint = 0xffffff
         }
     }
@@ -143,11 +148,13 @@ function replay() {
 
 var button1;
 var button2;
+var button3;
 var group;
 var box_size = 128; // for the menu item or tiles later on
 
 function menuCreate(s) {
     return function() {
+        console.log(s.x,s.y);
         if (group) {
             button1.destroy();
             button2.destroy();
@@ -189,6 +196,7 @@ function update() {
 }
 
 function movePlayer(tile) {
+    console.log(tile.exits);
     let xMove = playerPos.x - tile.x;
     let yMove = playerPos.y - tile.y;
     if (xMove == 0) {
@@ -207,8 +215,8 @@ function movePlayer(tile) {
             playerPos.x -= 1;
         }
     }
-    player.x = game.world.centerX+(playerPos.x)*tileSize;
-    player.y = game.world.centerY+(playerPos.y-1)*tileSize;
+    player.x = game.world.centerX+(playerPos.x-1)*tileSize;
+    player.y = game.world.centerY+(playerPos.y-2)*tileSize;
     player.bringToTop;
     moveGuard();
 }
@@ -241,8 +249,8 @@ function moveGuard() {
         guardPos.y += pickedMove[1];
     }
     
-    guard.x = game.world.centerX+guardPos.x*tileSize-width/2*tileSize;
-    guard.y = game.world.centerY+guardPos.y*tileSize-length/2*tileSize;
+    guard.x = game.world.centerX+(guardPos.x-1)*tileSize;
+    guard.y = game.world.centerY+(guardPos.y-2)*tileSize;
     guard.bringToTop;
 }
 function findExits(tileName) {
@@ -259,7 +267,7 @@ function findExits(tileName) {
             return [1,0,1,0];
         case "Tetris_Tile.png":
             return [1,1,1,0];
-        default:
+        default :
             return [0,0,0,0];
     }
 
@@ -278,7 +286,15 @@ class BasicTile {
     constructor(exits, rotation, xLoc, yLoc, tileName, x, y) {
         this.x = x;
         this.y = y;
+        // Only creates image for tiles with sprites
         this.image = game.add.sprite(xLoc, yLoc, tileName);
+        if (tileName != "") {
+            
+            this.image.anchor.setTo(0.5,0.5);
+            this.image.inputEnabled = true;
+            this.image.events.onInputDown.add(menuCreate(this), this);
+            addHighlight(this.image);
+        }
         this.exits = exits;
         this.rotation = rotation;
     }
@@ -295,11 +311,19 @@ class BasicTile {
         return this.exits[(3+(this.rotation/90)) % 4];
     }
     rotateClockWise() {
+        // Escape for exit/entrance
+        if (this.y == 0 || this.y == length+1) {
+            return;
+        }
         this.rotation = (this.rotation + 90) % 360;
         this.image.angle += 90;
         
     }
     rotateCounterClockWise() {
+        // Escape for exit/entrance
+        if (this.y == 0 || this.y == length+1) {
+            return;
+        }
         this.rotation = (this.rotation + 270) % 360;
         this.image.angle -= 90;
     }
