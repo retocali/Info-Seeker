@@ -100,7 +100,7 @@ function create() {
     player.inputEnabled = true;
 
     //Creates the restart button
-    restartButton = game.add.sprite(400,78,"replayImage");
+    restartButton = game.add.sprite(700,400,"replayImage");
 }
 
 function addHighlight(s) {
