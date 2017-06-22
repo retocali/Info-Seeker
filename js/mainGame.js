@@ -1,5 +1,5 @@
 
-var game = new Phaser.Game(1000, 850, Phaser.CANVAS, 'phaser-example', { preload: preload, create: create, update: update});
+var game = new Phaser.Game(1000, 850, Phaser.CANVAS, 'phaser-example', { preload: preload, create: create, update: update });
 var board;
 var player;
 var guard;
@@ -7,6 +7,12 @@ var playerPos;
 var entrance;
 var exit;
 var guardPos;
+var gameDone
+
+//music found from https://www.dl-sounds.com/royalty-free/category/game-film/video-game/ && http://freesound.org
+//https://tutorialzine.com/2015/06/making-your-first-html5-game-with-phaser source
+//for the game over scree
+
 
 // For keeping tracking of turns
 var moved = false;
@@ -29,6 +35,9 @@ var comboTileNames = ["Dead_End_2.png"] //,"Line_Combo.png","Loop_Tile_2.png"];
 var comboTiles = []
 
 function preload() {
+
+    // Used to load GAME OVER 
+    game.load.image('gameover', 'assets/sprites/gameover.png');
 
     // Used to load entrance/exit and restart button
     game.load.image('entrix',"assets/sprites/tiles/EntranceExit.png");
@@ -114,13 +123,22 @@ function create() {
     //Creates the restart button
     restartButton = game.add.button(game.world.centerX + 300, 100, 'replayImage', actionOnClick, this);
     restartButton.scale.setTo(0.41,0.41);
+
+    //puts a GameOver image on top
+
+    //GameOver();
 }
 
-
+// used with the restart button
 function actionOnClick () {
+    //player.resetposition of some form
+    //tiles need to either RANDOMIZE or restart (?)
+}
 
-    background.visible =! background.visible;
-
+//call this function when the player loses
+function GameOver () {
+    gameDone = game.add.sprite(200, 80, 'gameover');
+    gameDone = gameDone.scale.setTo(2.2,2.7);
 }
 
 function addHighlight(s) {
@@ -247,6 +265,7 @@ function update() {
 
     if (playerPos == guardPos) {
         console.log("You Lose!");
+        //call GameOver
     }
     if (player.x == exit.x && player.y == exit.y) {
         console.log("You Win!");
