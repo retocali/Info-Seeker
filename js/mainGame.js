@@ -100,8 +100,15 @@ function create() {
     player.inputEnabled = true;
 
     //Creates the restart button
-    restartButton = game.add.sprite(800,150,"replayImage");
-    restartButton = restartButton.scale.setTo(0.41,0.41);
+    restartButton = game.add.button(game.world.centerX + 300, 100, 'replayImage', actionOnClick, this);
+    restartButton.scale.setTo(0.41,0.41);
+}
+
+
+function actionOnClick () {
+
+    background.visible =! background.visible;
+
 }
 
 function addHighlight(s) {
