@@ -7,34 +7,11 @@ var playerPos;
 var entrance;
 var exit;
 var guardPos;
+var gameDone
 
+//music found from https://www.dl-sounds.com/royalty-free/category/game-film/video-game/ && http://freesound.org
 //https://tutorialzine.com/2015/06/making-your-first-html5-game-with-phaser source
-//for the game over screen
-var Game_Over = {
-
-    preload : function() {
-        // Load the needed image for this game screen.
-        game.load.image('gameover', './assets/images/gameover.png');
-    },
-
-    create : function() {
-
-        // Create button to start game like in Menu.
-        this.add.button(0, 0, 'gameover', this.startGame, this);
-
-        // Add text with information about the score from last game.
-        game.add.text(235, 350, "Restart!", { font: "bold 16px sans-serif", fill: "#46c0f9", align: "center"});
-
-    },
-
-    startGame: function () {
-
-        // Change the state back to Game.
-        this.state.start('Game');
-
-    }
-
-};
+//for the game over scree
 
 
 // For keeping tracking of turns
@@ -56,6 +33,9 @@ var tiles = [];
 var comboTiles = ["Dead_End_2.png","Line_Combo.png","Loop_Tile_2.png"];
 
 function preload() {
+
+    // Used to load GAME OVER 
+    game.load.image('gameover', 'assets/sprites/gameover.png');
 
     // Used to load entrance/exit and restart button
     game.load.image('entrix',"assets/sprites/tiles/EntranceExit.png");
@@ -138,11 +118,22 @@ function create() {
     //Creates the restart button
     restartButton = game.add.button(game.world.centerX + 300, 100, 'replayImage', actionOnClick, this);
     restartButton.scale.setTo(0.41,0.41);
+
+    //puts a GameOver image on top
+
+    //GameOver();
 }
 
 // used with the restart button
 function actionOnClick () {
+    //player.resetposition of some form
+    //tiles need to either RANDOMIZE or restart (?)
+}
 
+//call this function when the player loses
+function GameOver () {
+    gameDone = game.add.sprite(200, 80, 'gameover');
+    gameDone = gameDone.scale.setTo(2.2,2.7);
 }
 
 function addHighlight(s) {
@@ -269,13 +260,11 @@ function update() {
 
     if (playerPos == guardPos) {
         console.log("You Lose!");
+        //call GameOver
     }
     if (player.x == exit.x && player.y == exit.y) {
         console.log("You Win!");
     }
-
-    // game.state.add("Game_Over",Game_Over);
-    // game.state.start("Game_Over");
 }
 
 function movePlayer(tile) {
