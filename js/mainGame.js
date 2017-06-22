@@ -1,4 +1,8 @@
-var game = new Phaser.Game(1000, 850, Phaser.CANVAS, 'phaser-example', { preload: preload, create: create, update: update });
+
+var canvas_x = 1000;
+var canvas_y = 850;
+
+var game = new Phaser.Game(canvas_x, canvas_y, Phaser.CANVAS, 'phaser-example', { preload: preload, create: create, update: update });
 var board;
 var player;
 var guard;
@@ -6,7 +10,8 @@ var playerPos;
 var entrance;
 var exit;
 var guardPos;
-var gameDone
+var gameDone;
+var logo;
 
 //music found from https://www.dl-sounds.com/royalty-free/category/game-film/video-game/ && http://freesound.org
 //https://tutorialzine.com/2015/06/making-your-first-html5-game-with-phaser source
@@ -38,6 +43,9 @@ function preload() {
     // Used to load GAME OVER 
     game.load.image('gameover', 'assets/sprites/gameover.png');
 
+    // Splash Screen
+    game.load.image('logo', 'assets/sprites/welcome.jpg');
+
     // Used to load entrance/exit and restart button
     game.load.image('entrix',"assets/sprites/tiles/EntranceExit.png");
     game.load.image('replayImage',"assets/sprites/button_restart.png");
@@ -65,6 +73,7 @@ function preload() {
 }
 
 function create() {
+
     game.scale.pageAlignHorizontally = true; game.scale.pageAlignVeritcally = true; game.scale.refresh();
     board = [[],[],[]];
 
@@ -123,9 +132,18 @@ function create() {
     restartButton = game.add.button(game.world.centerX + 300, 100, 'replayImage', actionOnClick, this);
     restartButton.scale.setTo(0.41,0.41);
 
-    //puts a GameOver image on top
+    //Splash screen
+    logo = game.add.sprite(0, 0, "logo");
+    logo.scale.setTo(0.175,0.25);
+    logo.fixedtoCamera = true;
+    game.input.onDown.add(removeLogo, this);
+}
 
-    //GameOver();
+
+//used with the splash screen
+function removeLogo () {
+    game.input.onDown.remove(removeLogo, this);
+    logo.kill();
 }
 
 // used with the restart button
