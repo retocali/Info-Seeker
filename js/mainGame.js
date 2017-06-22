@@ -1,4 +1,3 @@
-
 var canvas_x = 1000;
 var canvas_y = 850;
 
@@ -107,7 +106,7 @@ function create() {
                 } else {
                     s = new BasicTile([0,0,0,0], 0, xLoc, yLoc, "", x, y);
                 }
-            } else if (x == 1 && y == 2){
+            } else if (Math.random() < comboSpawn){
                 let tileName = comboTiles[Math.floor(Math.random()*comboTiles.length)];
                 s = new ComboTile(findComboExits(tileName), 0, xLoc, yLoc, tileName, x, y);
             } else {
@@ -275,7 +274,8 @@ function checkGameStatus() {
     if (player.x == exit.x && player.y == exit.y) {
         console.log("You Win!");
     }
-    if (playerPos.x == guardPos.x && playerPos.y == guardPos.y) {
+    if (playerPos.x == guardPos.x && playerPos.y == guardPos.y 
+        && board[guardPos.x][guardPos.y].sameZone(player, guard)) {
         console.log("You Lose!");
         GameOver();
     }
@@ -383,7 +383,6 @@ function findExits(tileName) {
             return [1,0,1,0];
         case "Tetris_Tile.png":
             return [1,1,1,0];
-
         default:
             return [0,0,0,0];
     }
@@ -466,6 +465,9 @@ class BasicTile {
     }
     moveAway(character, characterPos) {
         return;
+    }
+    sameZone(player, guard) {
+        return true;
     }
 }
 
@@ -592,6 +594,11 @@ class ComboTile {
         }
         console.log(this.zone1);
         console.log(this.zone2);
+    }
+
+    sameZone(player, guard) {
+        return this.zone1.includes(player) == this.zone1.includes(guard) ||
+               this.zone2.includes(player) == this.zone2.includes(guard);
     }
 }
 
