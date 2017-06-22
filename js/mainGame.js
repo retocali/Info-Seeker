@@ -17,6 +17,7 @@ var rotated = false
 var width = 3;
 var length = 3;
 var tileSize = 140;
+var comboSpawn = 0.5;
 
 
 // TODO: Maybe have a function to search through folder for filenames?
@@ -24,7 +25,8 @@ var replayImage = "button_restart.png"
 var entrix = "EntranceExit.png";
 var tileNames = ["Corner_Tile.png","Cross_Tile.png","DeadEnd_Tile.png","Line_Tile.png","Tetris_Tile.png"];
 var tiles = [];
-var comboTiles = ["Dead_End_2.png","Line_Combo.png","Loop_Tile_2.png"];
+var comboTileNames = ["Dead_End_2.png"] //,"Line_Combo.png","Loop_Tile_2.png"];
+var comboTiles = []
 
 function preload() {
 
@@ -48,9 +50,9 @@ function preload() {
     }
 
     // same as above but for the combo tiles
-    for (var m = 0; m < comboTiles.length; m++) {
-        game.load.image('combotile'+m, 'assets/sprites/tiles/' + comboTiles[m]);
-        // comboTiles.push('combotile'+m); //something buggy happened lol
+    for (var m = 0; m < comboTileNames.length; m++) {
+        game.load.image('combo'+m, 'assets/sprites/tiles/' + comboTileNames[m]);
+        comboTiles.push('combo'+m);
     }
 }
 
@@ -88,10 +90,13 @@ function create() {
                 } else {
                     s = new BasicTile([0,0,0,0], 0, xLoc, yLoc, "", x, y);
                 }
-            } else {
+            } else if (Math.random() > comboSpawn){
                 // Creates the actual sprites and adds a handler to rotate it
                 let tileName = tiles[Math.floor(Math.random()*tiles.length)];
                 s = new BasicTile(findExits(tileName), 0, xLoc, yLoc, tileName, x, y);
+            } else {
+                let tileName = comboTiles[Math.floor(Math.random()*comboTiles.length)];
+                s = new ComboTile(findComboExits(tileName), 0, xLoc, yLoc, tileName, x, y);
             }
             board[x][y] = s; 
         }
@@ -169,7 +174,7 @@ var box_size = 128; // for the menu item or tiles later on
 
 function menuCreate(s) {
     return function() {
-        console.log(s.x,s.y);
+    
         if (group) {
             button1.destroy();
             button2.destroy();
@@ -249,64 +254,77 @@ function update() {
 }
 
 function movePlayer(tile) {
-    let xMove = tile.x - playerPos.x;
-    let yMove = tile.y - playerPos.y;
+    let x = playerPos.x;
+    let y = playerPos.y;
+    let xMove = tile.x - x;
+    let yMove = tile.y - y;
     let changed = false;
     if (xMove == 0) {
-        if (yMove == 1 && tile.canGoNorth() && board[playerPos.x][playerPos.y].canGoSouth()) {
+        if (yMove == 1 && tile.canGoNorth(player,playerPos) && board[x][y].canGoSouth(player, playerPos)) {
+            board[x][y].moveAway(player);
             playerPos.y += yMove;
             changed = true;
         }
-        if (yMove == -1 && tile.canGoSouth() && board[playerPos.x][playerPos.y].canGoNorth()) {
+        if (yMove == -1 && tile.canGoSouth(player, playerPos) && board[x][y].canGoNorth(player, playerPos)) {
+            board[x][y].moveAway(player);
             playerPos.y += yMove;
             changed = true;
         }
     }
     else if (yMove == 0) {
-        if (xMove == 1 && tile.canGoWest() && board[playerPos.x][playerPos.y].canGoEast()) {
+        if (xMove == 1 && tile.canGoWest(player, playerPos) && board[x][y].canGoEast(player, playerPos)) {
+            board[x][y].moveAway(player);
             playerPos.x += xMove;
             changed = true;
         }
-        if (xMove == -1 && tile.canGoEast() && board[playerPos.x][playerPos.y].canGoWest()) {
+        if (xMove == -1 && tile.canGoEast(player, playerPos) && board[x][y].canGoWest(player, playerPos)) {
+            board[x][y].moveAway(player);
             playerPos.x += xMove;
             changed = true;
         }
+    }
+    if (changed) {
+        tile.moveTo(player, xMove, yMove);
     }
     return changed;
 }
 
 function moveGuard() {
     let possibleMoves = [];
-    if (guardPos.y < board[guardPos.x].length-1) {
-        if (board[guardPos.x][guardPos.y+1].canGoNorth() && board[guardPos.x][guardPos.y].canGoSouth()) {
-            possibleMoves.push({x:0,y:1});
+    let x = guardPos.x;
+    let y = guardPos.y;
+    if (y < board[x].length-1) {
+        if (board[x][y+1].canGoNorth(guard, guardPos) && board[x][y].canGoSouth(guard, guardPos)) {
+            possibleMoves.push({x:0,y:1, tile: board[x][y+1]});
         }
     }
-    if (guardPos.y > 0) {
-        if (board[guardPos.x][guardPos.y-1].canGoSouth() && board[guardPos.x][guardPos.y].canGoNorth()) {
-            possibleMoves.push({x:0,y:-1});
+    if (y > 0) {
+        if (board[x][y-1].canGoSouth(guard, guardPos) && board[x][y].canGoNorth(guard, guardPos)) {
+            possibleMoves.push({x:0,y:-1, tile: board[x][y-1]});
         }
     }
-    if (guardPos.x < board.length-1) {
-        if (board[guardPos.x+1][guardPos.y].canGoWest() && board[guardPos.x][guardPos.y].canGoEast()) {
-            possibleMoves.push({x:1,y:0});
+    if (x < board.length-1) {
+        if (board[x+1][y].canGoWest(guard, guardPos) && board[x][y].canGoEast(guard, guardPos)) {
+            possibleMoves.push({x:1,y:0, tile: board[x+1][ y]});
         }
     }
-    if (guardPos.x > 0) {
-        if (board[guardPos.x-1][guardPos.y].canGoEast() && board[guardPos.x][guardPos.y].canGoWest()) {
-            possibleMoves.push({x:-1,y:0});
+    if (x > 0) {
+        if (board[x-1][y].canGoEast(guard, guardPos) && board[x][y].canGoWest(guard, guardPos)) {
+            possibleMoves.push({x:-1,y:0, tile: board[x-1][y]});
         }
     }
     if (possibleMoves.length != 0) {
         let pickedMove = possibleMoves[Math.floor(Math.random()*possibleMoves.length)];
+        board[ x][ y].moveAway(guard)
         guardPos.x += pickedMove.x;
         guardPos.y += pickedMove.y;
+        pickedMove.tile.moveTo(guard, pickedMove.x, pickedMove.y);
     }
     
 }
 function findExits(tileName) {
     // 4 being the length of the word tile
-    let index = tileName.slice(4, tileName.length);
+    let index = tileName.slice("tile".length, tileName.length);
     switch(tileNames[index]) {
         case "Corner_Tile.png":
             return [1,1,0,0];
@@ -318,7 +336,23 @@ function findExits(tileName) {
             return [1,0,1,0];
         case "Tetris_Tile.png":
             return [1,1,1,0];
-        default :
+
+        default:
+            return [0,0,0,0];
+    }
+
+}
+function findComboExits(tileName) {
+    // 4 being the length of the word tile
+    let index = tileName.slice("combo".length, tileName.length);
+    switch(comboTileNames[index]) {
+        case "Dead_End_2.png":
+            return [1,0,2,0];
+        case "Line_Combo.png":
+            return [1,2,1,2];
+        case "Loop_Tile_2.png":
+            return [1,1,2,2];
+        default:
             return [0,0,0,0];
     }
 
@@ -349,16 +383,16 @@ class BasicTile {
         this.exits = exits;
         this.rotation = rotation;
     }
-    canGoNorth () {
+    canGoNorth (character) {
         return this.exits[(this.rotation/90)];
     }
-    canGoWest () {
+    canGoWest (character) {
         return this.exits[(1+(this.rotation/90)) % 4];
     }
-    canGoSouth () {
+    canGoSouth (character) {
         return this.exits[(2+(this.rotation/90)) % 4];
     }
-    canGoEast () {
+    canGoEast (character) {
         return this.exits[(3+(this.rotation/90)) % 4];
     }
     rotateClockWise() {
@@ -380,10 +414,131 @@ class BasicTile {
         this.image.angle -= 90;
         return true;
     }
+    moveTo(character, x, y) {
+        return;
+    }
+    moveAway(character, characterPos) {
+        return;
+    }
 }
 
 class ComboTile {
+    // Specifically represents a tile with two separate zones
+    // exits : represent as an array of length 4
+    //          North: Index 0,
+    //          West:  Index 1,
+    //          South: Index 2,
+    //          East:  Index 3,
+    //          With Value 2 at the index meaning there is an exit for zone 2
+    //               Value 1 at the index meaning there is an exit for zone 1
+    //               Value 0 meaning there isn't
+    // rotation: keeps track of the rotation of the tile and is between 0 <= x <= 360
 
+    constructor(exits, rotation, xLoc, yLoc, tileName, x, y) {
+        this.zone1 = []
+        this.zone2 = []
+        this.x = x;
+        this.y = y;
+        // Only creates image for tiles with sprites
+        this.image = game.add.sprite(xLoc, yLoc, tileName);
+        if (tileName != "") {
+            
+            this.image.anchor.setTo(0.5,0.5);
+            this.image.inputEnabled = true;
+            this.image.events.onInputDown.add(menuCreate(this), this);
+            addHighlight(this.image);
+        }
+        this.exits = exits;
+        this.rotation = rotation;
+    }
+    canGoDirection(character, characterPos, direction) {
+        let isExit = this.exits[(direction+(this.rotation/90)) % 4]
+        if (isExit == 0) {
+            return false;
+        } else if (characterPos.x == this.x && characterPos.y == this.y) {
+            
+            if (this.zone1.includes(character)) {
+                return isExit == 1; // Should only return 1 when is Exit is 1
+            } else if (this.zone2.includes(character)){
+                return isExit == 2; // Should only return 1 when is Exit is 2
+            } else {
+                console.log("Error: Character is not in any zone");
+            }
+        } else {
+            return isExit != 0 // Any exit is good when you're entering
+        }
+    }
+
+    canGoNorth (character, characterPos) {
+        return this.canGoDirection(character,characterPos, 0);
+    }
+    canGoEast (character, characterPos) {
+        return this.canGoDirection(character, characterPos, 1);
+    }
+    canGoWest (character, characterPos) {
+        return this.canGoDirection(character, characterPos, 3);
+    }
+    canGoSouth (character, characterPos) {
+        return this.canGoDirection(character, characterPos, 2);
+    }
+    rotateClockWise() {
+        // Escape for exit/entrance
+        if (this.y == 0 || this.y == length+1) {
+            return false;
+        }
+        this.rotation = (this.rotation + 90) % 360;
+        this.image.angle += 90;
+        return true;
+        
+    }
+    rotateCounterClockWise() {
+        // Escape for exit/entrance
+        if (this.y == 0 || this.y == length+1) {
+            return false;
+        }
+        this.rotation = (this.rotation + 270) % 360;
+        this.image.angle -= 90;
+        return true;
+    }
+
+
+    moveTo(character, x, y) {
+         if (x == 0 && y == 1) { //Went to North Side
+            if (this.exits[0] == 1) {
+                this.zone1.push(character);
+            } else {
+                this.zone2.push(character);
+            }
+         } else if (x == 0 && y == -1) { //Went to South
+            if (this.exits[2] == 1) {
+                this.zone1.push(character);
+            } else {
+                this.zone2.push(character);
+            }
+        } else if (x == 1 && y == 0) {//Moved East
+            if (this.exits[3] == 1) {
+                this.zone1.push(character);
+            } else {
+                this.zone2.push(character);
+            }
+        } else if (x == -1 && y == 0) { //Moved West
+            if (this.exits[1] == 1) {
+                this.zone1.push(character);
+            } else {
+                this.zone2.push(character);
+            }
+        } else {
+                console.log("Error, Player moved too much");
+        }
+    }
+    moveAway(character) {
+        if (this.zone1.includes(character)) {
+            this.zone1.splice(this.zone1.indexOf(character), 1);
+        }
+        else {
+            this.zone2.splice(this.zone2.indexOf(character), 1);
+        }
+    }
 }
 
 
