@@ -155,6 +155,9 @@ function actionOnClick () {
             board[x][y].image.angle = 0;
         }
     }
+    rotated = false;
+    moved = false;
+    reset();
 }
 
 //call this function when the player loses
