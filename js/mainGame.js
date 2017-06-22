@@ -1,5 +1,5 @@
 
-var game = new Phaser.Game(1000, 850, Phaser.CANVAS, 'phaser-example', { preload: preload, create: create });
+var game = new Phaser.Game(1000, 850, Phaser.CANVAS, 'phaser-example', { preload: preload, create: create, update: update });
 var board;
 var player;
 var guard;
@@ -7,6 +7,35 @@ var playerPos;
 var entrance;
 var exit;
 var guardPos;
+
+//https://tutorialzine.com/2015/06/making-your-first-html5-game-with-phaser source
+//for the game over screen
+var Game_Over = {
+
+    preload : function() {
+        // Load the needed image for this game screen.
+        game.load.image('gameover', './assets/images/gameover.png');
+    },
+
+    create : function() {
+
+        // Create button to start game like in Menu.
+        this.add.button(0, 0, 'gameover', this.startGame, this);
+
+        // Add text with information about the score from last game.
+        game.add.text(235, 350, "Restart!", { font: "bold 16px sans-serif", fill: "#46c0f9", align: "center"});
+
+    },
+
+    startGame: function () {
+
+        // Change the state back to Game.
+        this.state.start('Game');
+
+    }
+
+};
+
 
 // For keeping tracking of turns
 var moved = false;
@@ -109,10 +138,8 @@ function create() {
     restartButton.scale.setTo(0.41,0.41);
 }
 
-
+// used with the restart button
 function actionOnClick () {
-
-    background.visible =! background.visible;
 
 }
 
@@ -232,6 +259,8 @@ function update() {
         rotated = false;
         moved = false;
     }
+    // game.state.add("Game_Over",Game_Over);
+    // game.state.start("Game_Over");
 }
 
 function movePlayer(tile) {
