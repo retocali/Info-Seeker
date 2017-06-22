@@ -8,6 +8,10 @@ var entrance;
 var exit;
 var guardPos;
 
+// For keeping tracking of turns
+var moved = false;
+var rotated = false
+
 
 // Constants to for the map 
 var width = 3;
@@ -150,9 +154,34 @@ function menuCreate(s) {
 
         group = game.add.group();
 
-        button1 = game.make.button( 10 , 700, 'rotateClock' , removeGroup, this, 20, 10, 0);
-        button2 = game.make.button(140, 700, 'rotateCounter', removeGroup, this, 20, 10, 0);
-        button3 = game.make.button(270, 700, 'move', removeGroup, this, 20, 10, 0)
+        button1 = game.make.button( 10 , 700, 'rotateClock' , clockwise, this, 20, 10, 0);
+        button2 = game.make.button(140, 700, 'rotateCounter', counterClockWise, this, 20, 10, 0);
+        button3 = game.make.button(270, 700, 'move', move, this, 20, 10, 0)
+        function clockwise() {
+            if (!rotated) {
+                rotated = s.rotateClockWise();
+            }
+            update();
+            removeGroup();
+
+        }
+        function counterClockWise() {
+            if (!rotated) {
+                rotated = s.rotateCounterClockWise();
+            }
+            update();
+            removeGroup();
+        }
+        function move() {
+            // Makes the player only be able to move after rotating
+            if (!moved && rotated) {
+                moved = movePlayer(s);
+            }
+            update();
+            removeGroup();
+        }
+
+
         function removeGroup() {
             button1.destroy();
             button2.destroy();
@@ -161,9 +190,6 @@ function menuCreate(s) {
             game.world.remove(group);
 
         }
-        button1.onInputDown.add(function() {s.rotateClockWise();}, this);
-        button2.onInputDown.add(function() {s.rotateCounterClockWise();}, this);
-        button3.onInputDown.add(function() {movePlayer(s);}, this);
 
 
         addHighlight(button1);
@@ -178,32 +204,45 @@ function menuCreate(s) {
 
 function update() {
     
+    console.log(rotated, moved);
+    if (rotated && moved) {
+        console.log("Guard turn!");
+        moveGuard();
+        rotated = false;
+        moved = false;
+        console.log("Player Turn!");
+    }
 }
 
 function movePlayer(tile) {
     console.log(tile.exits);
     let xMove = playerPos.x - tile.x;
     let yMove = playerPos.y - tile.y;
+    let changed = false;
     if (xMove == 0) {
         if (yMove == -1 && tile.canGoNorth() && board[playerPos.x][playerPos.y].canGoSouth()) {
             playerPos.y += 1;
+            changed = true;
         }
         if (yMove == 1  && tile.canGoSouth() && board[playerPos.x][playerPos.y].canGoNorth()) {
             playerPos.y -= 1;
+            changed = true;
         }
     }
     else if (yMove == 0) {
         if (xMove == -1 && tile.canGoWest() && board[playerPos.x][playerPos.y].canGoEast()) {
             playerPos.x += 1;
+            changed = true;
         }
         if (xMove == 1  && tile.canGoEast() && board[playerPos.x][playerPos.y].canGoWest()) {
             playerPos.x -= 1;
+            changed = true;
         }
     }
     player.x = game.world.centerX+(playerPos.x-1)*tileSize;
     player.y = game.world.centerY+(playerPos.y-2)*tileSize;
     player.bringToTop;
-    moveGuard();
+    return changed;
 }
 
 function moveGuard() {
@@ -298,19 +337,21 @@ class BasicTile {
     rotateClockWise() {
         // Escape for exit/entrance
         if (this.y == 0 || this.y == length+1) {
-            return;
+            return false;
         }
         this.rotation = (this.rotation + 90) % 360;
         this.image.angle += 90;
+        return true;
         
     }
     rotateCounterClockWise() {
         // Escape for exit/entrance
         if (this.y == 0 || this.y == length+1) {
-            return;
+            return false;
         }
         this.rotation = (this.rotation + 270) % 360;
         this.image.angle -= 90;
+        return true;
     }
 
 }
