@@ -407,7 +407,7 @@ function reset() {
 
 // Creates the UI for the tiles
 function menuCreate(s) {
-    // return function() {
+    return function() {
     //     console.log("Clicked:",s.x,s.y);
     //     console.log("East",s.canGoEast(player));
     //     console.log("West",s.canGoWest(player));
