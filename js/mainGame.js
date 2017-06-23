@@ -55,6 +55,7 @@ var button3;
 var group;
 var BOX_SIZE = 128*scaleRatio; 
 var BUTTON_Y = 700*scaleRatio;
+var cursorPos = {x:-1, y:-1};
 
 // Keys 
 var keyUp;
@@ -68,6 +69,7 @@ var WEST = 1;
 var SOUTH = 2;
 var EAST = 3;
 var DIRECTIONS = 4;
+
 
 // Phaser Functions
 function preload() {
@@ -208,17 +210,23 @@ function create() {
     game.input.onDown.add(removeLogo, this);
 
     // Adds keyboard input
-    var keyUp = game.input.keyboard.addKey(Phaser.Keyboard.UP);
+    keyUp = game.input.keyboard.addKey(Phaser.Keyboard.UP);
     keyUp.onDown.add(moveUp, this);
 
-    var keyLeft = game.input.keyboard.addKey(Phaser.Keyboard.LEFT);
+    keyLeft = game.input.keyboard.addKey(Phaser.Keyboard.LEFT);
     keyLeft.onDown.add(moveLeft, this);
 
-    var keyRight= game.input.keyboard.addKey(Phaser.Keyboard.RIGHT);
+    keyRight= game.input.keyboard.addKey(Phaser.Keyboard.RIGHT);
     keyRight.onDown.add(moveRight, this);
 
-    var keyDown = game.input.keyboard.addKey(Phaser.Keyboard.DOWN);
+    keyDown = game.input.keyboard.addKey(Phaser.Keyboard.DOWN);
     keyDown.onDown.add(moveDown, this);
+
+    keyZ = game.input.keyboard.addKey(Phaser.Keyboard.Z);
+    keyZ.onDown.add(rotateClockWise, this);
+
+    keyX = game.input.keyboard.addKey(Phaser.Keyboard.X);
+    keyX.onDown.add(rotateCounterClockWise, this);
 
     game.input.keyboard.removeKeyCapture(Phaser.Keyboard.UP);
     game.input.keyboard.removeKeyCapture(Phaser.Keyboard.LEFT);
@@ -238,7 +246,9 @@ function update() {
         checkGameStatus();
         rotated = false;
         moved = false;
+        //reset();
     }
+    gameDone.bringToTop;
 
     player.x = game.world.centerX+(playerPos.x-1)*(TILE_SIZE+MARGIN);
     player.y = game.world.centerY+(playerPos.y-2)*(TILE_SIZE+MARGIN);
@@ -249,28 +259,74 @@ function update() {
     guard.bringToTop;
 }
 
+
+// Functions that allow actions through keyboard
 function moveUp() {
     if (rotated && !moved && playerPos.y > 0) {
-        movePlayer(board[playerPos.x][playerPos.y-1])
-        moved = true;
+        normalize(board[cursorPos.x][cursorPos.y].image)();
+        moved = movePlayer(board[playerPos.x][playerPos.y-1]);
+    } else if (!rotated && cursorPos.y == -1) {
+        cursorPos.x = 0;
+        cursorPos.y = 1;
+        highlights(board[cursorPos.x][cursorPos.y].image)();
+    } else if (!rotated && cursorPos.y > 1) {
+        normalize(board[cursorPos.x][cursorPos.y].image)();
+        cursorPos.y--;
+        highlights(board[cursorPos.x][cursorPos.y].image)();
     }
 }
 function moveDown() {
     if (rotated && !moved && playerPos.y < board[playerPos.x].length-1) {
-         movePlayer(board[playerPos.x][playerPos.y+1])
-         moved = true;
+        normalize(board[cursorPos.x][cursorPos.y].image)();
+        moved = movePlayer(board[playerPos.x][playerPos.y+1]);
+    } else if (!rotated && cursorPos.y == -1) {
+        cursorPos.x = 0;
+        cursorPos.y = 1;
+        highlights(board[cursorPos.x][cursorPos.y].image)();
+    } else if (!rotated && cursorPos.y < board[playerPos.x].length-2) {
+        normalize(board[cursorPos.x][cursorPos.y].image)();
+        cursorPos.y++;
+        highlights(board[cursorPos.x][cursorPos.y].image)();
     }
 }
 function moveRight() {
-    if (rotated && !moved && playerPos.y < board[playerPos.x].length-1) {
-        movePlayer(board[playerPos.x+1][playerPos.y])
-        moved = true;
+    if (rotated && !moved && playerPos.y < board.length-1) {
+        normalize(board[cursorPos.x][cursorPos.y].image)();
+        moved = movePlayer(board[playerPos.x+1][playerPos.y]);
+    } else if (!rotated && cursorPos.y == -1) {
+        cursorPos.x = 0;
+        cursorPos.y = 1;
+        highlights(board[cursorPos.x][cursorPos.y].image)();
+    } else if (!rotated && cursorPos.x < board.length-1) {
+        normalize(board[cursorPos.x][cursorPos.y].image)();
+        cursorPos.x++;
+        highlights(board[cursorPos.x][cursorPos.y].image)();
     }
 }
 function moveLeft() {
     if (rotated && !moved && playerPos.x > 0) {
-        movePlayer(board[playerPos.x-1][playerPos.y])
-        moved = true;
+        normalize(board[cursorPos.x][cursorPos.y].image)();
+        moved = movePlayer(board[playerPos.x-1][playerPos.y]);
+    } else if (!rotated && cursorPos.y == -1) {
+        cursorPos.x = 0;
+        cursorPos.y = 1;
+        highlights(board[cursorPos.x][cursorPos.y].image)();
+    } else if (!rotated && cursorPos.x > 0) {
+        normalize(board[cursorPos.x][cursorPos.y].image)();
+        cursorPos.x--;
+        highlights(board[cursorPos.x][cursorPos.y].image)();
+    }
+}
+function rotateClockWise() {
+    if (!rotated && cursorPos.x != -1) {
+        board[cursorPos.x][cursorPos.y].rotateClockWise();
+        rotated = true;
+    }
+}
+function rotateCounterClockWise() {
+    if (!rotated && cursorPos.x != -1) {
+        board[cursorPos.x][cursorPos.y].rotateCounterClockWise();
+        rotated = true;
     }
 }
 
