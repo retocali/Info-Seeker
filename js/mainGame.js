@@ -130,12 +130,16 @@ function create() {
     //Creates the restart button
     restartButton = game.add.button(game.world.centerX + 300, 100, 'replayImage', actionOnClick, this);
     restartButton.scale.setTo(0.41,0.41);
+    restartButton.inputEnabled = true;
 
     //Splash screen
     logo = game.add.sprite(0, 0, "logo");
     logo.scale.setTo(0.18,0.25);
     logo.fixedtoCamera = true;
     game.input.onDown.add(removeLogo, this);
+    gameDone = game.add.sprite(0, 0, 'gameover');
+    gameDone.scale.setTo(3.1,3.5);
+    gameDone.visible = false;
 }
 
 
@@ -151,22 +155,23 @@ function removeLogo () {
 function actionOnClick () {
     playerPos = {x:entrance.x, y:entrance.y};
     guardPos = {x:exit.x, y:exit.y}
-     for (let x = 0;  x < board.length; x++) {
+    for (let x = 0;  x < board.length; x++) {
         for (let y = 0; y < board[x].length; y++) {
             board[x][y].rotation = 0;
-            board[x][y].image.angle = a0;
+            board[x][y].image.angle = 0;
         }
     }
+    gameDone.visible = false;
     rotated = false;
     moved = false;
-    gameDone.events.onInputDown.add(destroySprite,);
+    gameDone.destroy();
+    // game.input.onDown.add(actionOnClick,self);
     reset();
 }
 
 //call this function when the player loses
 function GameOver () {
-    gameDone = game.add.sprite(200, 80, 'gameover');
-    gameDone.scale.setTo(2.2,2.7);
+    gameDone.visible = true;
 }
 
 function addHighlight(s) {
@@ -205,11 +210,6 @@ function reset() {
             board[x][y].image.tint = 0xffffff
         }
     }
-}
-
-//to restart the game
-function replay() {
-
 }
 
 var button1;
