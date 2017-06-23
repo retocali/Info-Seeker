@@ -106,7 +106,7 @@ function create() {
                 } else {
                     s = new BasicTile([0,0,0,0], 0, xLoc, yLoc, "", x, y);
                 }
-            } else if (x == 1 && y == 2) {//(Math.random() < comboSpawn){
+            } else if (Math.random() < comboSpawn) {
                 let tileName = comboTiles[Math.floor(Math.random()*comboTiles.length)];
                 s = new ComboTile(findComboExits(tileName), 0, xLoc, yLoc, tileName, x, y);
             } else {
@@ -157,6 +157,7 @@ function actionOnClick () {
             board[x][y].image.angle = 0;
         }
     }
+    exit.rotation = 180;
     rotated = false;
     moved = false;
     gameDone.events.onInputDown.add(destroySprite);
