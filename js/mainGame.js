@@ -23,10 +23,14 @@ var rotated = false
 
 
 // Constants to for the map 
-var width = 3;
-var length = 3;
-var tileSize = 140;
-var comboSpawn = 0.1;
+var WIDTH = 3;
+var LENGTH = 3;
+var TILE_SIZE = 128;
+var MARGIN = 12;
+var COMBO_SPAWN = 0.1;
+var RIGHT_ANGLE = 90;
+var FLIPPED = 180;
+var FULL_CIRCLE = 360;
 
 
 // Filenames
@@ -50,9 +54,16 @@ var keyLeft;
 var keyDown;
 var keyRight;
 
+// Directions
+var NORTH = 0;
+var WEST = 1;
+var SOUTH = 2;
+var EAST = 3;
+var DIRECTIONS = 4;
+
 // Phaser Functions
 function preload() {
-
+    
     // Used to load GAME OVER 
     game.load.image('gameover', 'assets/sprites/gameover.png');
 
@@ -86,30 +97,21 @@ function preload() {
 }
 
 function create() {
-
-    //  Option 1 - in the update loop you can disable all input if the pointer isn't over the game
-    //  (see update function)
-
-    //  Option 2 - Alternatively, Remove captures so they flood up to the browser too
-    game.input.keyboard.removeKeyCapture(Phaser.Keyboard.ONE);
-    game.input.keyboard.removeKeyCapture(Phaser.Keyboard.TWO);
-    game.input.keyboard.removeKeyCapture(Phaser.Keyboard.THREE);
-
-
     game.stage.backgroundColor = "#4488AA";
 
+    //game.scale = 0.5;
     game.scale.pageAlignHorizontally = true; game.scale.pageAlignVertically = true; game.scale.refresh();
     board = [[],[],[]];
 
     // Creates the board
-    for (let x = 0; x < width; x++) {
+    for (let x = 0; x < WIDTH; x++) {
         
-        for (let y = 0; y <= length + 1; y++) {
+        for (let y = 0; y <= LENGTH + 1; y++) {
             
             // TODO: Tweak this to actually center it
             // Finds the centered placement of the tiles 
-            let xLoc = game.world.centerX+(x-1)*tileSize;
-            let yLoc = game.world.centerY+(y-2)*tileSize;
+            let xLoc = game.world.centerX+(x-1)*(TILE_SIZE+MARGIN);
+            let yLoc = game.world.centerY+(y-2)*(TILE_SIZE+MARGIN);
             let s;
             if (y == 0) {
                 if (x == 0) {
@@ -120,16 +122,16 @@ function create() {
                     s = new BasicTile([0,0,0,0], 0, xLoc, yLoc, "", x, y);
                 }
             }
-            else if (y == length + 1) {
+            else if (y == LENGTH + 1) {
                 // Creates the exit
-                if (x == width - 1) {
-                    s = new BasicTile([0,0,1,0], 180, xLoc, yLoc, "entrix",x, y);
+                if (x == WIDTH - 1) {
+                    s = new BasicTile([0,0,1,0], FLIPPED, xLoc, yLoc, "entrix",x, y);
                     s.image.scale.y *= -1;
                     exit = s
                 } else {
                     s = new BasicTile([0,0,0,0], 0, xLoc, yLoc, "", x, y);
                 }
-            } else if (Math.random() < comboSpawn) {
+            } else if (Math.random() < COMBO_SPAWN) {
                 let tileName = comboTiles[Math.floor(Math.random()*comboTiles.length)];
                 s = new ComboTile(findComboExits(tileName), 0, xLoc, yLoc, tileName, x, y);
             } else {
@@ -141,11 +143,11 @@ function create() {
         }
     }
     // Creates the Guard
-    guard = game.add.sprite(game.world.centerX+tileSize, game.world.centerY+tileSize, 'guard');
+    guard = game.add.sprite(game.world.centerX+TILE_SIZE+MARGIN, game.world.centerY+TILE_SIZE+MARGIN, 'guard');
     guardPos = {x:exit.x, y:exit.y}
     guard.anchor.setTo(0.5,0.5);
     // Creates the player
-    player = game.add.sprite(game.world.centerX-tileSize, game.world.centerY-(length-1)*tileSize, 'player');
+    player = game.add.sprite(game.world.centerX-TILE_SIZE+MARGIN, game.world.centerY-(LENGTH-1)*(TILE_SIZE+MARGIN), 'player');
     playerPos = {x:entrance.x, y:entrance.y}
     player.anchor.setTo(0.5,0.5);
     player.inputEnabled = true;
@@ -153,6 +155,7 @@ function create() {
     //Creates the restart button
     restartButton = game.add.button(game.world.centerX + 300, 100, 'replayImage', actionOnClick, this);
     restartButton.scale.setTo(0.41,0.41);
+    restartButton.inputEnabled = true;
 
     //Splash screen
     logo = game.add.sprite(0, 0, "logo");
@@ -162,21 +165,26 @@ function create() {
 
     // Adds keyboard input
     var keyUp = game.input.keyboard.addKey(Phaser.Keyboard.UP);
-    keyUp.onDown.add(addPhaserDude, this);
+    keyUp.onDown.add(function () {if (playerPos.y > 0) {movePlayer(board[playerPos.x][playerPos.y-1])}}, this);
 
     var keyLeft = game.input.keyboard.addKey(Phaser.Keyboard.LEFT);
-    keyLeft.onDown.add(addPhaserDude, this);
+    keyLeft.onDown.add(function () {if (playerPos.x > 0) {movePlayer(board[playerPos.x-1][playerPos.y])}}, this);
 
     var keyRight= game.input.keyboard.addKey(Phaser.Keyboard.RIGHT);
-    keyRight.onDown.add(addPhaserLogo, this);
+    keyRight.onDown.add(function () { if (playerPos.x < board[x].length-1) {movePlayer(board[playerPos.x+1][playerPos.y])}}, this);
 
     var keyDown = game.input.keyboard.addKey(Phaser.Keyboard.DOWN);
-    keyDown.onDown.add(addPineapple, this);
+    keyDown.onDown.add(function () { if (playerPos.y < board[x].length-1) {movePlayer(board[playerPos.x][playerPos.y+1])}}, this);
 
     game.input.keyboard.removeKeyCapture(Phaser.Keyboard.UP);
     game.input.keyboard.removeKeyCapture(Phaser.Keyboard.LEFT);
     game.input.keyboard.removeKeyCapture(Phaser.Keyboard.DOWN);
     game.input.keyboard.removeKeyCapture(Phaser.Keyboard.RIGHT);
+
+    // Game Over screen
+    gameDone = game.add.sprite(0, 0, 'gameover');
+    gameDone.scale.setTo(3.1,3.5);
+    gameDone.visible = false;
 }
 
 function update() {
@@ -188,16 +196,13 @@ function update() {
         moved = false;
     }
 
-    player.x = game.world.centerX+(playerPos.x-1)*tileSize;
-    player.y = game.world.centerY+(playerPos.y-2)*tileSize;
+    player.x = game.world.centerX+(playerPos.x-1)*(TILE_SIZE+MARGIN);
+    player.y = game.world.centerY+(playerPos.y-2)*(TILE_SIZE+MARGIN);
     player.bringToTop;
 
-    guard.x = game.world.centerX+(guardPos.x-1)*tileSize;
-    guard.y = game.world.centerY+(guardPos.y-2)*tileSize;
+    guard.x = game.world.centerX+(guardPos.x-1)*(TILE_SIZE+MARGIN);
+    guard.y = game.world.centerY+(guardPos.y-2)*(TILE_SIZE+MARGIN);
     guard.bringToTop;
-    if (rotated) {
-        
-    }
 }
 
 
@@ -214,23 +219,24 @@ function removeLogo () {
 function actionOnClick () {
     playerPos = {x:entrance.x, y:entrance.y};
     guardPos = {x:exit.x, y:exit.y}
-     for (let x = 0;  x < board.length; x++) {
+    for (let x = 0;  x < board.length; x++) {
         for (let y = 0; y < board[x].length; y++) {
             board[x][y].rotation = 0;
             board[x][y].image.angle = 0;
         }
     }
-    exit.rotation = 180;
+    gameDone.visible = false;
     rotated = false;
     moved = false;
-    gameDone.events.onInputDown.add(destroySprite);
+    gameDone.destroy();
+    // game.input.onDown.add(actionOnClick,self);
+    exit.rotation = FLIPPED;
     reset();
 }
 
 // call this function when the player loses
 function GameOver () {
-    gameDone = game.add.sprite(200, 80, 'gameover');
-    gameDone.scale.setTo(2.2,2.7);
+    gameDone.visible = true;
 }
 
 // Makes the buttons change color over various mouse inputs
@@ -482,34 +488,34 @@ class BasicTile {
         this.rotation = rotation;
     }
     canGoNorth (character) {
-        return this.exits[(this.rotation/90)];
+        return this.exits[(NORTH+(this.rotation/RIGHT_ANGLE)) % DIRECTIONS];
     }
     canGoWest (character) {
-        return this.exits[(1+(this.rotation/90)) % 4];
+        return this.exits[(WEST+(this.rotation/RIGHT_ANGLE)) % DIRECTIONS];
     }
     canGoSouth (character) {
-        return this.exits[(2+(this.rotation/90)) % 4];
+        return this.exits[(SOUTH+(this.rotation/RIGHT_ANGLE)) % DIRECTIONS];
     }
     canGoEast (character) {
-        return this.exits[(3+(this.rotation/90)) % 4];
+        return this.exits[(EAST+(this.rotation/RIGHT_ANGLE)) % DIRECTIONS];
     }
     rotateClockWise() {
         // Escape for exit/entrance
-        if (this.y == 0 || this.y == length+1) {
+        if (this.y == 0 || this.y == LENGTH+1) {
             return false;
         }
-        this.rotation = (this.rotation + 90) % 360;
-        this.image.angle += 90;
+        this.rotation = (this.rotation + RIGHT_ANGLE) % FULL_CIRCLE;
+        this.image.angle += RIGHT_ANGLE;
         return true;
         
     }
     rotateCounterClockWise() {
         // Escape for exit/entrance
-        if (this.y == 0 || this.y == length+1) {
+        if (this.y == 0 || this.y == LENGTH+1) {
             return false;
         }
-        this.rotation = (this.rotation + 270) % 360;
-        this.image.angle -= 90;
+        this.rotation = (this.rotation - RIGHT_ANGLE) % FULL_CIRCLE;
+        this.image.angle -= RIGHT_ANGLE;
         return true;
     }
     moveTo(character, x, y) {
@@ -553,7 +559,7 @@ class ComboTile {
         this.rotation = rotation;
     }
     canGoDirection(character, characterPos, direction) {
-        let isExit = this.exits[(direction+(this.rotation/90)) % 4]
+        let isExit = this.exits[(direction+(this.rotation/RIGHT_ANGLE)) % 4]
         if (isExit == 0) {
             return false;
         } else if (characterPos.x == this.x && characterPos.y == this.y) {
@@ -566,64 +572,64 @@ class ComboTile {
                 console.log("Error: Character is not in any zone");
             }
         } else {
-            return isExit != 0 // Any exit is good when you're entering
+            return isExit != 0; // Any exit is good when you're entering
         }
     }
 
     canGoNorth (character, characterPos) {
-        return this.canGoDirection(character,characterPos, 0);
+        return this.canGoDirection(character,characterPos, NORTH);
     }
     canGoWest (character, characterPos) {
-        return this.canGoDirection(character, characterPos, 1);
+        return this.canGoDirection(character, characterPos, WEST);
     }
     canGoSouth (character, characterPos) {
-        return this.canGoDirection(character, characterPos, 2);
+        return this.canGoDirection(character, characterPos, SOUTH);
     }
     canGoEast (character, characterPos) {
-        return this.canGoDirection(character, characterPos, 3);
+        return this.canGoDirection(character, characterPos, EAST);
     }
     rotateClockWise() {
         // Escape for exit/entrance
-        if (this.y == 0 || this.y == length+1) {
+        if (this.y == 0 || this.y == LENGTH+1) {
             return false;
         }
-        this.rotation = (this.rotation + 90) % 360;
-        this.image.angle += 90;
+        this.rotation = (this.rotation + RIGHT_ANGLE) % FULL_CIRCLE;
+        this.image.angle += RIGHT_ANGLE;
         return true;
         
     }
     rotateCounterClockWise() {
         // Escape for exit/entrance
-        if (this.y == 0 || this.y == length+1) {
+        if (this.y == 0 || this.y == LENGTH+1) {
             return false;
         }
-        this.rotation = (this.rotation + 270) % 360;
-        this.image.angle -= 90;
+        this.rotation = (this.rotation - RIGHT_ANGLE) % FULL_CIRCLE;
+        this.image.angle -= RIGHT_ANGLE;
         return true;
     }
 
 
     moveTo(character, x, y) {
          if (x == 0 && y == 1) { //Went to North Side
-            if (this.exits[(0+(this.rotation/90)) % 4] == 1) {
+            if (this.exits[(NORTH+(this.rotation/RIGHT_ANGLE)) % DIRECTIONS] == 1) {
                 this.zone1.push(character);
             } else {
                 this.zone2.push(character);
             }
         } else if (x == 1 && y == 0) { //Moved West
-            if (this.exits[(1+(this.rotation/90)) % 4] == 1) {
+            if (this.exits[(WEST+(this.rotation/RIGHT_ANGLE)) % DIRECTIONS] == 1) {
                 this.zone1.push(character);
             } else {
                 this.zone2.push(character);
             }
          } else if (x == 0 && y == -1) { //Went to South
-            if (this.exits[(2+(this.rotation/90)) % 4] == 1) {
+            if (this.exits[(SOUTH+(this.rotation/RIGHT_ANGLE)) % DIRECTIONS] == 1) {
                 this.zone1.push(character);
             } else {
                 this.zone2.push(character);
             }
         } else if (x == -1 && y == 0) {//Moved East
-            if (this.exits[(3+(this.rotation/90)) % 4] == 1) {
+            if (this.exits[(EAST+(this.rotation/RIGHT_ANGLE)) % DIRECTIONS] == 1) {
                 this.zone1.push(character);
             } else {
                 this.zone2.push(character);
@@ -632,11 +638,7 @@ class ComboTile {
         } else {
                 console.log("Error, Player moved too much");
         }
-        console.log(this.zone1);
-        console.log(this.zone2);
-        for (var x =0; x < 4; x++) {
-            console.log(x, this.canGoDirection(player, playerPos, x))
-        }
+
     }
     moveAway(character) {
         if (this.zone1.includes(character)) {
