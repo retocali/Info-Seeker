@@ -1,6 +1,8 @@
-var canvas_x = window.innerWidth * window.devicePixelRatio;
-var canvas_y = window.innerHeight * window.devicePixelRatio;
-var scaleRatio = Math.min(canvas_x/1100, canvas_y/800);
+var canvas_x = window.innerWidth;
+var canvas_y = window.innerHeight;
+var scaleRatio = Math.min(canvas_x/1100, canvas_y/800)/window.devicePixelRatio;
+
+console.log(window.devicePixelRatio);
 
 var game = new Phaser.Game(canvas_x, canvas_y, Phaser.CANVAS, 'phaser-example', { preload: preload, create: create, update: update });
 var board;
@@ -207,16 +209,16 @@ function create() {
 
     // Adds keyboard input
     var keyUp = game.input.keyboard.addKey(Phaser.Keyboard.UP);
-    keyUp.onDown.add(function () {if (playerPos.y > 0) {movePlayer(board[playerPos.x][playerPos.y-1])}}, this);
+    keyUp.onDown.add(moveUp, this);
 
     var keyLeft = game.input.keyboard.addKey(Phaser.Keyboard.LEFT);
-    keyLeft.onDown.add(function () {if (playerPos.x > 0) {movePlayer(board[playerPos.x-1][playerPos.y])}}, this);
+    keyLeft.onDown.add(moveLeft, this);
 
     var keyRight= game.input.keyboard.addKey(Phaser.Keyboard.RIGHT);
-    keyRight.onDown.add(function () { if (playerPos.x < board[x].length-1) {movePlayer(board[playerPos.x+1][playerPos.y])}}, this);
+    keyRight.onDown.add(moveRight, this);
 
     var keyDown = game.input.keyboard.addKey(Phaser.Keyboard.DOWN);
-    keyDown.onDown.add(function () { if (playerPos.y < board[x].length-1) {movePlayer(board[playerPos.x][playerPos.y+1])}}, this);
+    keyDown.onDown.add(moveDown, this);
 
     game.input.keyboard.removeKeyCapture(Phaser.Keyboard.UP);
     game.input.keyboard.removeKeyCapture(Phaser.Keyboard.LEFT);
@@ -247,6 +249,30 @@ function update() {
     guard.bringToTop;
 }
 
+function moveUp() {
+    if (rotated && !moved && playerPos.y > 0) {
+        movePlayer(board[playerPos.x][playerPos.y-1])
+        moved = true;
+    }
+}
+function moveDown() {
+    if (rotated && !moved && playerPos.y < board[playerPos.x].length-1) {
+         movePlayer(board[playerPos.x][playerPos.y+1])
+         moved = true;
+    }
+}
+function moveRight() {
+    if (rotated && !moved && playerPos.y < board[playerPos.x].length-1) {
+        movePlayer(board[playerPos.x+1][playerPos.y])
+        moved = true;
+    }
+}
+function moveLeft() {
+    if (rotated && !moved && playerPos.x > 0) {
+        movePlayer(board[playerPos.x-1][playerPos.y])
+        moved = true;
+    }
+}
 
 
 // used with the splash screen
@@ -653,7 +679,7 @@ class ComboTile {
         if (this.y == 0 || this.y == LENGTH+1) {
             return false;
         }
-        this.rotation = (this.rotation - RIGHT_ANGLE) % FULL_CIRCLE;
+        this.rotation = (this.rotation - RIGHT_ANGLE + FULL_CIRCLE) % FULL_CIRCLE;
         this.image.angle -= RIGHT_ANGLE;
         return true;
     }
