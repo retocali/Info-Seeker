@@ -11,7 +11,7 @@ var exit;
 var guardPos;
 var gameDone;
 var logo;
-
+var memoryTile;
 
 // Scaling and everything
 
@@ -44,6 +44,9 @@ var RIGHT_ANGLE = 90;
 var FLIPPED = 180;
 var FULL_CIRCLE = 360;
 
+// Counter for creating the map
+var counter = 0;
+memoryCount = 0;
 
 // Filenames
 var tiles = [];
@@ -82,6 +85,9 @@ function preload() {
     // Splash Screen
     game.load.image('logo', 'assets/sprites/welcome.jpg');
 
+    // Memory Tile 
+    game.load.image('memoryTile', 'assets/sprites/memory_tile.gif');
+
     // Used to load entrance/exit and restart button
     game.load.image('entrix',"assets/sprites/tiles/EntranceExit.png");
     game.load.image('replayImage',"assets/sprites/button_restart.png");
@@ -118,8 +124,21 @@ function create() {
     // Creates the board
     for (let x = 0; x < WIDTH; x++) {
         
+
         for (let y = 0; y <= LENGTH + 1; y++) {
-            
+
+            // Puts down the memory images
+            // counter = counter + 1;
+
+            // if (counter > 2 || counter != 4 ) {
+            //     if (memoryCount < 3) {
+            //         if (between(0, 3) == 0){
+            //             // game.add.sprite();
+            //             memoryCount = memoryCount + 1;
+            //         }
+            //     }
+            // }
+
             // TODO: Tweak this to actually center it
             // Finds the centered placement of the tiles 
             let xLoc = game.world.centerX+(x-1)*(TILE_SIZE+MARGIN);
@@ -154,7 +173,24 @@ function create() {
             board[x][y] = s; 
         }
     }
+
+    // Make memory tiles
+    var amount = 300;
+    for (let g = 0; g < 9; g++) {
+        if (counter > 2 || counter != 4 ) {
+            if (memoryCount < 2) {
+                if ( Math.floor(Math.random()*4) == 2) {
+                    memoryTile = game.add.sprite(amount, amount, 'memoryTile');
+                    amount = amount + 100;
+                    memoryCount = memoryCount + 1;
+                }
+            }
+        }
+    }
+
+
     // Creates the Guard
+
     guard = game.add.sprite(game.world.centerX+TILE_SIZE+MARGIN, game.world.centerY+TILE_SIZE+MARGIN, 'guard');
     guardPos = {x:exit.x, y:exit.y}
     guard.anchor.setTo(0.5,0.5);
