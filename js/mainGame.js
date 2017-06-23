@@ -14,7 +14,7 @@ var logo;
 
 //music found from https://www.dl-sounds.com/royalty-free/category/game-film/video-game/ && http://freesound.org
 //https://tutorialzine.com/2015/06/making-your-first-html5-game-with-phaser source
-//for the game over scree
+//for the game over screen
 
 
 // For keeping tracking of turns
@@ -29,14 +29,28 @@ var tileSize = 140;
 var comboSpawn = 0.1;
 
 
-// TODO: Maybe have a function to search through folder for filenames?
-var replayImage = "button_restart.png"
-var entrix = "EntranceExit.png";
-var tileNames = ["Corner_Tile.png","Cross_Tile.png","DeadEnd_Tile.png","Line_Tile.png","Tetris_Tile.png"];
+// Filenames
 var tiles = [];
-var comboTileNames = ["Dead_End_2.png","Line_Combo.png","Loop_Tile_2.png"];
 var comboTiles = []
+var entrix = "EntranceExit.png";
+var replayImage = "button_restart.png"
+var comboTileNames = ["Dead_End_2.png","Line_Combo.png","Loop_Tile_2.png"];
+var tileNames = ["Corner_Tile.png","Cross_Tile.png","DeadEnd_Tile.png", "Line_Tile.png","Tetris_Tile.png"];
 
+// UI variables
+var button1;
+var button2;
+var button3;
+var group;
+var box_size = 128; 
+
+// Keys 
+var keyUp;
+var keyLeft;
+var keyDown;
+var keyRight;
+
+// Phaser Functions
 function preload() {
 
     // Used to load GAME OVER 
@@ -72,6 +86,15 @@ function preload() {
 }
 
 function create() {
+
+    //  Option 1 - in the update loop you can disable all input if the pointer isn't over the game
+    //  (see update function)
+
+    //  Option 2 - Alternatively, Remove captures so they flood up to the browser too
+    game.input.keyboard.removeKeyCapture(Phaser.Keyboard.ONE);
+    game.input.keyboard.removeKeyCapture(Phaser.Keyboard.TWO);
+    game.input.keyboard.removeKeyCapture(Phaser.Keyboard.THREE);
+
 
     game.stage.backgroundColor = "#4488AA";
 
@@ -136,10 +159,50 @@ function create() {
     logo.scale.setTo(0.18,0.25);
     logo.fixedtoCamera = true;
     game.input.onDown.add(removeLogo, this);
+
+    // Adds keyboard input
+    var keyUp = game.input.keyboard.addKey(Phaser.Keyboard.UP);
+    keyUp.onDown.add(addPhaserDude, this);
+
+    var keyLeft = game.input.keyboard.addKey(Phaser.Keyboard.LEFT);
+    keyLeft.onDown.add(addPhaserDude, this);
+
+    var keyRight= game.input.keyboard.addKey(Phaser.Keyboard.RIGHT);
+    keyRight.onDown.add(addPhaserLogo, this);
+
+    var keyDown = game.input.keyboard.addKey(Phaser.Keyboard.DOWN);
+    keyDown.onDown.add(addPineapple, this);
+
+    game.input.keyboard.removeKeyCapture(Phaser.Keyboard.UP);
+    game.input.keyboard.removeKeyCapture(Phaser.Keyboard.LEFT);
+    game.input.keyboard.removeKeyCapture(Phaser.Keyboard.DOWN);
+    game.input.keyboard.removeKeyCapture(Phaser.Keyboard.RIGHT);
+}
+
+function update() {
+    checkGameStatus();
+    if (rotated && moved) {
+        moveGuard();
+        checkGameStatus();
+        rotated = false;
+        moved = false;
+    }
+
+    player.x = game.world.centerX+(playerPos.x-1)*tileSize;
+    player.y = game.world.centerY+(playerPos.y-2)*tileSize;
+    player.bringToTop;
+
+    guard.x = game.world.centerX+(guardPos.x-1)*tileSize;
+    guard.y = game.world.centerY+(guardPos.y-2)*tileSize;
+    guard.bringToTop;
+    if (rotated) {
+        
+    }
 }
 
 
-//used with the splash screen
+
+// used with the splash screen
 function removeLogo () {
     game.input.onDown.remove(removeLogo, this);
     //tried to use this to fade in/fade out the welcome...
@@ -164,26 +227,27 @@ function actionOnClick () {
     reset();
 }
 
-//call this function when the player loses
+// call this function when the player loses
 function GameOver () {
     gameDone = game.add.sprite(200, 80, 'gameover');
     gameDone.scale.setTo(2.2,2.7);
 }
 
+// Makes the buttons change color over various mouse inputs
 function addHighlight(s) {
     s.events.onInputOver.add(highlights(s), this);
     s.events.onInputOut.add(normalize(s),this);
     s.events.onInputDown.add(color(s), this);
 }
 
-//the dark blue (pressed down)
+// the dark blue (pressed down)
 function color(s) {
     return function() {
         s.tint = 0x0000ff;
     }
 }
 
-//the light blue highlight
+// the light blue highlight
 function highlights(s) {
     return function() {
         if (s.tint == 0xffffff) {
@@ -192,6 +256,7 @@ function highlights(s) {
     }
 }
 
+// Turns the hover tiles to normal
 function normalize(s) {
     return function() {
         if (s.tint == 0x009fff){ 
@@ -200,6 +265,7 @@ function normalize(s) {
     }
 }
 
+// Turns all tiles back to normal color
 function reset() {
     for (let x = 0;  x < board.length; x++) {
         for (let y = 0; y < board[x].length; y++) {
@@ -208,17 +274,7 @@ function reset() {
     }
 }
 
-//to restart the game
-function replay() {
-
-}
-
-var button1;
-var button2;
-var button3;
-var group;
-var box_size = 128; // for the menu item or tiles later on
-
+// Creates the UI for the tiles
 function menuCreate(s) {
     return function() {
         //console.log("Clicked:",s.x,s.y)
@@ -277,6 +333,8 @@ function menuCreate(s) {
         group.add(button3);
     }
 }
+
+// Used to check if the player has won or lost
 function checkGameStatus() {
     if (player.x == exit.x && player.y == exit.y) {
         console.log("You Win!");
@@ -288,25 +346,7 @@ function checkGameStatus() {
     }
 }
 
-function update() {
-    checkGameStatus();
-    if (rotated && moved) {
-        moveGuard();
-        checkGameStatus();
-        rotated = false;
-        moved = false;
-    }
-
-    player.x = game.world.centerX+(playerPos.x-1)*tileSize;
-    player.y = game.world.centerY+(playerPos.y-2)*tileSize;
-    player.bringToTop;
-
-    guard.x = game.world.centerX+(guardPos.x-1)*tileSize;
-    guard.y = game.world.centerY+(guardPos.y-2)*tileSize;
-    guard.bringToTop;
-
-}
-
+// Trys to move the player and returns true if it does false othewise
 function movePlayer(tile) {
     let x = playerPos.x;
     let y = playerPos.y;
@@ -343,6 +383,7 @@ function movePlayer(tile) {
     return changed;
 }
 
+// The guard AI
 function moveGuard() {
     let possibleMoves = [];
     let x = guardPos.x;
@@ -376,6 +417,8 @@ function moveGuard() {
     }
     
 }
+
+// Finds the exits for the various tiles
 function findExits(tileName) {
     // 4 being the length of the word tile
     let index = tileName.slice("tile".length, tileName.length);
@@ -395,6 +438,8 @@ function findExits(tileName) {
     }
 
 }
+
+// Finds the exits for the various combotiles
 function findComboExits(tileName) {
     // 4 being the length of the word tile
     let index = tileName.slice("combo".length, tileName.length);
