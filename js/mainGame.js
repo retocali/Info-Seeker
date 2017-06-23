@@ -23,7 +23,7 @@ var memoryTile;
 
 // For keeping tracking of turns
 var moved = false;
-var rotated = false
+var rotated = false;
 
 
 // Constants to for the map 
@@ -42,9 +42,9 @@ memoryCount = 0;
 
 // Filenames
 var tiles = [];
-var comboTiles = []
+var comboTiles = [];
 var entrix = "EntranceExit.png";
-var replayImage = "button_restart.png"
+var replayImage = "button_restart.png";
 var comboTileNames = ["Dead_End_2.png","Line_Combo.png","Loop_Tile_2.png"];
 var tileNames = ["Corner_Tile.png","Cross_Tile.png","DeadEnd_Tile.png", "Line_Tile.png","Tetris_Tile.png"];
 
@@ -62,6 +62,8 @@ var keyUp;
 var keyLeft;
 var keyDown;
 var keyRight;
+var keyZ;
+var keyX;
 
 // Directions
 var NORTH = 0;
@@ -185,11 +187,11 @@ function create() {
 
 
     // Creates the Guard
-
     guard = game.add.sprite(game.world.centerX+TILE_SIZE+MARGIN, game.world.centerY+TILE_SIZE+MARGIN, 'guard');
     guardPos = {x:exit.x, y:exit.y}
     guard.anchor.setTo(0.5,0.5);
     guard.scale.setTo(scaleRatio,scaleRatio);
+
     // Creates the player
     player = game.add.sprite(game.world.centerX-TILE_SIZE+MARGIN, game.world.centerY-(LENGTH-1)*(TILE_SIZE+MARGIN), 'player');
     playerPos = {x:entrance.x, y:entrance.y}
@@ -210,28 +212,28 @@ function create() {
     game.input.onDown.add(removeLogo, this);
 
     // Adds keyboard input
-    keyUp = game.input.keyboard.addKey(Phaser.Keyboard.UP);
-    keyUp.onDown.add(moveUp, this);
+    // keyUp = game.input.keyboard.addKey(Phaser.Keyboard.UP);
+    // keyUp.onDown.add(moveUp, this);
 
-    keyLeft = game.input.keyboard.addKey(Phaser.Keyboard.LEFT);
-    keyLeft.onDown.add(moveLeft, this);
+    // keyLeft = game.input.keyboard.addKey(Phaser.Keyboard.LEFT);
+    // keyLeft.onDown.add(moveLeft, this);
 
-    keyRight= game.input.keyboard.addKey(Phaser.Keyboard.RIGHT);
-    keyRight.onDown.add(moveRight, this);
+    // keyRight= game.input.keyboard.addKey(Phaser.Keyboard.RIGHT);
+    // keyRight.onDown.add(moveRight, this);
 
-    keyDown = game.input.keyboard.addKey(Phaser.Keyboard.DOWN);
-    keyDown.onDown.add(moveDown, this);
+    // keyDown = game.input.keyboard.addKey(Phaser.Keyboard.DOWN);
+    // keyDown.onDown.add(moveDown, this);
 
-    keyZ = game.input.keyboard.addKey(Phaser.Keyboard.Z);
-    keyZ.onDown.add(rotateClockWise, this);
+    // keyZ = game.input.keyboard.addKey(Phaser.Keyboard.Z);
+    // keyZ.onDown.add(rotateClockWise, this);
 
-    keyX = game.input.keyboard.addKey(Phaser.Keyboard.X);
-    keyX.onDown.add(rotateCounterClockWise, this);
+    // keyX = game.input.keyboard.addKey(Phaser.Keyboard.X);
+    // keyX.onDown.add(rotateCounterClockWise, this);
 
-    game.input.keyboard.removeKeyCapture(Phaser.Keyboard.UP);
-    game.input.keyboard.removeKeyCapture(Phaser.Keyboard.LEFT);
-    game.input.keyboard.removeKeyCapture(Phaser.Keyboard.DOWN);
-    game.input.keyboard.removeKeyCapture(Phaser.Keyboard.RIGHT);
+    // game.input.keyboard.removeKeyCapture(Phaser.Keyboard.UP);
+    // game.input.keyboard.removeKeyCapture(Phaser.Keyboard.LEFT);
+    // game.input.keyboard.removeKeyCapture(Phaser.Keyboard.DOWN);
+    // game.input.keyboard.removeKeyCapture(Phaser.Keyboard.RIGHT);
 
     // Game Over screen
     gameDone = game.add.sprite(0, 0, 'gameover');
@@ -240,13 +242,15 @@ function create() {
 }
 
 function update() {
+    // console.log(rotated);
+    // console.log(moved);
+
     checkGameStatus();
     if (rotated && moved) {
         moveGuard();
         checkGameStatus();
         rotated = false;
         moved = false;
-        //reset();
     }
     gameDone.bringToTop;
 
@@ -263,7 +267,6 @@ function update() {
 // Functions that allow actions through keyboard
 function moveUp() {
     if (rotated && !moved && playerPos.y > 0) {
-        normalize(board[cursorPos.x][cursorPos.y].image)();
         moved = movePlayer(board[playerPos.x][playerPos.y-1]);
     } else if (!rotated && cursorPos.y == -1) {
         cursorPos.x = 0;
@@ -277,7 +280,6 @@ function moveUp() {
 }
 function moveDown() {
     if (rotated && !moved && playerPos.y < board[playerPos.x].length-1) {
-        normalize(board[cursorPos.x][cursorPos.y].image)();
         moved = movePlayer(board[playerPos.x][playerPos.y+1]);
     } else if (!rotated && cursorPos.y == -1) {
         cursorPos.x = 0;
@@ -291,7 +293,6 @@ function moveDown() {
 }
 function moveRight() {
     if (rotated && !moved && playerPos.y < board.length-1) {
-        normalize(board[cursorPos.x][cursorPos.y].image)();
         moved = movePlayer(board[playerPos.x+1][playerPos.y]);
     } else if (!rotated && cursorPos.y == -1) {
         cursorPos.x = 0;
@@ -305,7 +306,7 @@ function moveRight() {
 }
 function moveLeft() {
     if (rotated && !moved && playerPos.x > 0) {
-        normalize(board[cursorPos.x][cursorPos.y].image)();
+
         moved = movePlayer(board[playerPos.x-1][playerPos.y]);
     } else if (!rotated && cursorPos.y == -1) {
         cursorPos.x = 0;
@@ -406,9 +407,14 @@ function reset() {
 
 // Creates the UI for the tiles
 function menuCreate(s) {
-    return function() {
-        //console.log("Clicked:",s.x,s.y)
-    
+    // return function() {
+    //     console.log("Clicked:",s.x,s.y);
+    //     console.log("East",s.canGoEast(player));
+    //     console.log("West",s.canGoWest(player));
+    //     console.log("North",s.canGoNorth(player));
+    //     console.log("South",s.canGoSouth(player));
+
+
         if (group) {
             button1.destroy();
             button2.destroy();
@@ -645,7 +651,7 @@ class BasicTile {
         if (this.y == 0 || this.y == LENGTH+1) {
             return false;
         }
-        this.rotation = (this.rotation - RIGHT_ANGLE) % FULL_CIRCLE;
+        this.rotation = (this.rotation - RIGHT_ANGLE + FULL_CIRCLE) % FULL_CIRCLE;
         this.image.angle -= RIGHT_ANGLE;
         return true;
     }
