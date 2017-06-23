@@ -1,5 +1,6 @@
-var canvas_x = 1000;
-var canvas_y = 850;
+var canvas_x = window.innerWidth * window.devicePixelRatio;
+var canvas_y = window.innerHeight * window.devicePixelRatio;
+var scaleRatio = window.devicePixelRatio;
 
 var game = new Phaser.Game(canvas_x, canvas_y, Phaser.CANVAS, 'phaser-example', { preload: preload, create: create, update: update });
 var board;
@@ -12,9 +13,21 @@ var guardPos;
 var gameDone;
 var logo;
 
+
+// Scaling and everything
+
+var w = window.innerWidth;
+var h = window.innerHeight;
+// var aaa = window.outerWidth;
+// var AAA = window.outerHeight;
+console.log(w);
+console.log(h);
+// console.log(aaa);
+// console.log(AAA);
+
 //music found from https://www.dl-sounds.com/royalty-free/category/game-film/video-game/ && http://freesound.org
 //https://tutorialzine.com/2015/06/making-your-first-html5-game-with-phaser source
-//for the game over scree
+//for the game over screen
 
 
 // For keeping tracking of turns
@@ -23,22 +36,47 @@ var rotated = false
 
 
 // Constants to for the map 
-var width = 3;
-var length = 3;
-var tileSize = 140;
-var comboSpawn = 0.1;
+var WIDTH = 3;
+var LENGTH = 3;
+var TILE_SIZE = 128*scaleRatio;
+var MARGIN = 12*scaleRatio;
+var COMBO_SPAWN = 0.1;
+var RIGHT_ANGLE = 90;
+var FLIPPED = 180;
+var FULL_CIRCLE = 360;
 
 
-// TODO: Maybe have a function to search through folder for filenames?
-var replayImage = "button_restart.png"
-var entrix = "EntranceExit.png";
-var tileNames = ["Corner_Tile.png","Cross_Tile.png","DeadEnd_Tile.png","Line_Tile.png","Tetris_Tile.png"];
+// Filenames
 var tiles = [];
-var comboTileNames = ["Dead_End_2.png","Line_Combo.png","Loop_Tile_2.png"];
 var comboTiles = []
+var entrix = "EntranceExit.png";
+var replayImage = "button_restart.png"
+var comboTileNames = ["Dead_End_2.png","Line_Combo.png","Loop_Tile_2.png"];
+var tileNames = ["Corner_Tile.png","Cross_Tile.png","DeadEnd_Tile.png", "Line_Tile.png","Tetris_Tile.png"];
 
+// UI variables
+var button1;
+var button2;
+var button3;
+var group;
+var box_size = 128; 
+
+// Keys 
+var keyUp;
+var keyLeft;
+var keyDown;
+var keyRight;
+
+// Directions
+var NORTH = 0;
+var WEST = 1;
+var SOUTH = 2;
+var EAST = 3;
+var DIRECTIONS = 4;
+
+// Phaser Functions
 function preload() {
-
+    
     // Used to load GAME OVER 
     game.load.image('gameover', 'assets/sprites/gameover.png');
 
@@ -72,21 +110,21 @@ function preload() {
 }
 
 function create() {
+    game.stage.backgroundColor = "#4488AA";
 
-    game.scale.pageAlignHorizontally = true; game.scale.pageAlignVeritcally = true; game.scale.refresh();
+    //game.scale = 0.5;
+    game.scale.pageAlignHorizontally = true; game.scale.pageAlignVertically = true; game.scale.refresh();
     board = [[],[],[]];
 
-    game.stage.backgroundColor = 'rgba(125,125,0,0)';
-
     // Creates the board
-    for (let x = 0; x < width; x++) {
+    for (let x = 0; x < WIDTH; x++) {
         
-        for (let y = 0; y <= length + 1; y++) {
+        for (let y = 0; y <= LENGTH + 1; y++) {
             
             // TODO: Tweak this to actually center it
             // Finds the centered placement of the tiles 
-            let xLoc = game.world.centerX+(x-1)*tileSize;
-            let yLoc = game.world.centerY+(y-2)*tileSize;
+            let xLoc = game.world.centerX+(x-1)*(TILE_SIZE+MARGIN);
+            let yLoc = game.world.centerY+(y-2)*(TILE_SIZE+MARGIN);
             let s;
             if (y == 0) {
                 if (x == 0) {
@@ -97,16 +135,16 @@ function create() {
                     s = new BasicTile([0,0,0,0], 0, xLoc, yLoc, "", x, y);
                 }
             }
-            else if (y == length + 1) {
+            else if (y == LENGTH + 1) {
                 // Creates the exit
-                if (x == width - 1) {
-                    s = new BasicTile([0,0,1,0], 180, xLoc, yLoc, "entrix",x, y);
+                if (x == WIDTH - 1) {
+                    s = new BasicTile([0,0,1,0], FLIPPED, xLoc, yLoc, "entrix",x, y);
                     s.image.scale.y *= -1;
                     exit = s
                 } else {
                     s = new BasicTile([0,0,0,0], 0, xLoc, yLoc, "", x, y);
                 }
-            } else if (Math.random() < comboSpawn){
+            } else if (Math.random() < COMBO_SPAWN) {
                 let tileName = comboTiles[Math.floor(Math.random()*comboTiles.length)];
                 s = new ComboTile(findComboExits(tileName), 0, xLoc, yLoc, tileName, x, y);
             } else {
@@ -118,30 +156,78 @@ function create() {
         }
     }
     // Creates the Guard
-    guard = game.add.sprite(game.world.centerX+tileSize, game.world.centerY+tileSize, 'guard');
+    guard = game.add.sprite(game.world.centerX+TILE_SIZE+MARGIN, game.world.centerY+TILE_SIZE+MARGIN, 'guard');
     guardPos = {x:exit.x, y:exit.y}
     guard.anchor.setTo(0.5,0.5);
+    guard.scale.setTo(scaleRatio,scaleRatio);
     // Creates the player
-    player = game.add.sprite(game.world.centerX-tileSize, game.world.centerY-(length-1)*tileSize, 'player');
+    player = game.add.sprite(game.world.centerX-TILE_SIZE+MARGIN, game.world.centerY-(LENGTH-1)*(TILE_SIZE+MARGIN), 'player');
     playerPos = {x:entrance.x, y:entrance.y}
     player.anchor.setTo(0.5,0.5);
     player.inputEnabled = true;
+    player.scale.setTo(scaleRatio,scaleRatio);
 
     //Creates the restart button
     restartButton = game.add.button(game.world.centerX + 300, 100, 'replayImage', actionOnClick, this);
-    restartButton.scale.setTo(0.41,0.41);
+    restartButton.scale.setTo(0.41*scaleRatio,0.41*scaleRatio);
+    restartButton.inputEnabled = true;
 
     //Splash screen
-    logo = game.add.sprite(0, 0, "logo");
-    logo.scale.setTo(0.175,0.25);
+    logo = game.add.sprite(game.world.centerX, game.world.centerY, "logo");
+    logo.anchor.setTo(0.5,0.5);
+    logo.scale.setTo(0.18*scaleRatio,0.25*scaleRatio);
     logo.fixedtoCamera = true;
     game.input.onDown.add(removeLogo, this);
+
+    // Adds keyboard input
+    var keyUp = game.input.keyboard.addKey(Phaser.Keyboard.UP);
+    keyUp.onDown.add(function () {if (playerPos.y > 0) {movePlayer(board[playerPos.x][playerPos.y-1])}}, this);
+
+    var keyLeft = game.input.keyboard.addKey(Phaser.Keyboard.LEFT);
+    keyLeft.onDown.add(function () {if (playerPos.x > 0) {movePlayer(board[playerPos.x-1][playerPos.y])}}, this);
+
+    var keyRight= game.input.keyboard.addKey(Phaser.Keyboard.RIGHT);
+    keyRight.onDown.add(function () { if (playerPos.x < board[x].length-1) {movePlayer(board[playerPos.x+1][playerPos.y])}}, this);
+
+    var keyDown = game.input.keyboard.addKey(Phaser.Keyboard.DOWN);
+    keyDown.onDown.add(function () { if (playerPos.y < board[x].length-1) {movePlayer(board[playerPos.x][playerPos.y+1])}}, this);
+
+    game.input.keyboard.removeKeyCapture(Phaser.Keyboard.UP);
+    game.input.keyboard.removeKeyCapture(Phaser.Keyboard.LEFT);
+    game.input.keyboard.removeKeyCapture(Phaser.Keyboard.DOWN);
+    game.input.keyboard.removeKeyCapture(Phaser.Keyboard.RIGHT);
+
+    // Game Over screen
+    gameDone = game.add.sprite(0, 0, 'gameover');
+    gameDone.scale.setTo(3.1*scaleRatio,3.5*scaleRatio);
+    gameDone.visible = false;
+}
+
+function update() {
+    checkGameStatus();
+    if (rotated && moved) {
+        moveGuard();
+        checkGameStatus();
+        rotated = false;
+        moved = false;
+    }
+
+    player.x = game.world.centerX+(playerPos.x-1)*(TILE_SIZE+MARGIN);
+    player.y = game.world.centerY+(playerPos.y-2)*(TILE_SIZE+MARGIN);
+    player.bringToTop;
+
+    guard.x = game.world.centerX+(guardPos.x-1)*(TILE_SIZE+MARGIN);
+    guard.y = game.world.centerY+(guardPos.y-2)*(TILE_SIZE+MARGIN);
+    guard.bringToTop;
 }
 
 
-//used with the splash screen
+
+// used with the splash screen
 function removeLogo () {
     game.input.onDown.remove(removeLogo, this);
+    //tried to use this to fade in/fade out the welcome...
+    // game.add.tween(sprite).to( { alpha: 1 }, 2000, Phaser.Easing.Linear.None, true, 0, 1000, true);
     logo.kill();
 }
 
@@ -149,34 +235,41 @@ function removeLogo () {
 function actionOnClick () {
     playerPos = {x:entrance.x, y:entrance.y};
     guardPos = {x:exit.x, y:exit.y}
-     for (let x = 0;  x < board.length; x++) {
+    for (let x = 0;  x < board.length; x++) {
         for (let y = 0; y < board[x].length; y++) {
             board[x][y].rotation = 0;
             board[x][y].image.angle = 0;
         }
     }
+    gameDone.visible = false;
+    rotated = false;
+    moved = false;
+    gameDone.destroy();
+    // game.input.onDown.add(actionOnClick,self);
+    exit.rotation = FLIPPED;
+    reset();
 }
 
-//call this function when the player loses
+// call this function when the player loses
 function GameOver () {
-    gameDone = game.add.sprite(200, 80, 'gameover');
-    gameDone = gameDone.scale.setTo(2.2,2.7);
+    gameDone.visible = true;
 }
 
+// Makes the buttons change color over various mouse inputs
 function addHighlight(s) {
     s.events.onInputOver.add(highlights(s), this);
     s.events.onInputOut.add(normalize(s),this);
     s.events.onInputDown.add(color(s), this);
 }
 
-//the dark blue (pressed down)
+// the dark blue (pressed down)
 function color(s) {
     return function() {
         s.tint = 0x0000ff;
     }
 }
 
-//the light blue highlight
+// the light blue highlight
 function highlights(s) {
     return function() {
         if (s.tint == 0xffffff) {
@@ -185,6 +278,7 @@ function highlights(s) {
     }
 }
 
+// Turns the hover tiles to normal
 function normalize(s) {
     return function() {
         if (s.tint == 0x009fff){ 
@@ -193,6 +287,7 @@ function normalize(s) {
     }
 }
 
+// Turns all tiles back to normal color
 function reset() {
     for (let x = 0;  x < board.length; x++) {
         for (let y = 0; y < board[x].length; y++) {
@@ -201,20 +296,10 @@ function reset() {
     }
 }
 
-//to restart the game
-function replay() {
-
-}
-
-var button1;
-var button2;
-var button3;
-var group;
-var box_size = 128; // for the menu item or tiles later on
-
+// Creates the UI for the tiles
 function menuCreate(s) {
     return function() {
-        console.log("Clicked:",s.x,s.y)
+        //console.log("Clicked:",s.x,s.y)
     
         if (group) {
             button1.destroy();
@@ -229,6 +314,12 @@ function menuCreate(s) {
         button1 = game.make.button( 10 , 700, 'rotateClock' , clockwise, this, 20, 10, 0);
         button2 = game.make.button(140, 700, 'rotateCounter', counterClockWise, this, 20, 10, 0);
         button3 = game.make.button(270, 700, 'move', move, this, 20, 10, 0)
+
+        button1.scale.setTo(scaleRatio,scaleRatio);
+        button2.scale.setTo(scaleRatio,scaleRatio);
+        button3.scale.setTo(scaleRatio,scaleRatio);
+
+
         function clockwise() {
             if (!rotated) {
                 rotated = s.rotateClockWise();
@@ -270,6 +361,8 @@ function menuCreate(s) {
         group.add(button3);
     }
 }
+
+// Used to check if the player has won or lost
 function checkGameStatus() {
     if (player.x == exit.x && player.y == exit.y) {
         console.log("You Win!");
@@ -281,25 +374,7 @@ function checkGameStatus() {
     }
 }
 
-function update() {
-    checkGameStatus();
-    if (rotated && moved) {
-        moveGuard();
-        checkGameStatus();
-        rotated = false;
-        moved = false;
-    }
-
-    player.x = game.world.centerX+(playerPos.x-1)*tileSize;
-    player.y = game.world.centerY+(playerPos.y-2)*tileSize;
-    player.bringToTop;
-
-    guard.x = game.world.centerX+(guardPos.x-1)*tileSize;
-    guard.y = game.world.centerY+(guardPos.y-2)*tileSize;
-    guard.bringToTop;
-
-}
-
+// Trys to move the player and returns true if it does false othewise
 function movePlayer(tile) {
     let x = playerPos.x;
     let y = playerPos.y;
@@ -336,6 +411,7 @@ function movePlayer(tile) {
     return changed;
 }
 
+// The guard AI
 function moveGuard() {
     let possibleMoves = [];
     let x = guardPos.x;
@@ -369,6 +445,8 @@ function moveGuard() {
     }
     
 }
+
+// Finds the exits for the various tiles
 function findExits(tileName) {
     // 4 being the length of the word tile
     let index = tileName.slice("tile".length, tileName.length);
@@ -388,6 +466,8 @@ function findExits(tileName) {
     }
 
 }
+
+// Finds the exits for the various combotiles
 function findComboExits(tileName) {
     // 4 being the length of the word tile
     let index = tileName.slice("combo".length, tileName.length);
@@ -397,7 +477,7 @@ function findComboExits(tileName) {
         case "Line_Combo.png":
             return [1,2,1,2];
         case "Loop_Tile_2.png":
-            return [1,1,2,2];
+            return [1,2,2,1];
         default:
             return [0,0,0,0];
     }
@@ -422,6 +502,7 @@ class BasicTile {
         if (tileName != "") {
             
             this.image.anchor.setTo(0.5,0.5);
+            this.image.scale.setTo(scaleRatio,scaleRatio);
             this.image.inputEnabled = true;
             this.image.events.onInputDown.add(menuCreate(this), this);
             addHighlight(this.image);
@@ -430,34 +511,34 @@ class BasicTile {
         this.rotation = rotation;
     }
     canGoNorth (character) {
-        return this.exits[(this.rotation/90)];
+        return this.exits[(NORTH+(this.rotation/RIGHT_ANGLE)) % DIRECTIONS];
     }
     canGoWest (character) {
-        return this.exits[(1+(this.rotation/90)) % 4];
+        return this.exits[(WEST+(this.rotation/RIGHT_ANGLE)) % DIRECTIONS];
     }
     canGoSouth (character) {
-        return this.exits[(2+(this.rotation/90)) % 4];
+        return this.exits[(SOUTH+(this.rotation/RIGHT_ANGLE)) % DIRECTIONS];
     }
     canGoEast (character) {
-        return this.exits[(3+(this.rotation/90)) % 4];
+        return this.exits[(EAST+(this.rotation/RIGHT_ANGLE)) % DIRECTIONS];
     }
     rotateClockWise() {
         // Escape for exit/entrance
-        if (this.y == 0 || this.y == length+1) {
+        if (this.y == 0 || this.y == LENGTH+1) {
             return false;
         }
-        this.rotation = (this.rotation + 90) % 360;
-        this.image.angle += 90;
+        this.rotation = (this.rotation + RIGHT_ANGLE) % FULL_CIRCLE;
+        this.image.angle += RIGHT_ANGLE;
         return true;
         
     }
     rotateCounterClockWise() {
         // Escape for exit/entrance
-        if (this.y == 0 || this.y == length+1) {
+        if (this.y == 0 || this.y == LENGTH+1) {
             return false;
         }
-        this.rotation = (this.rotation + 270) % 360;
-        this.image.angle -= 90;
+        this.rotation = (this.rotation - RIGHT_ANGLE) % FULL_CIRCLE;
+        this.image.angle -= RIGHT_ANGLE;
         return true;
     }
     moveTo(character, x, y) {
@@ -493,6 +574,7 @@ class ComboTile {
         if (tileName != "") {
             
             this.image.anchor.setTo(0.5,0.5);
+            this.image.scale.setTo(scaleRatio,scaleRatio);
             this.image.inputEnabled = true;
             this.image.events.onInputDown.add(menuCreate(this), this);
             addHighlight(this.image);
@@ -501,7 +583,7 @@ class ComboTile {
         this.rotation = rotation;
     }
     canGoDirection(character, characterPos, direction) {
-        let isExit = this.exits[(direction+(this.rotation/90)) % 4]
+        let isExit = this.exits[(direction+(this.rotation/RIGHT_ANGLE)) % 4]
         if (isExit == 0) {
             return false;
         } else if (characterPos.x == this.x && characterPos.y == this.y) {
@@ -514,76 +596,73 @@ class ComboTile {
                 console.log("Error: Character is not in any zone");
             }
         } else {
-            return isExit != 0 // Any exit is good when you're entering
+            return isExit != 0; // Any exit is good when you're entering
         }
     }
 
     canGoNorth (character, characterPos) {
-        return this.canGoDirection(character,characterPos, 0);
-    }
-    canGoEast (character, characterPos) {
-        return this.canGoDirection(character, characterPos, 1);
+        return this.canGoDirection(character,characterPos, NORTH);
     }
     canGoWest (character, characterPos) {
-        return this.canGoDirection(character, characterPos, 3);
+        return this.canGoDirection(character, characterPos, WEST);
     }
     canGoSouth (character, characterPos) {
-        return this.canGoDirection(character, characterPos, 2);
+        return this.canGoDirection(character, characterPos, SOUTH);
+    }
+    canGoEast (character, characterPos) {
+        return this.canGoDirection(character, characterPos, EAST);
     }
     rotateClockWise() {
         // Escape for exit/entrance
-        if (this.y == 0 || this.y == length+1) {
+        if (this.y == 0 || this.y == LENGTH+1) {
             return false;
         }
-        this.rotation = (this.rotation + 90) % 360;
-        this.image.angle += 90;
+        this.rotation = (this.rotation + RIGHT_ANGLE) % FULL_CIRCLE;
+        this.image.angle += RIGHT_ANGLE;
         return true;
         
     }
     rotateCounterClockWise() {
         // Escape for exit/entrance
-        if (this.y == 0 || this.y == length+1) {
+        if (this.y == 0 || this.y == LENGTH+1) {
             return false;
         }
-        this.rotation = (this.rotation + 270) % 360;
-        this.image.angle -= 90;
+        this.rotation = (this.rotation - RIGHT_ANGLE) % FULL_CIRCLE;
+        this.image.angle -= RIGHT_ANGLE;
         return true;
     }
 
 
     moveTo(character, x, y) {
          if (x == 0 && y == 1) { //Went to North Side
-            if (this.exits[(0+(this.rotation/90)) % 4] == 1) {
+            if (this.exits[(NORTH+(this.rotation/RIGHT_ANGLE)) % DIRECTIONS] == 1) {
+                this.zone1.push(character);
+            } else {
+                this.zone2.push(character);
+            }
+        } else if (x == 1 && y == 0) { //Moved West
+            if (this.exits[(WEST+(this.rotation/RIGHT_ANGLE)) % DIRECTIONS] == 1) {
                 this.zone1.push(character);
             } else {
                 this.zone2.push(character);
             }
          } else if (x == 0 && y == -1) { //Went to South
-            if (this.exits[(2+(this.rotation/90)) % 4] == 1) {
+            if (this.exits[(SOUTH+(this.rotation/RIGHT_ANGLE)) % DIRECTIONS] == 1) {
                 this.zone1.push(character);
             } else {
                 this.zone2.push(character);
             }
-        } else if (x == 1 && y == 0) {//Moved East
-            if (this.exits[(1+(this.rotation/90)) % 4] == 1) {
+        } else if (x == -1 && y == 0) {//Moved East
+            if (this.exits[(EAST+(this.rotation/RIGHT_ANGLE)) % DIRECTIONS] == 1) {
                 this.zone1.push(character);
             } else {
                 this.zone2.push(character);
             }
-        } else if (x == -1 && y == 0) { //Moved West
-            if (this.exits[(3+(this.rotation/90)) % 4] == 1) {
-                this.zone1.push(character);
-            } else {
-                this.zone2.push(character);
-            }
+
         } else {
                 console.log("Error, Player moved too much");
         }
-        console.log(this.zone1);
-        console.log(this.zone2);
-        for (var x =0; x < 4; x++) {
-            console.log(x, this.canGoDirection(player, playerPos, x))
-        }
+
     }
     moveAway(character) {
         if (this.zone1.includes(character)) {
@@ -592,8 +671,6 @@ class ComboTile {
         else {
             this.zone2.splice(this.zone2.indexOf(character), 1);
         }
-        console.log(this.zone1);
-        console.log(this.zone2);
     }
 
     sameZone(player, guard) {
