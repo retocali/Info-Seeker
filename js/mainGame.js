@@ -2,7 +2,6 @@ var canvas_x = window.innerWidth;
 var canvas_y = window.innerHeight;
 var scaleRatio = Math.min(canvas_x/1100, canvas_y/800)/window.devicePixelRatio;
 
-console.log(window.devicePixelRatio);
 
 var game = new Phaser.Game(canvas_x, canvas_y, Phaser.CANVAS, 'phaser-example', { preload: preload, create: create, update: update });
 var board;
@@ -13,6 +12,7 @@ var entrance;
 var exit;
 var guardPos;
 var gameDone;
+var youWin
 var logo;
 var memoryTile;
 
@@ -29,16 +29,13 @@ var rotated = false;
 // Constants to for the map 
 var WIDTH = 3;
 var LENGTH = 3;
+var MEMORY_NUM = 2;
 var TILE_SIZE = 128*scaleRatio;
 var MARGIN = 12*scaleRatio;
 var COMBO_SPAWN = 0.1;
 var RIGHT_ANGLE = 90;
 var FLIPPED = 180;
 var FULL_CIRCLE = 360;
-
-// Counter for creating the map
-var counter = 0;
-memoryCount = 0;
 
 // Filenames
 var tiles = [];
@@ -76,8 +73,9 @@ var DIRECTIONS = 4;
 // Phaser Functions
 function preload() {
     
-    // Used to load GAME OVER 
+    // Used to load GAME OVER and YOU WIN
     game.load.image('gameover', 'assets/sprites/gameover.png');
+    game.load.image('youwin', 'assets/sprites/youwin.png');
 
     // Splash Screen
     game.load.image('logo', 'assets/sprites/welcome.jpg');
@@ -112,13 +110,25 @@ function preload() {
 }
 
 function create() {
+    // Sets up the background
     game.stage.backgroundColor = "#4488AA";
-
-    //game.scale = 0.5;
     game.scale.pageAlignHorizontally = true; game.scale.pageAlignVertically = true; game.scale.refresh();
-    board = [[],[],[]];
+    
+    boardGenerator();
 
+    makePlayer();
+
+    guardCreation();
+
+    makeUI();
+
+    addKeyboardInput();
+
+}
+
+function boardGenerator() {
     // Creates the board
+    board = [[],[],[]];
     for (let x = 0; x < WIDTH; x++) {
         
 
@@ -146,9 +156,8 @@ function create() {
                     //Creates the entrance
                     s = new BasicTile([0,0,1,0], 0, xLoc, yLoc, "entrix", x, y);
                     entrance = s;
-                } else {
+                } else 
                     s = new BasicTile([0,0,0,0], 0, xLoc, yLoc, "", x, y);
-                }
             }
             else if (y == LENGTH + 1) {
                 // Creates the exit
@@ -156,9 +165,8 @@ function create() {
                     s = new BasicTile([0,0,1,0], FLIPPED, xLoc, yLoc, "entrix",x, y);
                     s.image.scale.y *= -1;
                     exit = s
-                } else {
+                } else
                     s = new BasicTile([0,0,0,0], 0, xLoc, yLoc, "", x, y);
-                }
             } else if (Math.random() < COMBO_SPAWN) {
                 let tileName = comboTiles[Math.floor(Math.random()*comboTiles.length)];
                 s = new ComboTile(findComboExits(tileName), 0, xLoc, yLoc, tileName, x, y);
@@ -170,34 +178,18 @@ function create() {
             board[x][y] = s; 
         }
     }
+}
 
-    // Make memory tiles
-    var amount = 300;
-    for (let g = 0; g < 9; g++) {
-        if (counter > 2 || counter != 4 ) {
-            if (memoryCount < 2) {
-                if ( Math.floor(Math.random()*4) == 2) {
-                    memoryTile = game.add.sprite(amount, amount, 'memoryTile');
-                    amount = amount + 100;
-                    memoryCount = memoryCount + 1;
-                }
-            }
-        }
-    }
-
-
-    // Creates the Guard
-    guard = game.add.sprite(game.world.centerX+TILE_SIZE+MARGIN, game.world.centerY+TILE_SIZE+MARGIN, 'guard');
-    guardPos = {x:exit.x, y:exit.y}
-    guard.anchor.setTo(0.5,0.5);
-    guard.scale.setTo(scaleRatio,scaleRatio);
-
+function makePlayer() {
     // Creates the player
     player = game.add.sprite(game.world.centerX-TILE_SIZE+MARGIN, game.world.centerY-(LENGTH-1)*(TILE_SIZE+MARGIN), 'player');
     playerPos = {x:entrance.x, y:entrance.y}
     player.anchor.setTo(0.5,0.5);
     player.inputEnabled = true;
     player.scale.setTo(scaleRatio,scaleRatio);
+}
+
+function makeUI() {
 
     //Creates the restart button
     restartButton = game.add.button(game.world.centerX + 300*scaleRatio, 100*scaleRatio, 'replayImage', actionOnClick, this);
@@ -211,34 +203,80 @@ function create() {
     logo.fixedtoCamera = true;
     game.input.onDown.add(removeLogo, this);
 
-    // Adds keyboard input
-    // keyUp = game.input.keyboard.addKey(Phaser.Keyboard.UP);
-    // keyUp.onDown.add(moveUp, this);
-
-    // keyLeft = game.input.keyboard.addKey(Phaser.Keyboard.LEFT);
-    // keyLeft.onDown.add(moveLeft, this);
-
-    // keyRight= game.input.keyboard.addKey(Phaser.Keyboard.RIGHT);
-    // keyRight.onDown.add(moveRight, this);
-
-    // keyDown = game.input.keyboard.addKey(Phaser.Keyboard.DOWN);
-    // keyDown.onDown.add(moveDown, this);
-
-    // keyZ = game.input.keyboard.addKey(Phaser.Keyboard.Z);
-    // keyZ.onDown.add(rotateClockWise, this);
-
-    // keyX = game.input.keyboard.addKey(Phaser.Keyboard.X);
-    // keyX.onDown.add(rotateCounterClockWise, this);
-
-    // game.input.keyboard.removeKeyCapture(Phaser.Keyboard.UP);
-    // game.input.keyboard.removeKeyCapture(Phaser.Keyboard.LEFT);
-    // game.input.keyboard.removeKeyCapture(Phaser.Keyboard.DOWN);
-    // game.input.keyboard.removeKeyCapture(Phaser.Keyboard.RIGHT);
-
     // Game Over screen
     gameDone = game.add.sprite(0, 0, 'gameover');
     gameDone.scale.setTo(3.1*scaleRatio,3.5*scaleRatio);
     gameDone.visible = false;
+
+    youWin = game.add.sprite(0, 0, 'youwin');
+    youWin.scale.setTo(1.9*scaleRatio,1.7*scaleRatio);
+    youWin.visible = false;
+}
+
+function guardCreation() {
+    // Make memory tiles
+    let memTilesLocs = [];
+    
+    for (let a = 0; a < WIDTH; a++) {
+        for (let b = 1; b <= LENGTH; b++) {
+            memTilesLocs.push([a,b]);
+        }
+    }
+    // Removes the chance that the tiles land adjacent to the player
+    memTilesLocs.splice(LENGTH, 1);
+    memTilesLocs.splice(1, 1);
+    memTilesLocs.splice(0, 1);
+    
+    for (let i = 0; i < MEMORY_NUM; i++) {
+        // Random indices on the board based on the locations
+        let index = Math.floor(Math.random()*memTilesLocs.length);
+        let coord = memTilesLocs[index];
+        console.log(memTilesLocs);
+        memTilesLocs.splice(index, 1)
+        let x = coord[0];
+        let y = coord[1];
+
+        // Which translate to random locations
+        let xLoc = game.world.centerX+(x-1)*(TILE_SIZE+MARGIN);
+        let yLoc = game.world.centerY+(y-2)*(TILE_SIZE+MARGIN);
+        memoryTile = game.add.sprite(xLoc, yLoc, 'memoryTile');
+        memoryTile.anchor.setTo(0.5,0.5);
+        memoryTile.scale.setTo(scaleRatio,scaleRatio);
+        memoryTile.bringToTop();
+    }
+
+    // Creates the Guard
+    guard = game.add.sprite(game.world.centerX+TILE_SIZE+MARGIN, game.world.centerY+TILE_SIZE+MARGIN, 'guard');
+    guardPos = {x:exit.x, y:exit.y}
+    guard.anchor.setTo(0.5,0.5);
+    guard.scale.setTo(scaleRatio,scaleRatio);
+
+}
+
+function addKeyboardInput() {
+    // Adds keyboard input
+    keyUp = game.input.keyboard.addKey(Phaser.Keyboard.UP);
+    keyUp.onDown.add(moveUp, this);
+
+    keyLeft = game.input.keyboard.addKey(Phaser.Keyboard.LEFT);
+    keyLeft.onDown.add(moveLeft, this);
+
+    keyRight= game.input.keyboard.addKey(Phaser.Keyboard.RIGHT);
+    keyRight.onDown.add(moveRight, this);
+
+    keyDown = game.input.keyboard.addKey(Phaser.Keyboard.DOWN);
+    keyDown.onDown.add(moveDown, this);
+
+    keyZ = game.input.keyboard.addKey(Phaser.Keyboard.Z);
+    keyZ.onDown.add(rotateClockWise, this);
+
+    keyX = game.input.keyboard.addKey(Phaser.Keyboard.X);
+    keyX.onDown.add(rotateCounterClockWise, this);
+
+    game.input.keyboard.removeKeyCapture(Phaser.Keyboard.UP);
+    game.input.keyboard.removeKeyCapture(Phaser.Keyboard.LEFT);
+    game.input.keyboard.removeKeyCapture(Phaser.Keyboard.DOWN);
+    game.input.keyboard.removeKeyCapture(Phaser.Keyboard.RIGHT);
 }
 
 function update() {
@@ -252,7 +290,6 @@ function update() {
         rotated = false;
         moved = false;
     }
-    gameDone.bringToTop;
 
     player.x = game.world.centerX+(playerPos.x-1)*(TILE_SIZE+MARGIN);
     player.y = game.world.centerY+(playerPos.y-2)*(TILE_SIZE+MARGIN);
@@ -261,8 +298,10 @@ function update() {
     guard.x = game.world.centerX+(guardPos.x-1)*(TILE_SIZE+MARGIN);
     guard.y = game.world.centerY+(guardPos.y-2)*(TILE_SIZE+MARGIN);
     guard.bringToTop;
-}
 
+    gameDone.bringToTop;
+    youWin.bringToTop;
+}
 
 // Functions that allow actions through keyboard
 function moveUp() {
@@ -351,17 +390,11 @@ function actionOnClick () {
         }
     }
     gameDone.visible = false;
+    youWin.visible = false
     rotated = false;
     moved = false;
-    gameDone.destroy();
-    // game.input.onDown.add(actionOnClick,self);
     exit.rotation = FLIPPED;
     reset();
-}
-
-// call this function when the player loses
-function GameOver () {
-    gameDone.visible = true;
 }
 
 // Makes the buttons change color over various mouse inputs
@@ -478,13 +511,13 @@ function menuCreate(s) {
 
 // Used to check if the player has won or lost
 function checkGameStatus() {
-    if (player.x == exit.x && player.y == exit.y) {
-        console.log("You Win!");
-    }
     if (playerPos.x == guardPos.x && playerPos.y == guardPos.y 
         && board[guardPos.x][guardPos.y].sameZone(player, guard)) {
         console.log("You Lose!");
-        GameOver();
+        gameDone.visible = true;
+    } else if (playerPos.x == exit.x && playerPos.y == exit.y) {
+        console.log("You Win!");
+        youWin.visible = true;
     }
 }
 
