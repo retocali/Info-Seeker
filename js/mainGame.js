@@ -106,7 +106,7 @@ function create() {
                 } else {
                     s = new BasicTile([0,0,0,0], 0, xLoc, yLoc, "", x, y);
                 }
-            } else if (Math.random() < comboSpawn){
+            } else if (x == 1 && y == 2) {//(Math.random() < comboSpawn){
                 let tileName = comboTiles[Math.floor(Math.random()*comboTiles.length)];
                 s = new ComboTile(findComboExits(tileName), 0, xLoc, yLoc, tileName, x, y);
             } else {
@@ -154,12 +154,12 @@ function actionOnClick () {
      for (let x = 0;  x < board.length; x++) {
         for (let y = 0; y < board[x].length; y++) {
             board[x][y].rotation = 0;
-            board[x][y].image.angle = a0;
+            board[x][y].image.angle = 0;
         }
     }
     rotated = false;
     moved = false;
-    gameDone.events.onInputDown.add(destroySprite,);
+    gameDone.events.onInputDown.add(destroySprite);
     reset();
 }
 
@@ -220,7 +220,7 @@ var box_size = 128; // for the menu item or tiles later on
 
 function menuCreate(s) {
     return function() {
-        console.log("Clicked:",s.x,s.y)
+        //console.log("Clicked:",s.x,s.y)
     
         if (group) {
             button1.destroy();
@@ -403,7 +403,7 @@ function findComboExits(tileName) {
         case "Line_Combo.png":
             return [1,2,1,2];
         case "Loop_Tile_2.png":
-            return [1,1,2,2];
+            return [1,2,2,1];
         default:
             return [0,0,0,0];
     }
@@ -527,14 +527,14 @@ class ComboTile {
     canGoNorth (character, characterPos) {
         return this.canGoDirection(character,characterPos, 0);
     }
-    canGoEast (character, characterPos) {
-        return this.canGoDirection(character, characterPos, 1);
-    }
     canGoWest (character, characterPos) {
-        return this.canGoDirection(character, characterPos, 3);
+        return this.canGoDirection(character, characterPos, 1);
     }
     canGoSouth (character, characterPos) {
         return this.canGoDirection(character, characterPos, 2);
+    }
+    canGoEast (character, characterPos) {
+        return this.canGoDirection(character, characterPos, 3);
     }
     rotateClockWise() {
         // Escape for exit/entrance
@@ -564,24 +564,25 @@ class ComboTile {
             } else {
                 this.zone2.push(character);
             }
+        } else if (x == 1 && y == 0) { //Moved West
+            if (this.exits[(1+(this.rotation/90)) % 4] == 1) {
+                this.zone1.push(character);
+            } else {
+                this.zone2.push(character);
+            }
          } else if (x == 0 && y == -1) { //Went to South
             if (this.exits[(2+(this.rotation/90)) % 4] == 1) {
                 this.zone1.push(character);
             } else {
                 this.zone2.push(character);
             }
-        } else if (x == 1 && y == 0) {//Moved East
-            if (this.exits[(1+(this.rotation/90)) % 4] == 1) {
-                this.zone1.push(character);
-            } else {
-                this.zone2.push(character);
-            }
-        } else if (x == -1 && y == 0) { //Moved West
+        } else if (x == -1 && y == 0) {//Moved East
             if (this.exits[(3+(this.rotation/90)) % 4] == 1) {
                 this.zone1.push(character);
             } else {
                 this.zone2.push(character);
             }
+
         } else {
                 console.log("Error, Player moved too much");
         }
