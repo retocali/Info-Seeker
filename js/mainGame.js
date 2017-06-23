@@ -1,5 +1,6 @@
-var canvas_x = 1000;
-var canvas_y = 850;
+var canvas_x = window.innerWidth * window.devicePixelRatio;
+var canvas_y = window.innerHeight * window.devicePixelRatio;
+var scaleRatio = window.devicePixelRatio;
 
 var game = new Phaser.Game(canvas_x, canvas_y, Phaser.CANVAS, 'phaser-example', { preload: preload, create: create, update: update });
 var board;
@@ -37,8 +38,8 @@ var rotated = false
 // Constants to for the map 
 var WIDTH = 3;
 var LENGTH = 3;
-var TILE_SIZE = 128;
-var MARGIN = 12;
+var TILE_SIZE = 128*scaleRatio;
+var MARGIN = 12*scaleRatio;
 var COMBO_SPAWN = 0.1;
 var RIGHT_ANGLE = 90;
 var FLIPPED = 180;
@@ -158,20 +159,23 @@ function create() {
     guard = game.add.sprite(game.world.centerX+TILE_SIZE+MARGIN, game.world.centerY+TILE_SIZE+MARGIN, 'guard');
     guardPos = {x:exit.x, y:exit.y}
     guard.anchor.setTo(0.5,0.5);
+    guard.scale.setTo(scaleRatio,scaleRatio);
     // Creates the player
     player = game.add.sprite(game.world.centerX-TILE_SIZE+MARGIN, game.world.centerY-(LENGTH-1)*(TILE_SIZE+MARGIN), 'player');
     playerPos = {x:entrance.x, y:entrance.y}
     player.anchor.setTo(0.5,0.5);
     player.inputEnabled = true;
+    player.scale.setTo(scaleRatio,scaleRatio);
 
     //Creates the restart button
     restartButton = game.add.button(game.world.centerX + 300, 100, 'replayImage', actionOnClick, this);
-    restartButton.scale.setTo(0.41,0.41);
+    restartButton.scale.setTo(0.41*scaleRatio,0.41*scaleRatio);
     restartButton.inputEnabled = true;
 
     //Splash screen
-    logo = game.add.sprite(0, 0, "logo");
-    logo.scale.setTo(0.18,0.25);
+    logo = game.add.sprite(game.world.centerX, game.world.centerY, "logo");
+    logo.anchor.setTo(0.5,0.5);
+    logo.scale.setTo(0.18*scaleRatio,0.25*scaleRatio);
     logo.fixedtoCamera = true;
     game.input.onDown.add(removeLogo, this);
 
@@ -195,7 +199,7 @@ function create() {
 
     // Game Over screen
     gameDone = game.add.sprite(0, 0, 'gameover');
-    gameDone.scale.setTo(3.1,3.5);
+    gameDone.scale.setTo(3.1*scaleRatio,3.5*scaleRatio);
     gameDone.visible = false;
 }
 
@@ -310,6 +314,12 @@ function menuCreate(s) {
         button1 = game.make.button( 10 , 700, 'rotateClock' , clockwise, this, 20, 10, 0);
         button2 = game.make.button(140, 700, 'rotateCounter', counterClockWise, this, 20, 10, 0);
         button3 = game.make.button(270, 700, 'move', move, this, 20, 10, 0)
+
+        button1.scale.setTo(scaleRatio,scaleRatio);
+        button2.scale.setTo(scaleRatio,scaleRatio);
+        button3.scale.setTo(scaleRatio,scaleRatio);
+
+
         function clockwise() {
             if (!rotated) {
                 rotated = s.rotateClockWise();
@@ -492,6 +502,7 @@ class BasicTile {
         if (tileName != "") {
             
             this.image.anchor.setTo(0.5,0.5);
+            this.image.scale.setTo(scaleRatio,scaleRatio);
             this.image.inputEnabled = true;
             this.image.events.onInputDown.add(menuCreate(this), this);
             addHighlight(this.image);
@@ -563,6 +574,7 @@ class ComboTile {
         if (tileName != "") {
             
             this.image.anchor.setTo(0.5,0.5);
+            this.image.scale.setTo(scaleRatio,scaleRatio);
             this.image.inputEnabled = true;
             this.image.events.onInputDown.add(menuCreate(this), this);
             addHighlight(this.image);
@@ -659,8 +671,6 @@ class ComboTile {
         else {
             this.zone2.splice(this.zone2.indexOf(character), 1);
         }
-        console.log(this.zone1);
-        console.log(this.zone2);
     }
 
     sameZone(player, guard) {
