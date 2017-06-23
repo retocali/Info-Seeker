@@ -1,6 +1,6 @@
 var canvas_x = window.innerWidth * window.devicePixelRatio;
 var canvas_y = window.innerHeight * window.devicePixelRatio;
-var scaleRatio = window.devicePixelRatio;
+var scaleRatio = Math.min(canvas_x/1100, canvas_x/800);
 
 var game = new Phaser.Game(canvas_x, canvas_y, Phaser.CANVAS, 'phaser-example', { preload: preload, create: create, update: update });
 var board;
@@ -13,17 +13,6 @@ var guardPos;
 var gameDone;
 var logo;
 
-
-// Scaling and everything
-
-var w = window.innerWidth;
-var h = window.innerHeight;
-// var aaa = window.outerWidth;
-// var AAA = window.outerHeight;
-console.log(w);
-console.log(h);
-// console.log(aaa);
-// console.log(AAA);
 
 //music found from https://www.dl-sounds.com/royalty-free/category/game-film/video-game/ && http://freesound.org
 //https://tutorialzine.com/2015/06/making-your-first-html5-game-with-phaser source
@@ -59,7 +48,8 @@ var button1;
 var button2;
 var button3;
 var group;
-var box_size = 128; 
+var BOX_SIZE = 128*scaleRatio; 
+var BUTTON_Y = 700*scaleRatio;
 
 // Keys 
 var keyUp;
@@ -168,7 +158,7 @@ function create() {
     player.scale.setTo(scaleRatio,scaleRatio);
 
     //Creates the restart button
-    restartButton = game.add.button(game.world.centerX + 300, 100, 'replayImage', actionOnClick, this);
+    restartButton = game.add.button(game.world.centerX + 300*scaleRatio, 100*scaleRatio, 'replayImage', actionOnClick, this);
     restartButton.scale.setTo(0.41*scaleRatio,0.41*scaleRatio);
     restartButton.inputEnabled = true;
 
@@ -311,9 +301,9 @@ function menuCreate(s) {
 
         group = game.add.group();
 
-        button1 = game.make.button( 10 , 700, 'rotateClock' , clockwise, this, 20, 10, 0);
-        button2 = game.make.button(140, 700, 'rotateCounter', counterClockWise, this, 20, 10, 0);
-        button3 = game.make.button(270, 700, 'move', move, this, 20, 10, 0)
+        button1 = game.make.button(MARGIN, BUTTON_Y, 'rotateClock' , clockwise, this, 20, 10, 0);
+        button2 = game.make.button(2*MARGIN+BOX_SIZE, BUTTON_Y, 'rotateCounter', counterClockWise, this, 20, 10, 0);
+        button3 = game.make.button(3*MARGIN+2*BOX_SIZE, BUTTON_Y, 'move', move, this, 20, 10, 0)
 
         button1.scale.setTo(scaleRatio,scaleRatio);
         button2.scale.setTo(scaleRatio,scaleRatio);
