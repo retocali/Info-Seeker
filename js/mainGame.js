@@ -12,6 +12,18 @@ var guardPos;
 var gameDone;
 var logo;
 
+
+// Scaling and everything
+
+var w = window.innerWidth;
+var h = window.innerHeight;
+// var aaa = window.outerWidth;
+// var AAA = window.outerHeight;
+console.log(w);
+console.log(h);
+// console.log(aaa);
+// console.log(AAA);
+
 //music found from https://www.dl-sounds.com/royalty-free/category/game-film/video-game/ && http://freesound.org
 //https://tutorialzine.com/2015/06/making-your-first-html5-game-with-phaser source
 //for the game over scree
