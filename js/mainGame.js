@@ -4,7 +4,7 @@ var canvas_x = window.innerWidth;
 var canvas_y = window.innerHeight;
 var scaleRatio = Math.min(canvas_x/1100, canvas_y/800);
 
-var game = new Phaser.Game(canvas_x, canvas_y, Phaser.CANVAS, 'phaser-example', { preload: preload, create: create, update: update });
+var game = new Phaser.Game(canvas_x, canvas_y, Phaser.CANVAS, 'phaser-example', { preload: preload, create: create, update: update});
 
 
 // Map related Variables
@@ -175,11 +175,15 @@ function memoryBoardGenerator() {
 
 function update() {
 
+    gameDone.bringToTop;
+    youWin.bringToTop;
+
     checkGameStatus();
     if (rotated && moved) {
         for(let n = 0; n < guards.length; n++) {
             if (!guards[n].active) {
                 respawnGuard(n);
+                guards[n].tint = 0xffffff;
                 guards[n].active = true;
             } else {
                 moveGuard(guards[n]);
@@ -194,8 +198,7 @@ function update() {
     positionCharacter(player);
 
     guards.forEach(positionCharacter, this);
-    gameDone.bringToTop;
-    youWin.bringToTop;
+    
 
 }
 
@@ -361,12 +364,9 @@ function addKeyboardInput() {
 function moveUp() {
     if (rotated && !moved && player.pos.y > 0) {
         moved = movePlayer(board[player.pos.x][player.pos.y-1]);
-    } else if (!rotated && cursorPos.y == -1) {
-        cursorPos.x = 0;
-        cursorPos.y = 1;
-        highlights(board[cursorPos.x][cursorPos.y].image)();
+    } else if (!rotated && cursorPos.x == -1 && cursorPos.y == -1) {
+        initializeCursor();
     } else if (!rotated && cursorPos.y > 1) {
-        normalize(board[cursorPos.x][cursorPos.y].image)();
         cursorPos.y--;
         highlights(board[cursorPos.x][cursorPos.y].image)();
     }
@@ -375,12 +375,9 @@ function moveUp() {
 function moveDown() {
     if (rotated && !moved && player.pos.y < board[player.pos.x].length-1) {
         moved = movePlayer(board[player.pos.x][player.pos.y+1]);
-    } else if (!rotated && cursorPos.y == -1) {
-        cursorPos.x = 0;
-        cursorPos.y = 1;
-        highlights(board[cursorPos.x][cursorPos.y].image)();
+    } else if (!rotated && cursorPos.x == -1 && cursorPos.y == -1) {
+        initializeCursor();
     } else if (!rotated && cursorPos.y < board[player.pos.x].length-2) {
-        normalize(board[cursorPos.x][cursorPos.y].image)();
         cursorPos.y++;
         highlights(board[cursorPos.x][cursorPos.y].image)();
     }
@@ -389,12 +386,9 @@ function moveDown() {
 function moveRight() {
     if (rotated && !moved && player.pos.x < board.length-1) {
         moved = movePlayer(board[player.pos.x+1][player.pos.y]);
-    } else if (!rotated && cursorPos.y == -1) {
-        cursorPos.x = 0;
-        cursorPos.y = 1;
-        highlights(board[cursorPos.x][cursorPos.y].image)();
+    } else if (!rotated && cursorPos.x == -1 && cursorPos.y == -1) {
+        initializeCursor();    
     } else if (!rotated && cursorPos.x < board.length-1) {
-        normalize(board[cursorPos.x][cursorPos.y].image)();
         cursorPos.x++;
         highlights(board[cursorPos.x][cursorPos.y].image)();
     }
@@ -403,15 +397,18 @@ function moveRight() {
 function moveLeft() {
     if (rotated && !moved && player.pos.x > 0) {
         moved = movePlayer(board[player.pos.x-1][player.pos.y]);
-    } else if (!rotated && cursorPos.y == -1) {
-        cursorPos.x = 0;
-        cursorPos.y = 1;
-        highlights(board[cursorPos.x][cursorPos.y].image)();
+    } else if (!rotated && cursorPos.x == -1 && cursorPos.y == -1) {
+        initializeCursor();
     } else if (!rotated && cursorPos.x > 0) {
-        normalize(board[cursorPos.x][cursorPos.y].image)();
         cursorPos.x--;
         highlights(board[cursorPos.x][cursorPos.y].image)();
     }
+}
+
+function initializeCursor() {
+    cursorPos.x = 0;
+    cursorPos.y = 1;
+    highlights(board[cursorPos.x][cursorPos.y].image)();
 }
 
 function rotateClockWise() {
@@ -457,6 +454,7 @@ function color(s) {
 // the light blue highlight
 function highlights(s) {
     return function() {
+        resetHighlight();
         if (s.tint == 0xffffff) {
             s.tint = 0x009fff;
         }
@@ -468,6 +466,17 @@ function normalize(s) {
     return function() {
         if (s.tint == 0x009fff){ 
             s.tint = 0xffffff;
+        }
+    }
+}
+
+// Turns all highlight back to normal
+function resetHighlight() {
+    for (let x = 0;  x < board.length; x++) {
+        for (let y = 0; y < board[x].length; y++) {
+            if (board[x][y].image.tint == 0x009fff) {
+                board[x][y].image.tint = 0xffffff
+            }
         }
     }
 }
@@ -653,6 +662,7 @@ function moveGuard(guard) {
         pickedMove.tile.moveTo(guard, pickedMove.x, pickedMove.y);
     } else {
         guard.active = false;
+        guard.tint = 0x000000;
     }
     
 }
