@@ -38,6 +38,7 @@ var RIGHT_ANGLE = 90;
 var FLIPPED = 180;
 var FULL_CIRCLE = 360;
 var memoryAmount = 0; //starts off with the amount of tiles collected
+var steps = 0;
 
 // Filenames
 var tiles = [];
