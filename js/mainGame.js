@@ -1,7 +1,7 @@
 // Canvas size and scaling relative to screen size
 
-var canvas_x = window.innerWidth*devicePixelRatio;
-var canvas_y = window.innerHeight*devicePixelRatio;
+var canvas_x = window.innerWidth;
+var canvas_y = window.innerHeight;
 var scaleRatio = devicePixelRatio;
 
 var game = new Phaser.Game(canvas_x, canvas_y, Phaser.CANVAS, 'phaser-example', { preload: preload, create: create, update: update});
