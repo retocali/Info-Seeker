@@ -518,7 +518,7 @@ function actionOnClick () {
     for (let n = 0; n < memoryTilesLoc.length; n++) {
         let xpos = memoryTilesLoc[n].x;
         let ypos = memoryTilesLoc[n].y;
-        guards[n].pos = {x: xpos, y:exit.ypos};
+        guards[n].pos = {x: xpos, y: ypos};
     }
     for (let x = 0;  x < board.length; x++) {
         for (let y = 0; y < board[x].length; y++) {
