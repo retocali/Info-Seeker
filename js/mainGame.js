@@ -157,9 +157,10 @@ function update() {
             if (!guards[n].active) {
                 respawnGuard(n);
                 guards[n].active = true;
+            } else {
+                moveGuard(guards[n]);
             }
         }
-        guards.forEach(moveGuard, this);
         checkGameStatus();
         rotated = false;
         moved = false;
