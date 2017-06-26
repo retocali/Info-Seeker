@@ -147,7 +147,6 @@ function memoryBoardGenerator() {
 
 }
 
-
 function boardGenerator() {
     // Creates the board
     board = [[],[],[]];
@@ -324,7 +323,8 @@ function update() {
     gameDone.bringToTop;
     youWin.bringToTop;
 
-    // for the memory tile box
+    // for the memory tile box 
+    // will change this later to "if player.position = memoryTile.position, use updateText"
     game.input.onDown.addOnce(updateText, this);
 }
 
