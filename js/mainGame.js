@@ -150,11 +150,15 @@ function memoryBoardGenerator() {
 }
 
 function update() {
-    // console.log(rotated);
-    // console.log(moved);
 
     checkGameStatus();
     if (rotated && moved) {
+        for(let n = 0; n < guards.length; n++) {
+            if (!guards[n].active) {
+                respawnGuard(n);
+                guards[n].active = true;
+            }
+        }
         guards.forEach(moveGuard, this);
         checkGameStatus();
         rotated = false;
@@ -167,10 +171,6 @@ function update() {
     guards.forEach(positionCharacter, this);
     gameDone.bringToTop;
     youWin.bringToTop;
-
-    // for the memory tile box 
-    // will change this later to "if player.position = memoryTile.position, use updateText"
-    game.input.onDown.addOnce(updateText, this);
 }
 
 
@@ -269,7 +269,7 @@ function makeMemoryTiles() {
         posMemTilesLocs.splice(index, 1)
         // Which translate to random locations
         let memoryTile = game.add.sprite(xLoc(coord.x), yLoc(coord.y), 'memoryTile');
-        memoryTilesLoc.push({x: xLoc(coord.x), y: yLoc(coord.y)})
+        memoryTilesLoc.push({x: coord.x, y: coord.y, found: false})
         memoryTile.anchor.setTo(0.5,0.5);
         memoryTile.scale.setTo(scaleRatio,scaleRatio);
         memoryTile.bringToTop();
@@ -284,6 +284,7 @@ function makeGuard(xpos, ypos) {
     guard.pos = {x: xpos, y: ypos};
     guard.anchor.setTo(0.5,0.5);
     guard.scale.setTo(scaleRatio,scaleRatio);
+    guard.active = true;
     guards.push(guard);
     board[xpos][ypos].joinZone(guard);
 }
@@ -318,26 +319,6 @@ function addKeyboardInput() {
 /*
      Functions that allow actions through keyboard
 */
-
-// Keeps track of memory tiles collected
-function updateText() {
-
-	//make an if then statement to see if it increases
-	if (true) {
-
-    	memoryAmount++;
-
-    }
-
-    // if (changed()) {
-
-    // 	steps ++;
-
-    // }
-
-    text.setText("Memory Tiles collected: " + memoryAmount + "\n" + "Steps taken: " + steps);
-
-}
 
 // Functions that allow actions through keyboard
 function moveUp() {
@@ -415,6 +396,12 @@ function rotateCounterClockWise() {
 /*
     UI Functions
 */
+
+// Keeps track of memory tiles collected
+function updateText() {
+    text.setText("Memory Tiles collected: " + memoryAmount + "\n" + "Steps taken: " + steps);
+
+}   
 
 // Makes the buttons change color over various mouse inputs
 function addHighlight(s) {
@@ -534,9 +521,7 @@ function removeLogo () {
 function actionOnClick () {
     player.pos = {x:entrance.x, y:entrance.y};
     for (let n = 0; n < memoryTilesLoc.length; n++) {
-        let xpos = memoryTilesLoc[n].x;
-        let ypos = memoryTilesLoc[n].y;
-        guards[n].pos = {x: xpos, y:exit.ypos};
+        respawnGuard(n);
     }
     for (let x = 0;  x < board.length; x++) {
         for (let y = 0; y < board[x].length; y++) {
@@ -549,6 +534,11 @@ function actionOnClick () {
     rotated = false;
     moved = false;
     exit.rotation = FLIPPED;
+    steps = 0;
+    memoryAmount = 0;
+    for (let n = 0; n < MEMORY_NUM; n++) {
+        memoryTilesLoc[n].found = false;
+    }
     reset();
 }
 
@@ -587,6 +577,9 @@ function movePlayer(tile) {
     if (changed) {
         board[x][y].moveAway(player);
         tile.moveTo(player, xMove, yMove);
+        steps++;
+        checkMemoryTiles();
+        updateText();
     }
     return changed;
 }
@@ -600,6 +593,8 @@ function moveGuard(guard) {
         guard.pos.x += pickedMove.x;
         guard.pos.y += pickedMove.y;
         pickedMove.tile.moveTo(guard, pickedMove.x, pickedMove.y);
+    } else {
+        guard.active = false;
     }
     
 }
@@ -907,9 +902,36 @@ function checkGameStatus() {
             && board[guard.pos.x][guard.pos.y].sameZone(player, guard)) {
             console.log("You Lose!");
             gameDone.visible = true;
-        } else if (player.pos.x == exit.x && player.pos.y == exit.y) {
+            return;
+        } else if (player.pos.x == exit.x && player.pos.y == exit.y && memoryAmount == MEMORY_NUM) {
             console.log("You Win!");
             youWin.visible = true;
+            return;
         }
     }
+    if (possibleMovements(player).length == 0) {
+        console.log("You Lose!");
+        gameDone.visible = true;
+    }
+}
+
+// Checks if the player has reached a memory tile
+function checkMemoryTiles() {
+    for (let n = 0; n < MEMORY_NUM; n++) {
+        let x = memoryTilesLoc[n].x;
+        let y = memoryTilesLoc[n].y;
+        let found = memoryTilesLoc[n].found;
+        if (player.pos.x == x && player.pos.y == y && !found) {
+            memoryAmount++;
+            memoryTilesLoc[n].found = true;
+            updateText();
+        }
+    }
+}
+
+// Respawns the guard in their corresponding memory tile
+function respawnGuard(n) {
+    let xpos = memoryTilesLoc[n].x;
+    let ypos = memoryTilesLoc[n].y;
+    guards[n].pos = {x: xpos, y: ypos};
 }
