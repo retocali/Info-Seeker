@@ -461,7 +461,7 @@ function menuCreate(s) {
 
         button1 = game.make.button(2*MARGIN, BUTTON_Y, 'rotateClock' , clockwise, this, 20, 10, 0);
         button2 = game.make.button(3*MARGIN+BOX_SIZE, BUTTON_Y, 'rotateCounter', counterClockWise, this, 20, 10, 0);
-        button3 = game.make.button(3*MARGIN+2*BOX_SIZE, BUTTON_Y, 'move', move, this, 20, 10, 0)
+        button3 = game.make.button(4*MARGIN+2*BOX_SIZE, BUTTON_Y, 'move', move, this, 20, 10, 0)
      
         button1.scale.setTo(scaleRatio,scaleRatio);
         button2.scale.setTo(scaleRatio,scaleRatio);
@@ -542,7 +542,7 @@ function actionOnClick () {
 
 
 /*
-    Functions that move characters
+    Functions related to the movement characters
 */
 
 // Trys to move the player and returns true if it does false othewise
@@ -553,30 +553,27 @@ function movePlayer(tile) {
     let yMove = tile.y - y;
     let changed = false;
     if (xMove == 0) {
-        if (yMove == 1 && tile.canGoNorth(player) && board[x][y].canGoSouth(player)) {
-            board[x][y].moveAway(player);
+        if (yMove == 1 && tile.canGoNorth(player) && board[x][y].canGoSouth(player)) {            
             player.pos.y += yMove;
             changed = true;
         }
         if (yMove == -1 && tile.canGoSouth(player) && board[x][y].canGoNorth(player)) {
-            board[x][y].moveAway(player);
             player.pos.y += yMove;
             changed = true;
         }
     }
     else if (yMove == 0) {
         if (xMove == 1 && tile.canGoWest(player) && board[x][y].canGoEast(player)) {
-            board[x][y].moveAway(player);
             player.pos.x += xMove;
             changed = true;
         }
         if (xMove == -1 && tile.canGoEast(player) && board[x][y].canGoWest(player)) {
-            board[x][y].moveAway(player);
             player.pos.x += xMove;
             changed = true;
         }
     }
     if (changed) {
+        board[x][y].moveAway(player);
         tile.moveTo(player, xMove, yMove);
     }
     return changed;
@@ -584,37 +581,42 @@ function movePlayer(tile) {
 
 // The guard AI
 function moveGuard(guard) {
-    let possibleMoves = [];
-    let x = guard.pos.x;
-    let y = guard.pos.y;
-    if (y < board[x].length-1) {
-        if (board[x][y+1].canGoNorth(guard) && board[x][y].canGoSouth(guard)) {
-            possibleMoves.push({x:0,y:1, tile: board[x][y+1]});
-        }
-    }
-    if (y > 0) {
-        if (board[x][y-1].canGoSouth(guard) && board[x][y].canGoNorth(guard)) {
-            possibleMoves.push({x:0,y:-1, tile: board[x][y-1]});
-        }
-    }
-    if (x < board.length-1) {
-        if (board[x+1][y].canGoWest(guard) && board[x][y].canGoEast(guard)) {
-            possibleMoves.push({x:1,y:0, tile: board[x+1][ y]});
-        }
-    }
-    if (x > 0) {
-        if (board[x-1][y].canGoEast(guard) && board[x][y].canGoWest(guard)) {
-            possibleMoves.push({x:-1,y:0, tile: board[x-1][y]});
-        }
-    }
+    let possibleMoves = possibleMovements(guard);
     if (possibleMoves.length != 0) {
         let pickedMove = possibleMoves[Math.floor(Math.random()*possibleMoves.length)];
-        board[x][y].moveAway(guard)
+        board[guard.pos.x][guard.pos.y].moveAway(guard)
         guard.pos.x += pickedMove.x;
         guard.pos.y += pickedMove.y;
         pickedMove.tile.moveTo(guard, pickedMove.x, pickedMove.y);
     }
     
+}
+
+function possibleMovements(character){
+    let possibleMoves = [];
+    let x = character.pos.x;
+    let y = character.pos.y;
+    if (y < board[x].length-1) {
+        if (board[x][y+1].canGoNorth(character) && board[x][y].canGoSouth(character)) {
+            possibleMoves.push({x:0,y:1, tile: board[x][y+1]});
+        }
+    }
+    if (y > 0) {
+        if (board[x][y-1].canGoSouth(character) && board[x][y].canGoNorth(character)) {
+            possibleMoves.push({x:0,y:-1, tile: board[x][y-1]});
+        }
+    }
+    if (x < board.length-1) {
+        if (board[x+1][y].canGoWest(character) && board[x][y].canGoEast(character)) {
+            possibleMoves.push({x:1,y:0, tile: board[x+1][ y]});
+        }
+    }
+    if (x > 0) {
+        if (board[x-1][y].canGoEast(character) && board[x][y].canGoWest(character)) {
+            possibleMoves.push({x:-1,y:0, tile: board[x-1][y]});
+        }
+    }
+    return possibleMoves;
 }
 
 
