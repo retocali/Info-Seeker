@@ -3,23 +3,36 @@ var canvas_y = window.innerHeight;
 var scaleRatio = Math.min(canvas_x/1100, canvas_y/800)/window.devicePixelRatio;
 
 var game = new Phaser.Game(canvas_x, canvas_y, Phaser.CANVAS, 'phaser-example', { preload: preload, create: create, update: update });
+
+
+// Map related Variables
 var board;
-var player;
-var guards = [];
-var memoryTilesLoc = [];
 var entrance;
 var exit;
-var gameDone;
-var youWin
-var logo;
-var memoryTile;
+
+
+// Characters on the screen
+var player;
+var guards = [];
+var memoryTiles = [];
+
+
+// Menu Variable
 var text; // this text is for the memory tiles text
 var memoryTaken;
 var rectangle;
+var memoryAmount = 0; //starts off with the amount of tiles collected
+var steps = 0;
 
 //music found from https://www.dl-sounds.com/royalty-free/category/game-film/video-game/ && http://freesound.org
 //https://tutorialzine.com/2015/06/making-your-first-html5-game-with-phaser source
 //for the game over screen
+
+
+// Various Screens
+var gameDone;
+var youWin
+var logo;
 
 
 // For keeping tracking of turns
@@ -31,14 +44,14 @@ var rotated = false;
 var WIDTH = 3;
 var LENGTH = 3;
 var MEMORY_NUM = 2;
-var TILE_SIZE = 128*scaleRatio;
-var MARGIN = 12*scaleRatio;
 var COMBO_SPAWN = 0.1;
+
+
+// Constants for checking directions
 var RIGHT_ANGLE = 90;
 var FLIPPED = 180;
 var FULL_CIRCLE = 360;
-var memoryAmount = 0; //starts off with the amount of tiles collected
-var steps = 0;
+
 
 // Filenames
 var tiles = [];
@@ -48,14 +61,21 @@ var replayImage = "button_restart.png";
 var comboTileNames = ["Dead_End_2.png","Line_Combo.png","Loop_Tile_2.png"];
 var tileNames = ["Corner_Tile.png","Cross_Tile.png","DeadEnd_Tile.png", "Line_Tile.png","Tetris_Tile.png"];
 
+
 // UI variables
 var button1;
 var button2;
 var button3;
 var group;
+var cursorPos = {x:-1, y:-1};
+
+
+// UI Constants
+var TILE_SIZE = 128*scaleRatio;
+var MARGIN = 12*scaleRatio;
 var BOX_SIZE = 128*scaleRatio; 
 var BUTTON_Y = 600*scaleRatio;
-var cursorPos = {x:-1, y:-1};
+
 
 // Keys 
 var keyUp;
@@ -64,6 +84,7 @@ var keyDown;
 var keyRight;
 var keyZ;
 var keyX;
+
 
 // Directions
 var NORTH = 0;
@@ -270,7 +291,9 @@ function makeMemoryTiles() {
         posMemTilesLocs.splice(index, 1)
         // Which translate to random locations
         let memoryTile = game.add.sprite(xLoc(coord.x), yLoc(coord.y), 'memoryTile');
-        memoryTilesLoc.push({x: coord.x, y: coord.y, found: false})
+        memoryTile.pos = {x: coord.x, y: coord.y};
+        memoryTile.found = false;
+        memoryTiles.push(memoryTile);
         memoryTile.anchor.setTo(0.5,0.5);
         memoryTile.scale.setTo(scaleRatio,scaleRatio);
         memoryTile.bringToTop();
@@ -521,8 +544,9 @@ function removeLogo () {
 // used with the restart button
 function actionOnClick () {
     player.pos = {x:entrance.x, y:entrance.y};
-    for (let n = 0; n < memoryTilesLoc.length; n++) {
+    for (let n = 0; n < memoryTiles.length; n++) {
         respawnGuard(n);
+        guards[n].active = true;
     }
     for (let x = 0;  x < board.length; x++) {
         for (let y = 0; y < board[x].length; y++) {
@@ -538,11 +562,28 @@ function actionOnClick () {
     steps = 0;
     memoryAmount = 0;
     for (let n = 0; n < MEMORY_NUM; n++) {
-        memoryTilesLoc[n].found = false;
+        memoryTiles[n].found = false;
     }
     reset();
 }
 
+function replay() {
+    actionOnClick();
+    for (let x = 0; x < WIDTH; x++) {
+        for (let y = 0; y <= LENGTH + 1; y++) {    
+            board[x][y].image.destroy();
+            delete board[x][y];
+        }
+    }
+    boardGenerator();
+    for (let n = 0; n < MEMORY_NUM; n++) {
+        memoryTiles[n].destroy();
+        guards[n].destroy();
+    }
+    makeMemoryTiles();
+    player.destroy();
+    actionOnClick();
+}
 
 /*
     Functions related to the movement characters
@@ -919,12 +960,12 @@ function checkGameStatus() {
 // Checks if the player has reached a memory tile
 function checkMemoryTiles() {
     for (let n = 0; n < MEMORY_NUM; n++) {
-        let x = memoryTilesLoc[n].x;
-        let y = memoryTilesLoc[n].y;
-        let found = memoryTilesLoc[n].found;
+        let x = memoryTiles[n].pos.x;
+        let y = memoryTiles[n].pos.y;
+        let found = memoryTiles[n].found;
         if (player.pos.x == x && player.pos.y == y && !found) {
             memoryAmount++;
-            memoryTilesLoc[n].found = true;
+            memoryTiles[n].found = true;
             updateText();
         }
     }
@@ -932,7 +973,7 @@ function checkMemoryTiles() {
 
 // Respawns the guard in their corresponding memory tile
 function respawnGuard(n) {
-    let xpos = memoryTilesLoc[n].x;
-    let ypos = memoryTilesLoc[n].y;
+    let xpos = memoryTiles[n].pos.x;
+    let ypos = memoryTiles[n].pos.y;
     guards[n].pos = {x: xpos, y: ypos};
 }
