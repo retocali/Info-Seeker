@@ -329,11 +329,11 @@ function updateText() {
 
     }
 
-    if (changed) {
+    // if (changed()) {
 
-    	steps ++;
+    // 	steps ++;
 
-    }
+    // }
 
     text.setText("Memory Tiles collected: " + memoryAmount + "\n" + "Steps taken: " + steps);
 
