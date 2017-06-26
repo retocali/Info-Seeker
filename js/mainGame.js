@@ -233,6 +233,11 @@ function boardGenerator() {
                 s = new BasicTile(findExits(tileName), 0, xLoc(x), yLoc(y), tileName, x, y);
             }
             board[x][y] = s; 
+            if (s != entrance && s!= exit && x != 0 && y != 1) {
+                for (let i = 0; i < Math.random()*4; i++) {
+                    s.rotateClockWise();                
+                }   
+            }
         }
     }
 }
@@ -268,6 +273,7 @@ function makeUI() {
     youWin = game.add.sprite(0, 0, 'youwin');
     youWin.scale.setTo(1.9*scaleRatio,1.7*scaleRatio);
     youWin.visible = false;
+    youWin.inputEnabled = false;
 }
 
 function makeMemoryTiles() {
@@ -567,6 +573,7 @@ function actionOnClick () {
     reset();
 }
 
+// To make the whole game replay
 function replay() {
     actionOnClick();
     for (let x = 0; x < WIDTH; x++) {
@@ -582,6 +589,7 @@ function replay() {
     }
     makeMemoryTiles();
     player.destroy();
+    makePlayer();
     actionOnClick();
 }
 
@@ -948,6 +956,8 @@ function checkGameStatus() {
         } else if (player.pos.x == exit.x && player.pos.y == exit.y && memoryAmount == MEMORY_NUM) {
             console.log("You Win!");
             youWin.visible = true;
+            youWin.inputEnabled = true;
+            youWin.events.onInputDown.add(replay,this);
             return;
         }
     }
