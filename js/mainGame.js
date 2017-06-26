@@ -167,10 +167,6 @@ function update() {
     guards.forEach(positionCharacter, this);
     gameDone.bringToTop;
     youWin.bringToTop;
-
-    // for the memory tile box 
-    // will change this later to "if player.position = memoryTile.position, use updateText"
-    game.input.onDown.addOnce(updateText, this);
 }
 
 
@@ -269,7 +265,7 @@ function makeMemoryTiles() {
         posMemTilesLocs.splice(index, 1)
         // Which translate to random locations
         let memoryTile = game.add.sprite(xLoc(coord.x), yLoc(coord.y), 'memoryTile');
-        memoryTilesLoc.push({x: coord.x, y: coord.y})
+        memoryTilesLoc.push({x: coord.x, y: coord.y, found: false})
         memoryTile.anchor.setTo(0.5,0.5);
         memoryTile.scale.setTo(scaleRatio,scaleRatio);
         memoryTile.bringToTop();
@@ -318,26 +314,6 @@ function addKeyboardInput() {
 /*
      Functions that allow actions through keyboard
 */
-
-// Keeps track of memory tiles collected
-function updateText() {
-
-	//make an if then statement to see if it increases
-	if (true) {
-
-    	memoryAmount++;
-
-    }
-
-    if (changed) {
-
-    	steps ++;
-
-    }
-
-    text.setText("Memory Tiles collected: " + memoryAmount + "\n" + "Steps taken: " + steps);
-
-}
 
 // Functions that allow actions through keyboard
 function moveUp() {
@@ -415,6 +391,12 @@ function rotateCounterClockWise() {
 /*
     UI Functions
 */
+
+// Keeps track of memory tiles collected
+function updateText() {
+    text.setText("Memory Tiles collected: " + memoryAmount + "\n" + "Steps taken: " + steps);
+
+}   
 
 // Makes the buttons change color over various mouse inputs
 function addHighlight(s) {
@@ -549,6 +531,11 @@ function actionOnClick () {
     rotated = false;
     moved = false;
     exit.rotation = FLIPPED;
+    steps = 0;
+    memoryAmount = 0;
+    for (let n = 0; n < MEMORY_NUM; n++) {
+        memoryTilesLoc[n].found = false;
+    }
     reset();
 }
 
@@ -587,6 +574,9 @@ function movePlayer(tile) {
     if (changed) {
         board[x][y].moveAway(player);
         tile.moveTo(player, xMove, yMove);
+        steps++;
+        checkMemoryTiles();
+        updateText();
     }
     return changed;
 }
@@ -608,7 +598,6 @@ function possibleMovements(character){
     let possibleMoves = [];
     let x = character.pos.x;
     let y = character.pos.y;
-    console.log(x,y);
     if (y < board[x].length-1) {
         if (board[x][y+1].canGoNorth(character) && board[x][y].canGoSouth(character)) {
             possibleMoves.push({x:0,y:1, tile: board[x][y+1]});
@@ -909,7 +898,7 @@ function checkGameStatus() {
             console.log("You Lose!");
             gameDone.visible = true;
             return;
-        } else if (player.pos.x == exit.x && player.pos.y == exit.y) {
+        } else if (player.pos.x == exit.x && player.pos.y == exit.y && memoryAmount == MEMORY_NUM) {
             console.log("You Win!");
             youWin.visible = true;
             return;
@@ -918,5 +907,19 @@ function checkGameStatus() {
     if (possibleMovements(player).length == 0) {
         console.log("You Lose!");
         gameDone.visible = true;
+    }
+}
+
+// Checks if the player has reached a memory tile
+function checkMemoryTiles() {
+    for (let n = 0; n < MEMORY_NUM; n++) {
+        let x = memoryTilesLoc[n].x;
+        let y = memoryTilesLoc[n].y;
+        let found = memoryTilesLoc[n].found;
+        if (player.pos.x == x && player.pos.y == y && !found) {
+            memoryAmount++;
+            memoryTilesLoc[n].found = true;
+            updateText();
+        }
     }
 }
