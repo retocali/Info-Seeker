@@ -14,6 +14,9 @@ var gameDone;
 var youWin
 var logo;
 var memoryTile;
+var text; // this text is for the memory tiles text
+var memoryTaken;
+var rectangle;
 
 //music found from https://www.dl-sounds.com/royalty-free/category/game-film/video-game/ && http://freesound.org
 //https://tutorialzine.com/2015/06/making-your-first-html5-game-with-phaser source
@@ -35,6 +38,7 @@ var COMBO_SPAWN = 0.1;
 var RIGHT_ANGLE = 90;
 var FLIPPED = 180;
 var FULL_CIRCLE = 360;
+var memoryAmount = 0; //starts off with the amount of tiles collected
 
 // Filenames
 var tiles = [];
@@ -81,6 +85,7 @@ function preload() {
 
     // Memory Tile 
     game.load.image('memoryTile', 'assets/sprites/memory_tile.gif');
+    game.load.image('memoryBoard', 'assets/sprites/memory_board.jpg')
 
     // Used to load entrance/exit and restart button
     game.load.image('entrix',"assets/sprites/tiles/EntranceExit.png");
@@ -123,7 +128,25 @@ function create() {
 
     addKeyboardInput();
 
+    memoryBoardGenerator();
+
 }
+
+function memoryBoardGenerator() {
+
+    rectangle = game.add.sprite(game.world.centerX + 350, game.world.centerY - 70, "memoryBoard");
+    rectangle.scale.setTo(scaleRatio*0.20,scaleRatio*0.20);
+
+    text = game.add.text(game.world.centerX + 460, game.world.centerY, "Memory Tiles collected: " + memoryAmount, {
+        font: "20px Comic Sans",
+        fill: "#00f00f",
+        align: "center"
+    });
+
+    text.anchor.setTo(0.5, 0.5);
+
+}
+
 
 function boardGenerator() {
     // Creates the board
@@ -300,6 +323,18 @@ function update() {
 
     gameDone.bringToTop;
     youWin.bringToTop;
+
+    // for the memory tile box
+    game.input.onDown.addOnce(updateText, this);
+}
+
+// Keeps track of memory tiles collected
+function updateText() {
+
+    memoryAmount++;
+
+    text.setText("Memory Tiles collected: " + memoryAmount);
+
 }
 
 // Functions that allow actions through keyboard
