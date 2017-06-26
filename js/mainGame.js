@@ -5,11 +5,10 @@ var scaleRatio = Math.min(canvas_x/1100, canvas_y/800)/window.devicePixelRatio;
 var game = new Phaser.Game(canvas_x, canvas_y, Phaser.CANVAS, 'phaser-example', { preload: preload, create: create, update: update });
 var board;
 var player;
-var guard;
-var playerPos;
+var guards = [];
+var memoryTilesLoc = [];
 var entrance;
 var exit;
-var guardPos;
 var gameDone;
 var youWin
 var logo;
@@ -55,7 +54,7 @@ var button2;
 var button3;
 var group;
 var BOX_SIZE = 128*scaleRatio; 
-var BUTTON_Y = 700*scaleRatio;
+var BUTTON_Y = 600*scaleRatio;
 var cursorPos = {x:-1, y:-1};
 
 // Keys 
@@ -74,7 +73,9 @@ var EAST = 3;
 var DIRECTIONS = 4;
 
 
-// Phaser Functions
+/*
+    Phaser Functions
+*/
 function preload() {
     
     // Used to load GAME OVER and YOU WIN
@@ -123,7 +124,7 @@ function create() {
 
     makePlayer();
 
-    guardCreation();
+    makeMemoryTiles();
 
     makeUI();
 
@@ -148,6 +149,34 @@ function memoryBoardGenerator() {
 
 }
 
+function update() {
+    // console.log(rotated);
+    // console.log(moved);
+
+    checkGameStatus();
+    if (rotated && moved) {
+        guards.forEach(moveGuard, this);
+        checkGameStatus();
+        rotated = false;
+        moved = false;
+    }
+
+    // Move the characters to their proper screen position
+    positionCharacter(player);
+
+    guards.forEach(positionCharacter, this);
+    gameDone.bringToTop;
+    youWin.bringToTop;
+
+    // for the memory tile box 
+    // will change this later to "if player.position = memoryTile.position, use updateText"
+    game.input.onDown.addOnce(updateText, this);
+}
+
+
+/* 
+    Initializing Functions for the create function
+*/
 function boardGenerator() {
     // Creates the board
     board = [[],[],[]];
@@ -155,47 +184,31 @@ function boardGenerator() {
         
 
         for (let y = 0; y <= LENGTH + 1; y++) {
-
-            // Puts down the memory images
-            // counter = counter + 1;
-
-            // if (counter > 2 || counter != 4 ) {
-            //     if (memoryCount < 3) {
-            //         if (between(0, 3) == 0){
-            //             // game.add.sprite();
-            //             memoryCount = memoryCount + 1;
-            //         }
-            //     }
-            // }
-
-            // TODO: Tweak this to actually center it
             // Finds the centered placement of the tiles 
-            let xLoc = game.world.centerX+(x-1)*(TILE_SIZE+MARGIN);
-            let yLoc = game.world.centerY+(y-2)*(TILE_SIZE+MARGIN);
             let s;
             if (y == 0) {
                 if (x == 0) {
                     //Creates the entrance
-                    s = new BasicTile([0,0,1,0], 0, xLoc, yLoc, "entrix", x, y);
+                    s = new BasicTile([0,0,1,0], 0, xLoc(x), yLoc(y), "entrix", x, y);
                     entrance = s;
                 } else 
-                    s = new BasicTile([0,0,0,0], 0, xLoc, yLoc, "", x, y);
+                    s = new BasicTile([0,0,0,0], 0, xLoc(x), yLoc(y), "", x, y);
             }
             else if (y == LENGTH + 1) {
                 // Creates the exit
                 if (x == WIDTH - 1) {
-                    s = new BasicTile([0,0,1,0], FLIPPED, xLoc, yLoc, "entrix",x, y);
+                    s = new BasicTile([0,0,1,0], FLIPPED, xLoc(x), yLoc(y), "entrix",x, y);
                     s.image.scale.y *= -1;
                     exit = s
                 } else
-                    s = new BasicTile([0,0,0,0], 0, xLoc, yLoc, "", x, y);
+                    s = new BasicTile([0,0,0,0], 0, xLoc(x), yLoc(y), "", x, y);
             } else if (Math.random() < COMBO_SPAWN) {
                 let tileName = comboTiles[Math.floor(Math.random()*comboTiles.length)];
-                s = new ComboTile(findComboExits(tileName), 0, xLoc, yLoc, tileName, x, y);
+                s = new ComboTile(findComboExits(tileName), 0, xLoc(x), yLoc(y), tileName, x, y);
             } else {
                 // Creates the actual sprites and adds a handler to rotate it
                 let tileName = tiles[Math.floor(Math.random()*tiles.length)];
-                s = new BasicTile(findExits(tileName), 0, xLoc, yLoc, tileName, x, y);
+                s = new BasicTile(findExits(tileName), 0, xLoc(x), yLoc(y), tileName, x, y);
             }
             board[x][y] = s; 
         }
@@ -204,8 +217,8 @@ function boardGenerator() {
 
 function makePlayer() {
     // Creates the player
-    player = game.add.sprite(game.world.centerX-TILE_SIZE+MARGIN, game.world.centerY-(LENGTH-1)*(TILE_SIZE+MARGIN), 'player');
-    playerPos = {x:entrance.x, y:entrance.y}
+    player = game.add.sprite(xLoc(entrance.x), yLoc(entrance.y), 'player');
+    player.pos = {x:entrance.x, y:entrance.y};
     player.anchor.setTo(0.5,0.5);
     player.inputEnabled = true;
     player.scale.setTo(scaleRatio,scaleRatio);
@@ -235,44 +248,44 @@ function makeUI() {
     youWin.visible = false;
 }
 
-function guardCreation() {
+function makeMemoryTiles() {
     // Make memory tiles
-    let memTilesLocs = [];
+    posMemTilesLocs = [];
     
     for (let a = 0; a < WIDTH; a++) {
         for (let b = 1; b <= LENGTH; b++) {
-            memTilesLocs.push([a,b]);
+            posMemTilesLocs.push({x:a,y:b});
         }
     }
     // Removes the chance that the tiles land adjacent to the player
-    memTilesLocs.splice(LENGTH, 1);
-    memTilesLocs.splice(1, 1);
-    memTilesLocs.splice(0, 1);
+    posMemTilesLocs.splice(LENGTH, 1);
+    posMemTilesLocs.splice(1, 1);
+    posMemTilesLocs.splice(0, 1);
     
     for (let i = 0; i < MEMORY_NUM; i++) {
         // Random indices on the board based on the locations
-        let index = Math.floor(Math.random()*memTilesLocs.length);
-        let coord = memTilesLocs[index];
-        console.log(memTilesLocs);
-        memTilesLocs.splice(index, 1)
-        let x = coord[0];
-        let y = coord[1];
-
+        let index = Math.floor(Math.random()*posMemTilesLocs.length);
+        let coord = posMemTilesLocs[index];
+        posMemTilesLocs.splice(index, 1)
         // Which translate to random locations
-        let xLoc = game.world.centerX+(x-1)*(TILE_SIZE+MARGIN);
-        let yLoc = game.world.centerY+(y-2)*(TILE_SIZE+MARGIN);
-        memoryTile = game.add.sprite(xLoc, yLoc, 'memoryTile');
+        let memoryTile = game.add.sprite(xLoc(coord.x), yLoc(coord.y), 'memoryTile');
+        memoryTilesLoc.push({x: xLoc(coord.x), y: yLoc(coord.y)})
         memoryTile.anchor.setTo(0.5,0.5);
         memoryTile.scale.setTo(scaleRatio,scaleRatio);
         memoryTile.bringToTop();
+        makeGuard(coord.x, coord.y);
     }
 
+}
+
+function makeGuard(xpos, ypos) {
     // Creates the Guard
-    guard = game.add.sprite(game.world.centerX+TILE_SIZE+MARGIN, game.world.centerY+TILE_SIZE+MARGIN, 'guard');
-    guardPos = {x:exit.x, y:exit.y}
+    let guard = game.add.sprite(xLoc(xpos), yLoc(ypos), 'guard');
+    guard.pos = {x: xpos, y: ypos};
     guard.anchor.setTo(0.5,0.5);
     guard.scale.setTo(scaleRatio,scaleRatio);
-
+    guards.push(guard);
+    board[xpos][ypos].joinZone(guard);
 }
 
 function addKeyboardInput() {
@@ -301,33 +314,10 @@ function addKeyboardInput() {
     game.input.keyboard.removeKeyCapture(Phaser.Keyboard.RIGHT);
 }
 
-function update() {
-    // console.log(rotated);
-    // console.log(moved);
 
-    checkGameStatus();
-    if (rotated && moved) {
-        moveGuard();
-        checkGameStatus();
-        rotated = false;
-        moved = false;
-    }
-
-    player.x = game.world.centerX+(playerPos.x-1)*(TILE_SIZE+MARGIN);
-    player.y = game.world.centerY+(playerPos.y-2)*(TILE_SIZE+MARGIN);
-    player.bringToTop;
-
-    guard.x = game.world.centerX+(guardPos.x-1)*(TILE_SIZE+MARGIN);
-    guard.y = game.world.centerY+(guardPos.y-2)*(TILE_SIZE+MARGIN);
-    guard.bringToTop;
-
-    gameDone.bringToTop;
-    youWin.bringToTop;
-
-    // for the memory tile box 
-    // will change this later to "if player.position = memoryTile.position, use updateText"
-    game.input.onDown.addOnce(updateText, this);
-}
+/*
+     Functions that allow actions through keyboard
+*/
 
 // Keeps track of memory tiles collected
 function updateText() {
@@ -340,8 +330,8 @@ function updateText() {
 
 // Functions that allow actions through keyboard
 function moveUp() {
-    if (rotated && !moved && playerPos.y > 0) {
-        moved = movePlayer(board[playerPos.x][playerPos.y-1]);
+    if (rotated && !moved && player.pos.y > 0) {
+        moved = movePlayer(board[player.pos.x][player.pos.y-1]);
     } else if (!rotated && cursorPos.y == -1) {
         cursorPos.x = 0;
         cursorPos.y = 1;
@@ -352,22 +342,24 @@ function moveUp() {
         highlights(board[cursorPos.x][cursorPos.y].image)();
     }
 }
+
 function moveDown() {
-    if (rotated && !moved && playerPos.y < board[playerPos.x].length-1) {
-        moved = movePlayer(board[playerPos.x][playerPos.y+1]);
+    if (rotated && !moved && player.pos.y < board[player.pos.x].length-1) {
+        moved = movePlayer(board[player.pos.x][player.pos.y+1]);
     } else if (!rotated && cursorPos.y == -1) {
         cursorPos.x = 0;
         cursorPos.y = 1;
         highlights(board[cursorPos.x][cursorPos.y].image)();
-    } else if (!rotated && cursorPos.y < board[playerPos.x].length-2) {
+    } else if (!rotated && cursorPos.y < board[player.pos.x].length-2) {
         normalize(board[cursorPos.x][cursorPos.y].image)();
         cursorPos.y++;
         highlights(board[cursorPos.x][cursorPos.y].image)();
     }
 }
+
 function moveRight() {
-    if (rotated && !moved && playerPos.y < board.length-1) {
-        moved = movePlayer(board[playerPos.x+1][playerPos.y]);
+    if (rotated && !moved && player.pos.y < board.length-1) {
+        moved = movePlayer(board[player.pos.x+1][player.pos.y]);
     } else if (!rotated && cursorPos.y == -1) {
         cursorPos.x = 0;
         cursorPos.y = 1;
@@ -378,10 +370,11 @@ function moveRight() {
         highlights(board[cursorPos.x][cursorPos.y].image)();
     }
 }
-function moveLeft() {
-    if (rotated && !moved && playerPos.x > 0) {
 
-        moved = movePlayer(board[playerPos.x-1][playerPos.y]);
+function moveLeft() {
+    if (rotated && !moved && player.pos.x > 0) {
+
+        moved = movePlayer(board[player.pos.x-1][player.pos.y]);
     } else if (!rotated && cursorPos.y == -1) {
         cursorPos.x = 0;
         cursorPos.y = 1;
@@ -392,12 +385,14 @@ function moveLeft() {
         highlights(board[cursorPos.x][cursorPos.y].image)();
     }
 }
+
 function rotateClockWise() {
     if (!rotated && cursorPos.x != -1) {
         board[cursorPos.x][cursorPos.y].rotateClockWise();
         rotated = true;
     }
 }
+
 function rotateCounterClockWise() {
     if (!rotated && cursorPos.x != -1) {
         board[cursorPos.x][cursorPos.y].rotateCounterClockWise();
@@ -406,31 +401,9 @@ function rotateCounterClockWise() {
 }
 
 
-// used with the splash screen
-function removeLogo () {
-    game.input.onDown.remove(removeLogo, this);
-    //tried to use this to fade in/fade out the welcome...
-    // game.add.tween(sprite).to( { alpha: 1 }, 2000, Phaser.Easing.Linear.None, true, 0, 1000, true);
-    logo.kill();
-}
-
-// used with the restart button
-function actionOnClick () {
-    playerPos = {x:entrance.x, y:entrance.y};
-    guardPos = {x:exit.x, y:exit.y}
-    for (let x = 0;  x < board.length; x++) {
-        for (let y = 0; y < board[x].length; y++) {
-            board[x][y].rotation = 0;
-            board[x][y].image.angle = 0;
-        }
-    }
-    gameDone.visible = false;
-    youWin.visible = false
-    rotated = false;
-    moved = false;
-    exit.rotation = FLIPPED;
-    reset();
-}
+/*
+    UI Functions
+*/
 
 // Makes the buttons change color over various mouse inputs
 function addHighlight(s) {
@@ -476,12 +449,6 @@ function reset() {
 // Creates the UI for the tiles
 function menuCreate(s) {
     return function() {
-    //     console.log("Clicked:",s.x,s.y);
-    //     console.log("East",s.canGoEast(player));
-    //     console.log("West",s.canGoWest(player));
-    //     console.log("North",s.canGoNorth(player));
-    //     console.log("South",s.canGoSouth(player));
-
 
         if (group) {
             button1.destroy();
@@ -493,10 +460,10 @@ function menuCreate(s) {
 
         group = game.add.group();
 
-        button1 = game.make.button(MARGIN, BUTTON_Y, 'rotateClock' , clockwise, this, 20, 10, 0);
-        button2 = game.make.button(2*MARGIN+BOX_SIZE, BUTTON_Y, 'rotateCounter', counterClockWise, this, 20, 10, 0);
+        button1 = game.make.button(2*MARGIN, BUTTON_Y, 'rotateClock' , clockwise, this, 20, 10, 0);
+        button2 = game.make.button(3*MARGIN+BOX_SIZE, BUTTON_Y, 'rotateCounter', counterClockWise, this, 20, 10, 0);
         button3 = game.make.button(3*MARGIN+2*BOX_SIZE, BUTTON_Y, 'move', move, this, 20, 10, 0)
-
+     
         button1.scale.setTo(scaleRatio,scaleRatio);
         button2.scale.setTo(scaleRatio,scaleRatio);
         button3.scale.setTo(scaleRatio,scaleRatio);
@@ -544,46 +511,69 @@ function menuCreate(s) {
     }
 }
 
-// Used to check if the player has won or lost
-function checkGameStatus() {
-    if (playerPos.x == guardPos.x && playerPos.y == guardPos.y 
-        && board[guardPos.x][guardPos.y].sameZone(player, guard)) {
-        console.log("You Lose!");
-        gameDone.visible = true;
-    } else if (playerPos.x == exit.x && playerPos.y == exit.y) {
-        console.log("You Win!");
-        youWin.visible = true;
-    }
+// used with the splash screen
+function removeLogo () {
+    game.input.onDown.remove(removeLogo, this);
+    //tried to use this to fade in/fade out the welcome...
+    // game.add.tween(sprite).to( { alpha: 1 }, 2000, Phaser.Easing.Linear.None, true, 0, 1000, true);
+    logo.kill();
 }
+
+// used with the restart button
+function actionOnClick () {
+    player.pos = {x:entrance.x, y:entrance.y};
+    for (let n = 0; n < memoryTilesLoc.length; n++) {
+        let xpos = memoryTilesLoc[n].x;
+        let ypos = memoryTilesLoc[n].y;
+        guards[n].pos = {x: xpos, y:exit.ypos};
+    }
+    for (let x = 0;  x < board.length; x++) {
+        for (let y = 0; y < board[x].length; y++) {
+            board[x][y].rotation = 0;
+            board[x][y].image.angle = 0;
+        }
+    }
+    gameDone.visible = false;
+    youWin.visible = false
+    rotated = false;
+    moved = false;
+    exit.rotation = FLIPPED;
+    reset();
+}
+
+
+/*
+    Functions that move characters
+*/
 
 // Trys to move the player and returns true if it does false othewise
 function movePlayer(tile) {
-    let x = playerPos.x;
-    let y = playerPos.y;
+    let x = player.pos.x;
+    let y = player.pos.y;
     let xMove = tile.x - x;
     let yMove = tile.y - y;
     let changed = false;
     if (xMove == 0) {
-        if (yMove == 1 && tile.canGoNorth(player,playerPos) && board[x][y].canGoSouth(player, playerPos)) {
+        if (yMove == 1 && tile.canGoNorth(player) && board[x][y].canGoSouth(player)) {
             board[x][y].moveAway(player);
-            playerPos.y += yMove;
+            player.pos.y += yMove;
             changed = true;
         }
-        if (yMove == -1 && tile.canGoSouth(player, playerPos) && board[x][y].canGoNorth(player, playerPos)) {
+        if (yMove == -1 && tile.canGoSouth(player) && board[x][y].canGoNorth(player)) {
             board[x][y].moveAway(player);
-            playerPos.y += yMove;
+            player.pos.y += yMove;
             changed = true;
         }
     }
     else if (yMove == 0) {
-        if (xMove == 1 && tile.canGoWest(player, playerPos) && board[x][y].canGoEast(player, playerPos)) {
+        if (xMove == 1 && tile.canGoWest(player) && board[x][y].canGoEast(player)) {
             board[x][y].moveAway(player);
-            playerPos.x += xMove;
+            player.pos.x += xMove;
             changed = true;
         }
-        if (xMove == -1 && tile.canGoEast(player, playerPos) && board[x][y].canGoWest(player, playerPos)) {
+        if (xMove == -1 && tile.canGoEast(player) && board[x][y].canGoWest(player)) {
             board[x][y].moveAway(player);
-            playerPos.x += xMove;
+            player.pos.x += xMove;
             changed = true;
         }
     }
@@ -594,78 +584,44 @@ function movePlayer(tile) {
 }
 
 // The guard AI
-function moveGuard() {
+function moveGuard(guard) {
     let possibleMoves = [];
-    let x = guardPos.x;
-    let y = guardPos.y;
+    let x = guard.pos.x;
+    let y = guard.pos.y;
     if (y < board[x].length-1) {
-        if (board[x][y+1].canGoNorth(guard, guardPos) && board[x][y].canGoSouth(guard, guardPos)) {
+        if (board[x][y+1].canGoNorth(guard) && board[x][y].canGoSouth(guard)) {
             possibleMoves.push({x:0,y:1, tile: board[x][y+1]});
         }
     }
     if (y > 0) {
-        if (board[x][y-1].canGoSouth(guard, guardPos) && board[x][y].canGoNorth(guard, guardPos)) {
+        if (board[x][y-1].canGoSouth(guard) && board[x][y].canGoNorth(guard)) {
             possibleMoves.push({x:0,y:-1, tile: board[x][y-1]});
         }
     }
     if (x < board.length-1) {
-        if (board[x+1][y].canGoWest(guard, guardPos) && board[x][y].canGoEast(guard, guardPos)) {
+        if (board[x+1][y].canGoWest(guard) && board[x][y].canGoEast(guard)) {
             possibleMoves.push({x:1,y:0, tile: board[x+1][ y]});
         }
     }
     if (x > 0) {
-        if (board[x-1][y].canGoEast(guard, guardPos) && board[x][y].canGoWest(guard, guardPos)) {
+        if (board[x-1][y].canGoEast(guard) && board[x][y].canGoWest(guard)) {
             possibleMoves.push({x:-1,y:0, tile: board[x-1][y]});
         }
     }
     if (possibleMoves.length != 0) {
         let pickedMove = possibleMoves[Math.floor(Math.random()*possibleMoves.length)];
-        board[ x][ y].moveAway(guard)
-        guardPos.x += pickedMove.x;
-        guardPos.y += pickedMove.y;
+        board[x][y].moveAway(guard)
+        guard.pos.x += pickedMove.x;
+        guard.pos.y += pickedMove.y;
         pickedMove.tile.moveTo(guard, pickedMove.x, pickedMove.y);
     }
     
 }
 
-// Finds the exits for the various tiles
-function findExits(tileName) {
-    // 4 being the length of the word tile
-    let index = tileName.slice("tile".length, tileName.length);
-    switch(tileNames[index]) {
-        case "Corner_Tile.png":
-            return [1,1,0,0];
-        case "Cross_Tile.png":
-            return [1,1,1,1];
-        case "DeadEnd_Tile.png":
-            return [1,0,0,0];
-        case "Line_Tile.png":
-            return [1,0,1,0];
-        case "Tetris_Tile.png":
-            return [1,1,1,0];
-        default:
-            return [0,0,0,0];
-    }
 
-}
-
-// Finds the exits for the various combotiles
-function findComboExits(tileName) {
-    // 4 being the length of the word tile
-    let index = tileName.slice("combo".length, tileName.length);
-    switch(comboTileNames[index]) {
-        case "Dead_End_2.png":
-            return [1,0,2,0];
-        case "Line_Combo.png":
-            return [1,2,1,2];
-        case "Loop_Tile_2.png":
-            return [1,2,2,1];
-        default:
-            return [0,0,0,0];
-    }
-
-}
-
+/*
+    Classes used for the tiles
+*/
 class BasicTile {
     // exits : represent as an array of length 4
     //          North: Index 0,
@@ -726,11 +682,14 @@ class BasicTile {
     moveTo(character, x, y) {
         return;
     }
-    moveAway(character, characterPos) {
+    moveAway(character) {
         return;
     }
     sameZone(player, guard) {
         return true;
+    }
+    joinZone(character) {
+        return
     }
 }
 
@@ -764,11 +723,11 @@ class ComboTile {
         this.exits = exits;
         this.rotation = rotation;
     }
-    canGoDirection(character, characterPos, direction) {
+    canGoDirection(character, direction) {
         let isExit = this.exits[(direction+(this.rotation/RIGHT_ANGLE)) % 4]
         if (isExit == 0) {
             return false;
-        } else if (characterPos.x == this.x && characterPos.y == this.y) {
+        } else if (character.pos.x == this.x && character.pos.y == this.y) {
             
             if (this.zone1.includes(character)) {
                 return isExit == 1; // Should only return 1 when is Exit is 1
@@ -782,17 +741,17 @@ class ComboTile {
         }
     }
 
-    canGoNorth (character, characterPos) {
-        return this.canGoDirection(character,characterPos, NORTH);
+    canGoNorth (character) {
+        return this.canGoDirection(character, NORTH);
     }
-    canGoWest (character, characterPos) {
-        return this.canGoDirection(character, characterPos, WEST);
+    canGoWest (character) {
+        return this.canGoDirection(character, WEST);
     }
-    canGoSouth (character, characterPos) {
-        return this.canGoDirection(character, characterPos, SOUTH);
+    canGoSouth (character) {
+        return this.canGoDirection(character, SOUTH);
     }
-    canGoEast (character, characterPos) {
-        return this.canGoDirection(character, characterPos, EAST);
+    canGoEast (character) {
+        return this.canGoDirection(character, EAST);
     }
     rotateClockWise() {
         // Escape for exit/entrance
@@ -859,6 +818,85 @@ class ComboTile {
         return this.zone1.includes(player) == this.zone1.includes(guard) ||
                this.zone2.includes(player) == this.zone2.includes(guard);
     }
+    joinZone(character) {
+        if (Math.random > 0.5) {
+            this.zone1.push(character);
+        } else {
+            this.zone2.push(character);
+        }
+    }
 }
 
 
+/*
+    Helper functions to shorten code/ make it readable
+*/
+// Both return the coordinate value for the board index values
+function xLoc(x) {
+    return game.world.centerX+(x-1)*(TILE_SIZE+MARGIN);
+}
+
+function yLoc(y) {
+    return game.world.centerY+(y-2)*(TILE_SIZE+MARGIN);
+}
+
+// positions character on the screen
+function positionCharacter(character) {
+    character.x = xLoc(character.pos.x);
+    character.y = yLoc(character.pos.y);
+    character.bringToTop;
+}
+
+// Finds the exits for the various tiles
+function findExits(tileName) {
+    // 4 being the length of the word tile
+    let index = tileName.slice("tile".length, tileName.length);
+    switch(tileNames[index]) {
+        case "Corner_Tile.png":
+            return [1,1,0,0];
+        case "Cross_Tile.png":
+            return [1,1,1,1];
+        case "DeadEnd_Tile.png":
+            return [1,0,0,0];
+        case "Line_Tile.png":
+            return [1,0,1,0];
+        case "Tetris_Tile.png":
+            return [1,1,1,0];
+        default:
+            return [0,0,0,0];
+    }
+
+}
+
+// Finds the exits for the various combotiles
+function findComboExits(tileName) {
+    // 4 being the length of the word tile
+    let index = tileName.slice("combo".length, tileName.length);
+    switch(comboTileNames[index]) {
+        case "Dead_End_2.png":
+            return [1,0,2,0];
+        case "Line_Combo.png":
+            return [1,2,1,2];
+        case "Loop_Tile_2.png":
+            return [1,2,2,1];
+        default:
+            return [0,0,0,0];
+    }
+
+}
+
+// Used to check if the player has won or lost
+function checkGameStatus() {
+    for (var n = 0;  n < guards.length; n++) {
+        let guard = guards[n];
+
+        if (player.pos.x == guard.pos.x && player.pos.y == guard.pos.y 
+            && board[guard.pos.x][guard.pos.y].sameZone(player, guard)) {
+            console.log("You Lose!");
+            gameDone.visible = true;
+        } else if (player.pos.x == exit.x && player.pos.y == exit.y) {
+            console.log("You Win!");
+            youWin.visible = true;
+        }
+    }
+}
