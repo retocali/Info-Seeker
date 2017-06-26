@@ -976,4 +976,5 @@ function respawnGuard(n) {
     let xpos = memoryTiles[n].pos.x;
     let ypos = memoryTiles[n].pos.y;
     guards[n].pos = {x: xpos, y: ypos};
+    board[xpos][ypos].joinZone();
 }
