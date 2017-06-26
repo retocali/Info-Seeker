@@ -1,3 +1,5 @@
+// Canvas size and scaling relative to screen size
+
 var canvas_x = window.innerWidth;
 var canvas_y = window.innerHeight;
 var scaleRatio = Math.min(canvas_x/1100, canvas_y/800)/window.devicePixelRatio;
@@ -97,6 +99,7 @@ var DIRECTIONS = 4;
 /*
     Phaser Functions
 */
+
 function preload() {
     
     // Used to load GAME OVER and YOU WIN
@@ -193,6 +196,7 @@ function update() {
     guards.forEach(positionCharacter, this);
     gameDone.bringToTop;
     youWin.bringToTop;
+
 }
 
 
@@ -243,12 +247,14 @@ function boardGenerator() {
 }
 
 function makePlayer() {
+
     // Creates the player
     player = game.add.sprite(xLoc(entrance.x), yLoc(entrance.y), 'player');
     player.pos = {x:entrance.x, y:entrance.y};
     player.anchor.setTo(0.5,0.5);
     player.inputEnabled = true;
     player.scale.setTo(scaleRatio,scaleRatio);
+
 }
 
 function makeUI() {
@@ -277,6 +283,7 @@ function makeUI() {
 }
 
 function makeMemoryTiles() {
+
     // Make memory tiles
     posMemTilesLocs = [];
     
@@ -421,6 +428,7 @@ function rotateCounterClockWise() {
         rotated = true;
     }
 }
+
 
 
 /*
@@ -634,7 +642,7 @@ function movePlayer(tile) {
     return changed;
 }
 
-// The guard AI
+// The bodyguard AI
 function moveGuard(guard) {
     let possibleMoves = possibleMovements(guard);
     if (possibleMoves.length != 0) {
@@ -680,7 +688,9 @@ function possibleMovements(character){
 /*
     Classes used for the tiles
 */
+
 class BasicTile {
+
     // exits : represent as an array of length 4
     //          North: Index 0,
     //          West:  Index 1,
@@ -752,6 +762,7 @@ class BasicTile {
 }
 
 class ComboTile {
+
     // Specifically represents a tile with two separate zones
     // exits : represent as an array of length 4
     //          North: Index 0,
@@ -945,6 +956,7 @@ function findComboExits(tileName) {
 
 // Used to check if the player has won or lost
 function checkGameStatus() {
+
     for (var n = 0;  n < guards.length; n++) {
         let guard = guards[n];
 
