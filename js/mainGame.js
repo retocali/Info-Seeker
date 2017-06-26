@@ -1,3 +1,5 @@
+// Canvas size and scaling relative to screen size
+
 var canvas_x = window.innerWidth;
 var canvas_y = window.innerHeight;
 var scaleRatio = Math.min(canvas_x/1100, canvas_y/800)/window.devicePixelRatio;
