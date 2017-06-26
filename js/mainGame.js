@@ -175,10 +175,15 @@ function memoryBoardGenerator() {
 
 function update() {
 
+
     gameDone.bringToTop;
     youWin.bringToTop;
 
-    checkGameStatus();
+    if (!checkGameStatus()) {
+        return;
+    }
+
+    
     if (rotated && moved) {
         for(let n = 0; n < guards.length; n++) {
             if (!guards[n].active) {
@@ -604,6 +609,8 @@ function replay() {
         memoryTiles[n].destroy();
         guards[n].destroy();
     }
+    guards = [];
+    memoryTiles = [];
     makeMemoryTiles();
     player.destroy();
     makePlayer();
@@ -767,7 +774,7 @@ class BasicTile {
         return true;
     }
     joinZone(character) {
-        return
+        return;
     }
 }
 
@@ -898,10 +905,20 @@ class ComboTile {
                this.zone2.includes(player) == this.zone2.includes(guard);
     }
     joinZone(character) {
-        if (Math.random > 0.5) {
+        if (character.zone) {
+            if (character.zone == 1) {
+                this.zone1.push(character);    
+            } else {
+                this.zone2.push(character);
+
+            }
+        }
+        else if (Math.random > 0.5) {
             this.zone1.push(character);
+            character.zone = 1;
         } else {
             this.zone2.push(character);
+            character.zone = 2;
         }
     }
 }
@@ -972,21 +989,24 @@ function checkGameStatus() {
 
         if (player.pos.x == guard.pos.x && player.pos.y == guard.pos.y 
             && board[guard.pos.x][guard.pos.y].sameZone(player, guard)) {
+            console.log(player.pos, guard.pos);
             console.log("You Lose!");
             gameDone.visible = true;
-            return;
+            return false;
         } else if (player.pos.x == exit.x && player.pos.y == exit.y && memoryAmount == MEMORY_NUM) {
             console.log("You Win!");
             youWin.visible = true;
             youWin.inputEnabled = true;
             youWin.events.onInputDown.add(replay,this);
-            return;
+            return false;
         }
     }
     if (possibleMovements(player).length == 0) {
         console.log("You Lose!");
         gameDone.visible = true;
+        return false;
     }
+    return true;
 }
 
 // Checks if the player has reached a memory tile
@@ -1008,5 +1028,5 @@ function respawnGuard(n) {
     let xpos = memoryTiles[n].pos.x;
     let ypos = memoryTiles[n].pos.y;
     guards[n].pos = {x: xpos, y: ypos};
-    board[xpos][ypos].joinZone();
+    board[xpos][ypos].joinZone(guards[n]);
 }
