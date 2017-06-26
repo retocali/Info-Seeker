@@ -150,11 +150,15 @@ function memoryBoardGenerator() {
 }
 
 function update() {
-    // console.log(rotated);
-    // console.log(moved);
 
     checkGameStatus();
     if (rotated && moved) {
+        for(let n = 0; n < guards.length; n++) {
+            if (!guards[n].active) {
+                respawnGuard(n);
+                guards[n].active = true;
+            }
+        }
         guards.forEach(moveGuard, this);
         checkGameStatus();
         rotated = false;
@@ -280,6 +284,7 @@ function makeGuard(xpos, ypos) {
     guard.pos = {x: xpos, y: ypos};
     guard.anchor.setTo(0.5,0.5);
     guard.scale.setTo(scaleRatio,scaleRatio);
+    guard.active = true;
     guards.push(guard);
     board[xpos][ypos].joinZone(guard);
 }
@@ -516,9 +521,7 @@ function removeLogo () {
 function actionOnClick () {
     player.pos = {x:entrance.x, y:entrance.y};
     for (let n = 0; n < memoryTilesLoc.length; n++) {
-        let xpos = memoryTilesLoc[n].x;
-        let ypos = memoryTilesLoc[n].y;
-        guards[n].pos = {x: xpos, y: ypos};
+        respawnGuard(n);
     }
     for (let x = 0;  x < board.length; x++) {
         for (let y = 0; y < board[x].length; y++) {
@@ -590,6 +593,8 @@ function moveGuard(guard) {
         guard.pos.x += pickedMove.x;
         guard.pos.y += pickedMove.y;
         pickedMove.tile.moveTo(guard, pickedMove.x, pickedMove.y);
+    } else {
+        guard.active = false;
     }
     
 }
@@ -922,4 +927,11 @@ function checkMemoryTiles() {
             updateText();
         }
     }
+}
+
+// Respawns the guard in their corresponding memory tile
+function respawnGuard(n) {
+    let xpos = memoryTilesLoc[n].x;
+    let ypos = memoryTilesLoc[n].y;
+    guards[n].pos = {x: xpos, y: ypos};
 }
