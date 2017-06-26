@@ -2,7 +2,7 @@
 
 var canvas_x = window.innerWidth;
 var canvas_y = window.innerHeight;
-var scaleRatio = Math.min(canvas_x/1100, canvas_y/800)/window.devicePixelRatio;
+var scaleRatio = Math.min(canvas_x/1100, canvas_y/800);
 
 var game = new Phaser.Game(canvas_x, canvas_y, Phaser.CANVAS, 'phaser-example', { preload: preload, create: create, update: update });
 
@@ -387,7 +387,7 @@ function moveDown() {
 }
 
 function moveRight() {
-    if (rotated && !moved && player.pos.y < board.length-1) {
+    if (rotated && !moved && player.pos.x < board.length-1) {
         moved = movePlayer(board[player.pos.x+1][player.pos.y]);
     } else if (!rotated && cursorPos.y == -1) {
         cursorPos.x = 0;
@@ -402,7 +402,6 @@ function moveRight() {
 
 function moveLeft() {
     if (rotated && !moved && player.pos.x > 0) {
-
         moved = movePlayer(board[player.pos.x-1][player.pos.y]);
     } else if (!rotated && cursorPos.y == -1) {
         cursorPos.x = 0;
@@ -579,6 +578,7 @@ function actionOnClick () {
         memoryTiles[n].found = false;
     }
     reset();
+    updateText();
 }
 
 // To make the whole game replay
