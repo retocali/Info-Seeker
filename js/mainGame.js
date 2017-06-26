@@ -269,7 +269,7 @@ function makeMemoryTiles() {
         posMemTilesLocs.splice(index, 1)
         // Which translate to random locations
         let memoryTile = game.add.sprite(xLoc(coord.x), yLoc(coord.y), 'memoryTile');
-        memoryTilesLoc.push({x: xLoc(coord.x), y: yLoc(coord.y)})
+        memoryTilesLoc.push({x: coord.x, y: coord.y})
         memoryTile.anchor.setTo(0.5,0.5);
         memoryTile.scale.setTo(scaleRatio,scaleRatio);
         memoryTile.bringToTop();
@@ -597,6 +597,7 @@ function possibleMovements(character){
     let possibleMoves = [];
     let x = character.pos.x;
     let y = character.pos.y;
+    console.log(x,y);
     if (y < board[x].length-1) {
         if (board[x][y+1].canGoNorth(character) && board[x][y].canGoSouth(character)) {
             possibleMoves.push({x:0,y:1, tile: board[x][y+1]});
@@ -896,9 +897,15 @@ function checkGameStatus() {
             && board[guard.pos.x][guard.pos.y].sameZone(player, guard)) {
             console.log("You Lose!");
             gameDone.visible = true;
+            return;
         } else if (player.pos.x == exit.x && player.pos.y == exit.y) {
             console.log("You Win!");
             youWin.visible = true;
+            return;
         }
+    }
+    if (possibleMovements(player).length == 0) {
+        console.log("You Lose!");
+        gameDone.visible = true;
     }
 }
