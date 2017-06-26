@@ -139,7 +139,7 @@ function memoryBoardGenerator() {
     rectangle = game.add.sprite(game.world.centerX + 350, game.world.centerY - 70, "memoryBoard");
     rectangle.scale.setTo(scaleRatio*0.20,scaleRatio*0.20);
 
-    text = game.add.text(game.world.centerX + 460, game.world.centerY, "Memory Tiles collected: " + memoryAmount, {
+    text = game.add.text(game.world.centerX + 460, game.world.centerY, "Memory Tiles collected: " + memoryAmount + "\n Steps taken: " + steps, {
         font: "20px Comic Sans",
         fill: "#00f00f",
         align: "center"
@@ -322,9 +322,20 @@ function addKeyboardInput() {
 // Keeps track of memory tiles collected
 function updateText() {
 
-    memoryAmount++;
+	//make an if then statement to see if it increases
+	if (true) {
 
-    text.setText("Memory Tiles collected: " + memoryAmount);
+    	memoryAmount++;
+
+    }
+
+    if (changed) {
+
+    	steps ++;
+
+    }
+
+    text.setText("Memory Tiles collected: " + memoryAmount + "\n" + "Steps taken: " + steps);
 
 }
 
