@@ -334,10 +334,10 @@ function addKeyboardInput() {
     keyDown.onDown.add(moveDown, this);
 
     keyZ = game.input.keyboard.addKey(Phaser.Keyboard.Z);
-    keyZ.onDown.add(rotateClockWise, this);
+    keyZ.onDown.add(rotateCounterClockWise, this);
 
     keyX = game.input.keyboard.addKey(Phaser.Keyboard.X);
-    keyX.onDown.add(rotateCounterClockWise, this);
+    keyX.onDown.add(rotateClockWise, this);
 
     game.input.keyboard.removeKeyCapture(Phaser.Keyboard.UP);
     game.input.keyboard.removeKeyCapture(Phaser.Keyboard.LEFT);
