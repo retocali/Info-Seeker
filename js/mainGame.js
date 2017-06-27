@@ -115,6 +115,8 @@ function preload() {
     game.load.audio('win!', 'assets/sounds/win.mp3');
     game.load.audio('lose', 'assets/sounds/gameover.wav');
 
+    // Image
+
     // Big Screens
     game.load.image('logo', 'assets/sprites/welcome.jpg');
     game.load.image('gameover', 'assets/sprites/gameover.png');
