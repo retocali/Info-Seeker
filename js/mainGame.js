@@ -1,5 +1,4 @@
 // Canvas size and scaling relative to screen size
-
 var canvas_x = window.innerWidth;
 var canvas_y = window.innerHeight;
 var scaleRatio = Math.min(canvas_x/1100, canvas_y/800);
@@ -76,8 +75,6 @@ var cursorPos = {x:-1, y:-1};
 var TILE_SIZE = 128*scaleRatio;
 var MARGIN = 12*scaleRatio;
 var BOX_SIZE = 128*scaleRatio; 
-var BUTTON_Y = 600*scaleRatio+game.world.centerY-400*scaleRatio;
-var OFFSET = game.world.centerX-550*scaleRatio;
 
 
 // Keys 
@@ -161,17 +158,17 @@ function create() {
 
 function memoryBoardGenerator() {
 
-    rectangle = game.add.sprite(game.world.centerX + 350*scaleRatio, game.world.centerY - 70*scaleRatio, "memoryBoard");
-    rectangle.scale.setTo(scaleRatio*0.20,scaleRatio*0.20);
+    rectangle = game.add.sprite(game.world.centerX + 400*scaleRatio, game.world.centerY - 60*scaleRatio, "memoryBoard");
+    rectangle.scale.setTo(scaleRatio*0.1,scaleRatio*0.10);
 
-    text = game.add.text(game.world.centerX + 460*scaleRatio, game.world.centerY, "Memory Tiles collected: " + memoryAmount + "\n Steps taken: " + steps, {
+    text = game.add.text(game.world.centerX + 480*scaleRatio, game.world.centerY, "Memories: " + memoryAmount + "\n Steps: " + steps, {
         font: "20px Comic Sans",
-        fill: "#00f00f",
+        fill: "#ffffff",
         align: "center"
     });
 
     text.anchor.setTo(0.5, 0.5);
-    text.scaleRatio.setTo(scaleRatio, scaleRatio);
+    text.scale.setTo(scaleRatio, scaleRatio);
 }
 
 function update() {
@@ -499,6 +496,10 @@ function reset() {
 // Creates the UI for the tiles
 function menuCreate(s) {
     return function() {
+
+        
+        var BUTTON_Y = 600*scaleRatio+game.world.centerY-400*scaleRatio;
+        var OFFSET = game.world.centerX-550*scaleRatio;
 
         if (group) {
             button1.destroy();
