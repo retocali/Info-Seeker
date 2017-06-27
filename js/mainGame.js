@@ -113,6 +113,7 @@ function preload() {
     game.load.audio('click', 'assets/sounds/click1.wav');
     game.load.audio('restartClick', 'assets/sounds/219472__jarredgibb__button-01.wav');
     game.load.audio('win!', 'assets/sounds/win.mp3');
+    game.load.audio('lose', 'assets/sounds/gameover.wav');
 
     // Big Screens
     game.load.image('logo', 'assets/sprites/welcome.jpg');
@@ -174,6 +175,7 @@ function create() {
 
 function backgroundMusic() {
     youwin = game.add.audio('win!',volume, false);
+    youlose = game.add.audio('lose', volume, false);
     background = game.add.audio('bgm', volume, true);
     background.play();
       
@@ -1049,6 +1051,7 @@ function checkGameStatus() {
         if (player.pos.x == guard.pos.x && player.pos.y == guard.pos.y 
             && board[guard.pos.x][guard.pos.y].sameZone(player, guard)) {
             console.log("You Lose!");
+            youlose.play();
             gameDone.visible = true;
             gameDone.bringToTop;
             return true;
@@ -1066,6 +1069,7 @@ function checkGameStatus() {
     }
     if (possibleMovements(player).length == 0) {
         console.log("You Lose!");
+        youlose.play();
         gameDone.visible = true;
         return true;
     }
