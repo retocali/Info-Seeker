@@ -261,7 +261,6 @@ function update() {
         else {
             memory.tint = 0xffffff;
         }
-        memory.bringToTop();
     }
 
     // Move the characters to their proper screen position
@@ -396,8 +395,8 @@ function makeMemoryTiles() {
         memoryTiles.push(memoryTile);
         memoryTile.anchor.setTo(0.5,0.5);
         memoryTile.scale.setTo(scaleRatio,scaleRatio);
-        memoryTile.bringToTop();
         makeGuard(coord.x, coord.y);
+        memoryTile.bringToTop();
     }
 
 }
@@ -580,8 +579,8 @@ function reset() {
 function menuCreate(s) {
     return function() {
 
-        var BUTTON_Y = 600*scaleRatio+game.world.centerY-(gameY/2)*scaleRatio;
-        var OFFSET = game.world.centerX-(gameX/2)*scaleRatio;
+        var BUTTON_Y = game.world.centerY;
+        var OFFSET = game.world.centerX-400*scaleRatio;
 
 
         if (group) {
@@ -594,9 +593,9 @@ function menuCreate(s) {
 
         group = game.add.group();
 
-        button1 = game.make.button(2*MARGIN-OFFSET, BUTTON_Y, 'rotateClock' , clockwise, this, 20, 10, 0);
-        button2 = game.make.button(3*MARGIN+BOX_SIZE-OFFSET, BUTTON_Y, 'rotateCounter', counterClockWise, this, 20, 10, 0);
-        button3 = game.make.button(4*MARGIN+2*BOX_SIZE-OFFSET, BUTTON_Y, 'move', move, this, 20, 10, 0)
+        button1 = game.make.button(OFFSET, BUTTON_Y, 'rotateClock' , clockwise, this, 20, 10, 0);
+        button2 = game.make.button(OFFSET, BUTTON_Y-(BOX_SIZE+MARGIN), 'rotateCounter', counterClockWise, this, 20, 10, 0);
+        button3 = game.make.button(OFFSET, BUTTON_Y-2*(BOX_SIZE+MARGIN), 'move', move, this, 20, 10, 0)
      
         button1.scale.setTo(scaleRatio,scaleRatio);
         button2.scale.setTo(scaleRatio,scaleRatio);
@@ -1070,6 +1069,8 @@ function findComboExits(tileName) {
 // Used to check if the player has won or lost
 function checkGameStatus() {
 
+    youwin.destroy();
+    youlose.destroy();
     youwin = game.add.audio('win!',volume, false);
     youlose = game.add.audio('lose', volume, false);
     
