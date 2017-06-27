@@ -189,9 +189,9 @@ function makeBackground() {
 
     backgroundImage = game.add.image(game.world.centerX, game.world.centerY, 'background');
     backgroundImage.anchor.setTo(0.5, 0.5);
-    backgroundImage.scale.setTo(2*canvas_x/backgroundImage.width,2*canvas_y/backgroundImage.height);
+    backgroundImage.scale.setTo(1.5*canvas_x/backgroundImage.width,2*canvas_y/backgroundImage.height);
     backgroundImage.bringToBottom;
-    backgroundImage.tint = 0x220022;
+    backgroundImage.tint = 0x224422;
 }
 
 function memoryBoardGenerator() {
@@ -232,14 +232,23 @@ function update() {
         rotated = false;
         moved = false;
     }
+    for (var n = 0; n < MEMORY_NUM; n++) {
+        positionCharacter(guards[n])
+        let memory = memoryTiles[n];
+        if (memory.found) {
+            memory.tint = 0x444444;
+        }
+        else {
+            memory.tint = 0xffffff;
+        }
+        memory.bringToTop();
+    }
 
     // Move the characters to their proper screen position
     positionCharacter(player);
 
-    guards.forEach(positionCharacter, this);
     delta += 1;
     if (delta == 20){
-        console.log(backgroundImage.tint.toString(16));
         chance = Math.floor(Math.random()*3);
         if (backgroundImage.tint - backgroundImage.tint < 0) {
             backgroundImage.tint = Math.floor(Math.random()*0xffffff)
@@ -250,7 +259,6 @@ function update() {
         delta = 0;
     }
     backgroundImage.rotation += 0.001;
-    //console.log(backgroundImage.tint);
 }
 
 
@@ -784,9 +792,7 @@ class BasicTile {
         // Only creates image for tiles with sprites
         this.image = game.add.sprite(xLoc, yLoc, tileName);
         if (tileName != "") {
-            
             this.image.anchor.setTo(0.5,0.5);
-            this.image.scale.setTo(scaleRatio,scaleRatio);
             this.image.inputEnabled = true;
             this.image.events.onInputDown.add(menuCreate(this), this);
             addHighlight(this.image);
@@ -862,7 +868,6 @@ class ComboTile {
         if (tileName != "") {
             
             this.image.anchor.setTo(0.5,0.5);
-            this.image.scale.setTo(scaleRatio,scaleRatio);
             this.image.inputEnabled = true;
             this.image.events.onInputDown.add(menuCreate(this), this);
             addHighlight(this.image);
