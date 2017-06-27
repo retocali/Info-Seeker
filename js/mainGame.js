@@ -1069,17 +1069,17 @@ function findComboExits(tileName) {
 // Used to check if the player has won or lost
 function checkGameStatus() {
 
-    youwin.destroy();
-    youlose.destroy();
-    youwin = game.add.audio('win!',volume, false);
-    youlose = game.add.audio('lose', volume, false);
+
     
+        
     for (var n = 0;  n < guards.length; n++) {
         let guard = guards[n];
 
         if (player.pos.x == guard.pos.x && player.pos.y == guard.pos.y 
             && board[guard.pos.x][guard.pos.y].sameZone(player, guard)) {
             console.log("You Lose!");
+            youlose = game.add.audio('lose', volume, false);
+
             youlose.play();
             gameDone.visible = true;
             gameDone.bringToTop;
@@ -1088,6 +1088,8 @@ function checkGameStatus() {
         } else if (player.pos.x == exit.x && player.pos.y == exit.y && memoryAmount == MEMORY_NUM) {
             console.log("You Win!");
             // if its played at update, it's gonna keep playing it.... causing a bug :/
+            
+            youwin = game.add.audio('win!',volume, false);
             youwin.play();
             youWin.visible = true;
             youWin.bringToTop;
@@ -1098,6 +1100,8 @@ function checkGameStatus() {
     }
     if (possibleMovements(player).length == 0) {
         console.log("You Lose!");
+        youlose = game.add.audio('lose', volume, false);
+
         youlose.play();
         gameDone.visible = true;
         return true;
