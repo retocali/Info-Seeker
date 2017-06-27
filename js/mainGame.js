@@ -13,6 +13,7 @@ var click;
 var background;
 var volume = 1; 
 var youwin;
+var muteBGM;
 
 // Map related Variables
 var board;
@@ -115,7 +116,8 @@ function preload() {
     game.load.audio('win!', 'assets/sounds/win.mp3');
     game.load.audio('lose', 'assets/sounds/gameover.wav');
 
-    // Image
+    // Image for mute button
+    game.load.image('mute', 'assets/sprites/mute.png');
 
     // Big Screens
     game.load.image('logo', 'assets/sprites/welcome.jpg');
@@ -167,21 +169,37 @@ function create() {
 
     memoryBoardGenerator();
 
+    backgroundMusic();
+
     makeUI();
 
     addKeyboardInput();
 
-    backgroundMusic();
-
 }
 
 function backgroundMusic() {
-    youwin = game.add.audio('win!',volume, false);
-    youlose = game.add.audio('lose', volume, false);
+
+    // Muting the BGM
+    muteBGM = game.add.button(game.world.centerX + scaleRatio * 128*2.5, game.world.centerY + scaleRatio * 128, 'mute');
+    muteBGM.scale.setTo(64*scaleRatio/muteBGM.width,64*scaleRatio/muteBGM.height);
+    muteBGM.inputEnabled = true;
+    muteBGM.bringToBottom;
+    muteBGM.events.onInputDown.add(muteFunction,this);
+
     background = game.add.audio('bgm', volume, true);
     background.play();
-      
+    
 
+}
+
+// Mute function for the BGM
+function muteFunction() {
+    if (volume) {
+        background.stop();
+    } else {
+        background.play();
+    }
+    volume = !volume;
 }
 
 function makeBackground() {
@@ -505,7 +523,7 @@ function addHighlight(s) {
 // the dark blue (pressed down)
 function color(s) {
     return function() {
-        click = game.add.audio('click');
+        click = game.add.audio('click', 0+volume);
         click.play();
         s.tint = 0x0000ff;
     }
@@ -652,7 +670,7 @@ function actionOnClick () {
     for (let n = 0; n < MEMORY_NUM; n++) {
         memoryTiles[n].found = false;
     }
-    click = game.add.audio('restartClick');
+    click = game.add.audio('restartClick', volume);
     click.play();
     reset();
     updateText();
@@ -1047,6 +1065,9 @@ function findComboExits(tileName) {
 // Used to check if the player has won or lost
 function checkGameStatus() {
 
+    youwin = game.add.audio('win!',volume, false);
+    youlose = game.add.audio('lose', volume, false);
+    
     for (var n = 0;  n < guards.length; n++) {
         let guard = guards[n];
 
