@@ -209,7 +209,7 @@ function makeBackground() {
 
     backgroundImage = game.add.image(game.world.centerX, game.world.centerY, 'background');
     backgroundImage.anchor.setTo(0.5, 0.5);
-    backgroundImage.scale.setTo(1.5*canvas_x/backgroundImage.width,2*canvas_y/backgroundImage.height);
+    backgroundImage.scale.setTo(2*canvas_x/backgroundImage.width,2*canvas_y/backgroundImage.height);
     backgroundImage.bringToBottom;
     backgroundImage.tint = 0x224422;
 }
@@ -532,7 +532,7 @@ function color(s) {
     return function() {
         click = game.add.audio('click', 0+volume);
         click.play();
-        s.tint = 0x0000ff;
+        s.tint = 0x00ff00;
     }
 }
 
@@ -580,7 +580,7 @@ function menuCreate(s) {
     return function() {
 
         var BUTTON_Y = game.world.centerY;
-        var OFFSET = game.world.centerX-400*scaleRatio;
+        var OFFSET = game.world.centerX-350*scaleRatio;
 
 
         if (group) {
@@ -593,7 +593,7 @@ function menuCreate(s) {
 
         group = game.add.group();
 
-        button1 = game.make.button(OFFSET, BUTTON_Y-(BOX_SIZE+MARGIN), 'rotateClock' , clockwise, this, 20, 10, 0);
+        button1 = game.make.button(OFFSET, BUTTON_Y+(BOX_SIZE+MARGIN), 'rotateClock' , clockwise, this, 20, 10, 0);
         button2 = game.make.button(OFFSET, BUTTON_Y, 'rotateCounter', counterClockWise, this, 20, 10, 0);
         button3 = game.make.button(OFFSET, BUTTON_Y-(BOX_SIZE+MARGIN), 'move', move, this, 20, 10, 0)
      
@@ -601,6 +601,9 @@ function menuCreate(s) {
         button2.scale.setTo(scaleRatio,scaleRatio);
         button3.scale.setTo(scaleRatio,scaleRatio);
 
+        button1.anchor.setTo(0.5,0.5);
+        button2.anchor.setTo(0.5,0.5);
+        button3.anchor.setTo(0.5,0.5);
 
         function clockwise() {
             if (!rotated) {
