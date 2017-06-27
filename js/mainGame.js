@@ -5,6 +5,9 @@ var scaleRatio = Math.min(canvas_x/1100, canvas_y/800);
 
 var game = new Phaser.Game(canvas_x, canvas_y, Phaser.CANVAS, 'phaser-example', { preload: preload, create: create, update: update});
 
+// Sound
+var click;
+
 
 // Map related Variables
 var board;
@@ -99,13 +102,14 @@ var DIRECTIONS = 4;
 */
 
 function preload() {
-    
-    // Used to load GAME OVER and YOU WIN
+    // Sounds
+    game.load.audio('click', 'assets/sounds/click1.wav');
+    game.load.audio('restartClick', 'assets/sounds/219472__jarredgibb__button-01.wav')
+
+    // Big Screens
+    game.load.image('logo', 'assets/sprites/welcome.jpg');
     game.load.image('gameover', 'assets/sprites/gameover.png');
     game.load.image('youwin', 'assets/sprites/youwin.png');
-
-    // Splash Screen
-    game.load.image('logo', 'assets/sprites/welcome.jpg');
 
     // Memory Tile 
     game.load.image('memoryTile', 'assets/sprites/memory_tile.gif');
@@ -174,8 +178,7 @@ function memoryBoardGenerator() {
 function update() {
 
 
-    gameDone.bringToTop;
-    youWin.bringToTop;
+    
 
     if (!checkGameStatus()) {
         return;
@@ -438,7 +441,7 @@ function rotateCounterClockWise() {
 
 // Keeps track of memory tiles collected
 function updateText() {
-    text.setText("Memory Tiles collected: " + memoryAmount + "\n" + "Steps taken: " + steps);
+    text.setText("Memories: " + memoryAmount + "\n" + "Steps: " + steps);
 
 }   
 
@@ -452,6 +455,8 @@ function addHighlight(s) {
 // the dark blue (pressed down)
 function color(s) {
     return function() {
+        click = game.add.audio('click');
+        click.play();
         s.tint = 0x0000ff;
     }
 }
@@ -595,6 +600,8 @@ function actionOnClick () {
     for (let n = 0; n < MEMORY_NUM; n++) {
         memoryTiles[n].found = false;
     }
+    click = game.add.audio('restartClick');
+    click.play();
     reset();
     updateText();
 }
@@ -993,13 +1000,14 @@ function checkGameStatus() {
 
         if (player.pos.x == guard.pos.x && player.pos.y == guard.pos.y 
             && board[guard.pos.x][guard.pos.y].sameZone(player, guard)) {
-            console.log(player.pos, guard.pos);
             console.log("You Lose!");
             gameDone.visible = true;
+            gameDone.bringToTop;
             return false;
         } else if (player.pos.x == exit.x && player.pos.y == exit.y && memoryAmount == MEMORY_NUM) {
             console.log("You Win!");
             youWin.visible = true;
+            youWin.bringToTop;
             youWin.inputEnabled = true;
             youWin.events.onInputDown.add(replay,this);
             return false;
