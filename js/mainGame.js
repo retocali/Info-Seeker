@@ -238,7 +238,7 @@ function update() {
 
     guards.forEach(positionCharacter, this);
     backgroundImage.tint += 0x010101;
-    backgroundImage.rotation += 0.01;
+    backgroundImage.rotation += 0.001;
     //console.log(backgroundImage.tint);
 }
 
@@ -617,7 +617,7 @@ function removeLogo () {
 // used with the restart button
 function actionOnClick () {
     
-    finished = true;
+    finished = false;
     player.pos = {x:entrance.x, y:entrance.y};
     for (let n = 0; n < memoryTiles.length; n++) {
         respawnGuard(n);
