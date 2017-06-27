@@ -593,9 +593,9 @@ function menuCreate(s) {
 
         group = game.add.group();
 
-        button1 = game.make.button(OFFSET, BUTTON_Y, 'rotateClock' , clockwise, this, 20, 10, 0);
-        button2 = game.make.button(OFFSET, BUTTON_Y-(BOX_SIZE+MARGIN), 'rotateCounter', counterClockWise, this, 20, 10, 0);
-        button3 = game.make.button(OFFSET, BUTTON_Y-2*(BOX_SIZE+MARGIN), 'move', move, this, 20, 10, 0)
+        button1 = game.make.button(OFFSET, BUTTON_Y-(BOX_SIZE+MARGIN), 'rotateClock' , clockwise, this, 20, 10, 0);
+        button2 = game.make.button(OFFSET, BUTTON_Y, 'rotateCounter', counterClockWise, this, 20, 10, 0);
+        button3 = game.make.button(OFFSET, BUTTON_Y-(BOX_SIZE+MARGIN), 'move', move, this, 20, 10, 0)
      
         button1.scale.setTo(scaleRatio,scaleRatio);
         button2.scale.setTo(scaleRatio,scaleRatio);
