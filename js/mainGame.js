@@ -76,7 +76,8 @@ var cursorPos = {x:-1, y:-1};
 var TILE_SIZE = 128*scaleRatio;
 var MARGIN = 12*scaleRatio;
 var BOX_SIZE = 128*scaleRatio; 
-var BUTTON_Y = 600*scaleRatio;
+var BUTTON_Y = 600*scaleRatio+game.world.centerY-400*scaleRatio;
+var OFFSET = game.world.centerX-550*scaleRatio;
 
 
 // Keys 
@@ -160,17 +161,17 @@ function create() {
 
 function memoryBoardGenerator() {
 
-    rectangle = game.add.sprite(game.world.centerX + 350, game.world.centerY - 70, "memoryBoard");
+    rectangle = game.add.sprite(game.world.centerX + 350*scaleRatio, game.world.centerY - 70*scaleRatio, "memoryBoard");
     rectangle.scale.setTo(scaleRatio*0.20,scaleRatio*0.20);
 
-    text = game.add.text(game.world.centerX + 460, game.world.centerY, "Memory Tiles collected: " + memoryAmount + "\n Steps taken: " + steps, {
+    text = game.add.text(game.world.centerX + 460*scaleRatio, game.world.centerY, "Memory Tiles collected: " + memoryAmount + "\n Steps taken: " + steps, {
         font: "20px Comic Sans",
         fill: "#00f00f",
         align: "center"
     });
 
     text.anchor.setTo(0.5, 0.5);
-
+    text.scaleRatio.setTo(scaleRatio, scaleRatio);
 }
 
 function update() {
@@ -268,7 +269,7 @@ function makePlayer() {
 function makeUI() {
 
     //Creates the restart button
-    restartButton = game.add.button(game.world.centerX + 300*scaleRatio, 100*scaleRatio, 'replayImage', actionOnClick, this);
+    restartButton = game.add.button(game.world.centerX + 300*scaleRatio, 100*scaleRatio+game.world.centerY-400*scaleRatio, 'replayImage', actionOnClick, this);
     restartButton.scale.setTo(0.41*scaleRatio,0.41*scaleRatio);
     restartButton.inputEnabled = true;
 
@@ -280,11 +281,11 @@ function makeUI() {
     game.input.onDown.add(removeLogo, this);
 
     // Game Over screen
-    gameDone = game.add.sprite(0, 0, 'gameover');
+    gameDone = game.add.sprite(game.world.centerX, game.world.centerY, 'gameover');
     gameDone.scale.setTo(3.1*scaleRatio,3.5*scaleRatio);
     gameDone.visible = false;
 
-    youWin = game.add.sprite(0, 0, 'youwin');
+    youWin = game.add.sprite(game.world.centerX, game.world.centerY, 'youwin');
     youWin.scale.setTo(1.9*scaleRatio,1.7*scaleRatio);
     youWin.visible = false;
     youWin.inputEnabled = false;
@@ -509,9 +510,9 @@ function menuCreate(s) {
 
         group = game.add.group();
 
-        button1 = game.make.button(2*MARGIN, BUTTON_Y, 'rotateClock' , clockwise, this, 20, 10, 0);
-        button2 = game.make.button(3*MARGIN+BOX_SIZE, BUTTON_Y, 'rotateCounter', counterClockWise, this, 20, 10, 0);
-        button3 = game.make.button(4*MARGIN+2*BOX_SIZE, BUTTON_Y, 'move', move, this, 20, 10, 0)
+        button1 = game.make.button(2*MARGIN-OFFSET, BUTTON_Y, 'rotateClock' , clockwise, this, 20, 10, 0);
+        button2 = game.make.button(3*MARGIN+BOX_SIZE-OFFSET, BUTTON_Y, 'rotateCounter', counterClockWise, this, 20, 10, 0);
+        button3 = game.make.button(4*MARGIN+2*BOX_SIZE-OFFSET, BUTTON_Y, 'move', move, this, 20, 10, 0)
      
         button1.scale.setTo(scaleRatio,scaleRatio);
         button2.scale.setTo(scaleRatio,scaleRatio);
