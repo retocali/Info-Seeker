@@ -211,10 +211,8 @@ function memoryBoardGenerator() {
     text.scale.setTo(scaleRatio, scaleRatio);
 }
 
+var delta = 0;
 function update() {
-
-
-    
 
     if (finished) {
         return;
@@ -241,7 +239,18 @@ function update() {
     positionCharacter(player);
 
     guards.forEach(positionCharacter, this);
-    backgroundImage.tint += 0x010101;
+    delta += 1;
+    if (delta == 20){
+        console.log(backgroundImage.tint.toString(16));
+        chance = Math.floor(Math.random()*3);
+        if (backgroundImage.tint - backgroundImage.tint < 0) {
+            backgroundImage.tint = Math.floor(Math.random()*0xffffff)
+        } else {
+            backgroundImage.tint -= Math.pow(16,(2*chance));
+        }
+        
+        delta = 0;
+    }
     backgroundImage.rotation += 0.001;
     //console.log(backgroundImage.tint);
 }
