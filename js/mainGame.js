@@ -290,10 +290,12 @@ function makeUI() {
     // Game Over screen
     gameDone = game.add.sprite(game.world.centerX, game.world.centerY, 'gameover');
     gameDone.scale.setTo(3.1*scaleRatio,3.5*scaleRatio);
+    gameDone.anchor.setTo(0.5,0.5);
     gameDone.visible = false;
 
     youWin = game.add.sprite(game.world.centerX, game.world.centerY, 'youwin');
     youWin.scale.setTo(1.9*scaleRatio,1.7*scaleRatio);
+    youWin.anchor.setTo(0.5,0.5);
     youWin.visible = false;
     youWin.inputEnabled = false;
 }
