@@ -41,7 +41,7 @@ var steps = 0;
 var gameDone;
 var youWin
 var logo;
-
+var backgroundImage;
 
 // For keeping tracking of turns
 var moved = false;
@@ -78,7 +78,7 @@ var cursorPos = {x:-1, y:-1};
 
 
 // UI Constants
-var TILE_SIZE = 128*scaleRatio;
+var TILE_SIZE = 150*scaleRatio;
 var MARGIN = 12*scaleRatio;
 var BOX_SIZE = 128*scaleRatio; 
 
@@ -115,6 +115,7 @@ function preload() {
     game.load.image('logo', 'assets/sprites/welcome.jpg');
     game.load.image('gameover', 'assets/sprites/gameover.png');
     game.load.image('youwin', 'assets/sprites/youwin.png');
+    game.load.image('background', 'assets/sprites/12436668-torsion-movement-op-art-abstract-illustration.jpg');
 
     // Memory Tile 
     game.load.image('memoryTile', 'assets/sprites/memory_tile.gif');
@@ -133,6 +134,8 @@ function preload() {
     game.load.image('rotateClock',"assets/sprites/Rotate_Clockwise.png");
     game.load.image('rotateCounter',"assets/sprites/Rotate_Counter_Clockwise.png");
 
+
+
     // Used to load the images as sprites to randomly access
     for (var i = 0; i < tileNames.length; i++) {
         game.load.image('tile'+i, 'assets/sprites/tiles/' + tileNames[i]);
@@ -148,10 +151,8 @@ function preload() {
 
 function create() {
 
-    // Sets up the background
-    game.stage.backgroundColor = "#4488AA";
-    game.scale.pageAlignHorizontally = true; game.scale.pageAlignVertically = true; game.scale.refresh();
-    
+    makeBackground();
+
     boardGenerator();
 
     makePlayer();
@@ -171,6 +172,18 @@ function create() {
 function backgroundMusic() {
     background = game.add.audio('bgm', volume, true);
     background.play();
+}
+
+function makeBackground() {
+    // Sets up the background
+    game.stage.backgroundColor = "#4488AA";
+    game.scale.pageAlignHorizontally = true; game.scale.pageAlignVertically = true; game.scale.refresh();
+
+    backgroundImage = game.add.image(game.world.centerX, game.world.centerY, 'background');
+    backgroundImage.anchor.setTo(0.5, 0.5);
+    backgroundImage.scale.setTo(2*canvas_x/backgroundImage.width,2*canvas_y/backgroundImage.height);
+    backgroundImage.bringToBottom;
+    backgroundImage.tint = 0x220022;
 }
 
 function memoryBoardGenerator() {
@@ -216,7 +229,9 @@ function update() {
     positionCharacter(player);
 
     guards.forEach(positionCharacter, this);
-    
+    backgroundImage.tint += 0x010101;
+    backgroundImage.rotation += 0.01;
+    //console.log(backgroundImage.tint);
 }
 
 
@@ -262,6 +277,7 @@ function boardGenerator() {
                     s.rotateClockWise();                
                 }   
             }
+            s.image.scale.setTo(TILE_SIZE/s.image.width, TILE_SIZE/s.image.height);
         }
     }
 }
