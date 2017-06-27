@@ -62,7 +62,6 @@ var replayImage = "button_restart.png";
 var comboTileNames = ["Dead_End_2.png","Line_Combo.png","Loop_Tile_2.png"];
 var tileNames = ["Corner_Tile.png","Cross_Tile.png","DeadEnd_Tile.png", "Line_Tile.png","Tetris_Tile.png"];
 
-
 // UI variables
 var button1;
 var button2;
@@ -99,7 +98,10 @@ var DIRECTIONS = 4;
 */
 
 function preload() {
-    
+
+    // Used to load the background music and UI sounds
+    game.load.audio('BGM', 'assets/sounds/PuzzleTheme1.wav');
+
     // Used to load GAME OVER and YOU WIN
     game.load.image('gameover', 'assets/sprites/gameover.png');
     game.load.image('youwin', 'assets/sprites/youwin.png');
@@ -138,6 +140,7 @@ function preload() {
 }
 
 function create() {
+
     // Sets up the background
     game.stage.backgroundColor = "#4488AA";
     game.scale.pageAlignHorizontally = true; game.scale.pageAlignVertically = true; game.scale.refresh();
@@ -153,6 +156,14 @@ function create() {
     addKeyboardInput();
 
     memoryBoardGenerator();
+
+    backgroundMusic();
+
+}
+
+function backgroundMusic() {
+
+    new Sound(game, "BGM", 1, true);
 
 }
 
@@ -202,7 +213,6 @@ function update() {
 
     guards.forEach(positionCharacter, this);
     
-
 }
 
 
