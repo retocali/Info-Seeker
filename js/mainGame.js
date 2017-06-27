@@ -32,6 +32,7 @@ var memoryTaken;
 var rectangle;
 var memoryAmount = 0; //starts off with the amount of tiles collected
 var steps = 0;
+var finished = false;
 
 //music found from https://www.dl-sounds.com/royalty-free/category/game-film/video-game/ && http://freesound.org
 //https://tutorialzine.com/2015/06/making-your-first-html5-game-with-phaser source
@@ -171,9 +172,11 @@ function create() {
 }
 
 function backgroundMusic() {
-    youwin = game.add.audio('win!',volume,false);
+    youwin = game.add.audio('win!',volume, false);
     background = game.add.audio('bgm', volume, true);
     background.play();
+      
+
 }
 
 function memoryBoardGenerator() {
@@ -196,9 +199,12 @@ function update() {
 
     
 
-    if (!checkGameStatus()) {
+    if (finished) {
         return;
+    } else {
+        finished = checkGameStatus();
     }
+
     if (rotated && moved) {
         for(let n = 0; n < guards.length; n++) {
             if (!guards[n].active) {
@@ -594,6 +600,8 @@ function removeLogo () {
 
 // used with the restart button
 function actionOnClick () {
+    
+    finished = true;
     player.pos = {x:entrance.x, y:entrance.y};
     for (let n = 0; n < memoryTiles.length; n++) {
         respawnGuard(n);
@@ -1018,7 +1026,7 @@ function checkGameStatus() {
             console.log("You Lose!");
             gameDone.visible = true;
             gameDone.bringToTop;
-            return false;
+            return true;
 
         } else if (player.pos.x == exit.x && player.pos.y == exit.y && memoryAmount == MEMORY_NUM) {
             console.log("You Win!");
@@ -1028,15 +1036,15 @@ function checkGameStatus() {
             youWin.bringToTop;
             youWin.inputEnabled = true;
             youWin.events.onInputDown.add(replay,this);
-            return false;
+            return true;
         }
     }
     if (possibleMovements(player).length == 0) {
         console.log("You Lose!");
         gameDone.visible = true;
-        return false;
+        return true;
     }
-    return true;
+    return false;
 }
 
 // Checks if the player has reached a memory tile
