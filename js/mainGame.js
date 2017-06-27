@@ -12,6 +12,7 @@ var game = new Phaser.Game(canvas_x, canvas_y, Phaser.CANVAS, 'phaser-example', 
 var click;
 var background;
 var volume = 1; 
+var youwin;
 
 // Map related Variables
 var board;
@@ -31,6 +32,7 @@ var memoryTaken;
 var rectangle;
 var memoryAmount = 0; //starts off with the amount of tiles collected
 var steps = 0;
+var finished = false;
 
 //music found from https://www.dl-sounds.com/royalty-free/category/game-film/video-game/ && http://freesound.org
 //https://tutorialzine.com/2015/06/making-your-first-html5-game-with-phaser source
@@ -106,10 +108,11 @@ var DIRECTIONS = 4;
 */
 
 function preload() {
-    // Used to load the background music and UI sounds
+    // Used to load the background music, game over and win sounds, and UI sounds
     game.load.audio('bgm', 'assets/sounds/PuzzleTheme1.wav');
     game.load.audio('click', 'assets/sounds/click1.wav');
     game.load.audio('restartClick', 'assets/sounds/219472__jarredgibb__button-01.wav');
+    game.load.audio('win!', 'assets/sounds/win.mp3');
 
     // Big Screens
     game.load.image('logo', 'assets/sprites/welcome.jpg');
@@ -170,8 +173,11 @@ function create() {
 }
 
 function backgroundMusic() {
+    youwin = game.add.audio('win!',volume, false);
     background = game.add.audio('bgm', volume, true);
     background.play();
+      
+
 }
 
 function makeBackground() {
@@ -206,10 +212,12 @@ function update() {
 
     
 
-    if (!checkGameStatus()) {
+    if (finished) {
         return;
+    } else {
+        finished = checkGameStatus();
     }
-    
+
     if (rotated && moved) {
         for(let n = 0; n < guards.length; n++) {
             if (!guards[n].active) {
@@ -314,6 +322,7 @@ function makeUI() {
     gameDone.anchor.setTo(0.5,0.5);
     gameDone.visible = false;
 
+    // You Win! Screen
     youWin = game.add.sprite(game.world.centerX, game.world.centerY, 'youwin');
     youWin.scale.setTo(1.9*scaleRatio,1.7*scaleRatio);
     youWin.anchor.setTo(0.5,0.5);
@@ -607,6 +616,8 @@ function removeLogo () {
 
 // used with the restart button
 function actionOnClick () {
+    
+    finished = true;
     player.pos = {x:entrance.x, y:entrance.y};
     for (let n = 0; n < memoryTiles.length; n++) {
         respawnGuard(n);
@@ -1031,22 +1042,25 @@ function checkGameStatus() {
             console.log("You Lose!");
             gameDone.visible = true;
             gameDone.bringToTop;
-            return false;
+            return true;
+
         } else if (player.pos.x == exit.x && player.pos.y == exit.y && memoryAmount == MEMORY_NUM) {
             console.log("You Win!");
+            // if its played at update, it's gonna keep playing it.... causing a bug :/
+            youwin.play();
             youWin.visible = true;
             youWin.bringToTop;
             youWin.inputEnabled = true;
             youWin.events.onInputDown.add(replay,this);
-            return false;
+            return true;
         }
     }
     if (possibleMovements(player).length == 0) {
         console.log("You Lose!");
         gameDone.visible = true;
-        return false;
+        return true;
     }
-    return true;
+    return false;
 }
 
 // Checks if the player has reached a memory tile
