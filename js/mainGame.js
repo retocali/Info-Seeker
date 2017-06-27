@@ -1,13 +1,17 @@
 // Canvas size and scaling relative to screen size
+
+var gameX = 1100;
+var gameY = 800;
 var canvas_x = window.innerWidth;
 var canvas_y = window.innerHeight;
-var scaleRatio = Math.min(canvas_x/1100, canvas_y/800);
+var scaleRatio = Math.min(canvas_x/gameX, canvas_y/gameY);
 
 var game = new Phaser.Game(canvas_x, canvas_y, Phaser.CANVAS, 'phaser-example', { preload: preload, create: create, update: update});
 
 // Sound
 var click;
-
+var background;
+var volume = 1; 
 
 // Map related Variables
 var board;
@@ -65,7 +69,6 @@ var replayImage = "button_restart.png";
 var comboTileNames = ["Dead_End_2.png","Line_Combo.png","Loop_Tile_2.png"];
 var tileNames = ["Corner_Tile.png","Cross_Tile.png","DeadEnd_Tile.png", "Line_Tile.png","Tetris_Tile.png"];
 
-
 // UI variables
 var button1;
 var button2;
@@ -78,6 +81,7 @@ var cursorPos = {x:-1, y:-1};
 var TILE_SIZE = 128*scaleRatio;
 var MARGIN = 12*scaleRatio;
 var BOX_SIZE = 128*scaleRatio; 
+
 
 
 // Keys 
@@ -102,9 +106,10 @@ var DIRECTIONS = 4;
 */
 
 function preload() {
-    // Sounds
+    // Used to load the background music and UI sounds
+    game.load.audio('bgm', 'assets/sounds/PuzzleTheme1.wav');
     game.load.audio('click', 'assets/sounds/click1.wav');
-    game.load.audio('restartClick', 'assets/sounds/219472__jarredgibb__button-01.wav')
+    game.load.audio('restartClick', 'assets/sounds/219472__jarredgibb__button-01.wav');
 
     // Big Screens
     game.load.image('logo', 'assets/sprites/welcome.jpg');
@@ -142,6 +147,7 @@ function preload() {
 }
 
 function create() {
+
     // Sets up the background
     game.stage.backgroundColor = "#4488AA";
     game.scale.pageAlignHorizontally = true; game.scale.pageAlignVertically = true; game.scale.refresh();
@@ -152,20 +158,27 @@ function create() {
 
     makeMemoryTiles();
 
+    memoryBoardGenerator();
+
     makeUI();
 
     addKeyboardInput();
 
-    memoryBoardGenerator();
+    backgroundMusic();
 
+}
+
+function backgroundMusic() {
+    background = game.add.audio('bgm', volume, true);
+    background.play();
 }
 
 function memoryBoardGenerator() {
 
-    rectangle = game.add.sprite(game.world.centerX + 400*scaleRatio, game.world.centerY - 60*scaleRatio, "memoryBoard");
+    rectangle = game.add.sprite(game.world.centerX + 280*scaleRatio, game.world.centerY - 60*scaleRatio, "memoryBoard");
     rectangle.scale.setTo(scaleRatio*0.1,scaleRatio*0.10);
 
-    text = game.add.text(game.world.centerX + 480*scaleRatio, game.world.centerY, "Memories: " + memoryAmount + "\n Steps: " + steps, {
+    text = game.add.text(game.world.centerX + 360*scaleRatio, game.world.centerY, "Memories: " + memoryAmount + "\n Steps: " + steps, {
         font: "20px Comic Sans",
         fill: "#ffffff",
         align: "center"
@@ -183,7 +196,6 @@ function update() {
     if (!checkGameStatus()) {
         return;
     }
-
     
     if (rotated && moved) {
         for(let n = 0; n < guards.length; n++) {
@@ -205,7 +217,6 @@ function update() {
 
     guards.forEach(positionCharacter, this);
     
-
 }
 
 
@@ -269,7 +280,7 @@ function makePlayer() {
 function makeUI() {
 
     //Creates the restart button
-    restartButton = game.add.button(game.world.centerX + 300*scaleRatio, 100*scaleRatio+game.world.centerY-400*scaleRatio, 'replayImage', actionOnClick, this);
+    restartButton = game.add.button(game.world.centerX + 300*scaleRatio, 100*scaleRatio+game.world.centerY-(gameY/2)*scaleRatio, 'replayImage', actionOnClick, this);
     restartButton.scale.setTo(0.41*scaleRatio,0.41*scaleRatio);
     restartButton.inputEnabled = true;
 
@@ -278,6 +289,7 @@ function makeUI() {
     logo.anchor.setTo(0.5,0.5);
     logo.scale.setTo(0.18*scaleRatio,0.25*scaleRatio);
     logo.fixedtoCamera = true;
+    logo.bringToTop;
     game.input.onDown.add(removeLogo, this);
 
     // Game Over screen
@@ -504,9 +516,9 @@ function reset() {
 function menuCreate(s) {
     return function() {
 
-        
-        var BUTTON_Y = 600*scaleRatio+game.world.centerY-400*scaleRatio;
-        var OFFSET = game.world.centerX-550*scaleRatio;
+        var BUTTON_Y = 600*scaleRatio+game.world.centerY-(gameY/2)*scaleRatio;
+        var OFFSET = game.world.centerX-(gameX/2)*scaleRatio;
+
 
         if (group) {
             button1.destroy();
