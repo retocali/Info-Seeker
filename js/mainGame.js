@@ -4,7 +4,7 @@ var gameX = 1100;
 var gameY = 800;
 var canvas_x = window.innerWidth;
 var canvas_y = window.innerHeight;
-var scaleRatio = Math.min(canvas_x/gameX, canvas_y/gameY);
+var scaleRatio = Math.min(canvas_x/gameX, canvas_y/gameY)*Math.pow(devicePixelRatio, 1/2);
 
 var game = new Phaser.Game(canvas_x, canvas_y, Phaser.CANVAS, 'phaser-example', { preload: preload, create: create, update: update});
 
@@ -204,14 +204,14 @@ function muteFunction() {
 
 function makeBackground() {
     // Sets up the background
-    game.stage.backgroundColor = "#4488AA";
+    game.stage.backgroundColor = "#44aaaa";
     game.scale.pageAlignHorizontally = true; game.scale.pageAlignVertically = true; game.scale.refresh();
 
-    backgroundImage = game.add.image(game.world.centerX, game.world.centerY, 'background');
-    backgroundImage.anchor.setTo(0.5, 0.5);
-    backgroundImage.scale.setTo(2*canvas_x/backgroundImage.width,2*canvas_y/backgroundImage.height);
-    backgroundImage.bringToBottom;
-    backgroundImage.tint = 0x224422;
+    // backgroundImage = game.add.image(game.world.centerX, game.world.centerY, 'background');
+    // backgroundImage.anchor.setTo(0.5, 0.5);
+    // backgroundImage.scale.setTo(canvas_x/backgroundImage.width,canvas_y/backgroundImage.height);
+    // backgroundImage.bringToBottom;
+    // backgroundImage.tint = 0x224422;
 }
 
 function memoryBoardGenerator() {
@@ -266,18 +266,18 @@ function update() {
     // Move the characters to their proper screen position
     positionCharacter(player);
 
-    delta += 1;
-    if (delta == 20){
-        chance = Math.floor(Math.random()*3);
-        if (backgroundImage.tint - backgroundImage.tint < 0) {
-            backgroundImage.tint = Math.floor(Math.random()*0xffffff)
-        } else {
-            backgroundImage.tint -= Math.pow(16,(2*chance));
-        }
+    // delta += 1;
+    // if (delta == 20){
+    //     chance = Math.floor(Math.random()*3);
+    //     if (backgroundImage.tint - backgroundImage.tint < 0) {
+    //         backgroundImage.tint = Math.floor(Math.random()*0xffffff)
+    //     } else {
+    //         backgroundImage.tint -= Math.pow(16,(2*chance));
+    //     }
         
-        delta = 0;
-    }
-    backgroundImage.rotation += 0.001;
+    //     delta = 0;
+    // }
+    // //backgroundImage.rotation += 0.001;
 }
 
 
@@ -293,6 +293,12 @@ function boardGenerator() {
         for (let y = 0; y <= LENGTH + 1; y++) {
             // Finds the centered placement of the tiles 
             let s;
+            
+            // Sets up a random rotation for eachtile
+            let rotation = Math.floor(Math.random()*DIRECTIONS)*RIGHT_ANGLE;
+            if (x == 0 && y == 1) {
+                rotation = 0; // Ignores the tile that is directly below the player at the start    
+            }
             if (y == 0) {
                 if (x == 0) {
                     //Creates the entrance
@@ -300,29 +306,25 @@ function boardGenerator() {
                     entrance = s;
                 } else 
                     s = new BasicTile([0,0,0,0], 0, xLoc(x), yLoc(y), "", x, y);
-            }
-            else if (y == LENGTH + 1) {
+            
+            } else if (y == LENGTH + 1) {
                 // Creates the exit
                 if (x == WIDTH - 1) {
                     s = new BasicTile([0,0,1,0], FLIPPED, xLoc(x), yLoc(y), "entrix",x, y);
-                    s.image.scale.y *= -1;
                     exit = s
                 } else
                     s = new BasicTile([0,0,0,0], 0, xLoc(x), yLoc(y), "", x, y);
+
             } else if (Math.random() < COMBO_SPAWN) {
                 let tileName = comboTiles[Math.floor(Math.random()*comboTiles.length)];
-                s = new ComboTile(findComboExits(tileName), 0, xLoc(x), yLoc(y), tileName, x, y);
+                s = new ComboTile(findComboExits(tileName), rotation, xLoc(x), yLoc(y), tileName, x, y);
+            
             } else {
                 // Creates the actual sprites and adds a handler to rotate it
                 let tileName = tiles[Math.floor(Math.random()*tiles.length)];
-                s = new BasicTile(findExits(tileName), 0, xLoc(x), yLoc(y), tileName, x, y);
+                s = new BasicTile(findExits(tileName), rotation, xLoc(x), yLoc(y), tileName, x, y);
             }
-            board[x][y] = s; 
-            if (s != entrance && s!= exit && x != 0 && y != 1) {
-                for (let i = 0; i < Math.random()*4; i++) {
-                    s.rotateClockWise();                
-                }   
-            }
+            board[x][y] = s;
             s.image.scale.setTo(TILE_SIZE/s.image.width, TILE_SIZE/s.image.height);
         }
     }
@@ -663,18 +665,17 @@ function actionOnClick () {
     for (let n = 0; n < memoryTiles.length; n++) {
         respawnGuard(n);
         guards[n].active = true;
+        guards[n].tint = 0xffffff;
     }
     for (let x = 0;  x < board.length; x++) {
         for (let y = 0; y < board[x].length; y++) {
-            board[x][y].rotation = 0;
-            board[x][y].image.angle = 0;
+            board[x][y].resetRotation();
         }
     }
     gameDone.visible = false;
     youWin.visible = false
     rotated = false;
     moved = false;
-    exit.rotation = FLIPPED;
     steps = 0;
     memoryAmount = 0;
     for (let n = 0; n < MEMORY_NUM; n++) {
@@ -760,7 +761,7 @@ function moveGuard(guard) {
         pickedMove.tile.moveTo(guard, pickedMove.x, pickedMove.y);
     } else {
         guard.active = false;
-        guard.tint = 0x000000;
+        guard.tint = 0x444444;
     }
     
 }
@@ -817,10 +818,12 @@ class BasicTile {
             this.image.anchor.setTo(0.5,0.5);
             this.image.inputEnabled = true;
             this.image.events.onInputDown.add(menuCreate(this), this);
+            this.image.angle = rotation;
             addHighlight(this.image);
         }
         this.exits = exits;
         this.rotation = rotation;
+        this.initialRotation = rotation;
     }
     canGoNorth (character) {
         return this.exits[(NORTH+(this.rotation/RIGHT_ANGLE)) % DIRECTIONS];
@@ -865,6 +868,10 @@ class BasicTile {
     joinZone(character) {
         return;
     }
+    resetRotation() {
+        this.image.angle = this.initialRotation;
+        this.rotation = this.initialRotation
+    }
 }
 
 class ComboTile {
@@ -892,10 +899,12 @@ class ComboTile {
             this.image.anchor.setTo(0.5,0.5);
             this.image.inputEnabled = true;
             this.image.events.onInputDown.add(menuCreate(this), this);
+            this.image.angle = rotation;
             addHighlight(this.image);
         }
         this.exits = exits;
         this.rotation = rotation;
+        this.initialRotation = rotation;
     }
     canGoDirection(character, direction) {
         let isExit = this.exits[(direction+(this.rotation/RIGHT_ANGLE)) % 4]
@@ -914,7 +923,6 @@ class ComboTile {
             return isExit != 0; // Any exit is good when you're entering
         }
     }
-
     canGoNorth (character) {
         return this.canGoDirection(character, NORTH);
     }
@@ -946,8 +954,6 @@ class ComboTile {
         this.image.angle -= RIGHT_ANGLE;
         return true;
     }
-
-
     moveTo(character, x, y) {
          if (x == 0 && y == 1) { //Went to North Side
             if (this.exits[(NORTH+(this.rotation/RIGHT_ANGLE)) % DIRECTIONS] == 1) {
@@ -987,7 +993,6 @@ class ComboTile {
             this.zone2.splice(this.zone2.indexOf(character), 1);
         }
     }
-
     sameZone(player, guard) {
         return this.zone1.includes(player) == this.zone1.includes(guard) ||
                this.zone2.includes(player) == this.zone2.includes(guard);
@@ -1008,6 +1013,10 @@ class ComboTile {
             this.zone2.push(character);
             character.zone = 2;
         }
+    }
+    resetRotation() {
+        this.image.angle = this.initialRotation;
+        this.rotation = this.initialRotation
     }
 }
 
@@ -1082,10 +1091,9 @@ function checkGameStatus() {
             && board[guard.pos.x][guard.pos.y].sameZone(player, guard)) {
             console.log("You Lose!");
             youlose = game.add.audio('lose', volume, false);
-
             youlose.play();
+            gameDone.bringToTop;  
             gameDone.visible = true;
-            gameDone.bringToTop;
             return true;
 
         } else if (player.pos.x == exit.x && player.pos.y == exit.y && memoryAmount == MEMORY_NUM) {
@@ -1094,8 +1102,8 @@ function checkGameStatus() {
             
             youwin = game.add.audio('win!',volume, false);
             youwin.play();
-            youWin.visible = true;
             youWin.bringToTop;
+            youWin.visible = true;
             youWin.inputEnabled = true;
             youWin.events.onInputDown.add(replay,this);
             return true;
@@ -1104,8 +1112,8 @@ function checkGameStatus() {
     if (possibleMovements(player).length == 0) {
         console.log("You Lose!");
         youlose = game.add.audio('lose', volume, false);
-
         youlose.play();
+        gameDone.bringToTop;
         gameDone.visible = true;
         return true;
     }
@@ -1132,4 +1140,9 @@ function respawnGuard(n) {
     let ypos = memoryTiles[n].pos.y;
     guards[n].pos = {x: xpos, y: ypos};
     board[xpos][ypos].joinZone(guards[n]);
+}
+
+function rgbToHex(r, g, b) {
+    return r*Math.pow(16,4)+g*Math.pow(16,2)+b;
+
 }
