@@ -211,7 +211,7 @@ function makeBackground() {
     backgroundImage.anchor.setTo(0.5, 0.5);
     backgroundImage.scale.setTo(canvas_x/backgroundImage.width,canvas_y/backgroundImage.height);
     backgroundImage.bringToBottom;
-    backgroundImage.tint = 0x224422;
+    backgroundImage.tint = 0x101010;
 }
 
 function memoryBoardGenerator() {
@@ -580,6 +580,10 @@ function reset() {
 // Creates the UI for the tiles
 function menuCreate(s) {
     return function() {
+        
+        if (finished) {
+            return;
+        }
 
         var BUTTON_Y = game.world.centerY;
         var OFFSET = game.world.centerX-350*scaleRatio;
@@ -724,20 +728,24 @@ function movePlayer(tile) {
         if (yMove == 1 && tile.canGoNorth(player) && board[x][y].canGoSouth(player)) {            
             player.pos.y += yMove;
             changed = true;
+            player.anchor.setTo(0.5,1);
         }
         if (yMove == -1 && tile.canGoSouth(player) && board[x][y].canGoNorth(player)) {
             player.pos.y += yMove;
             changed = true;
+            player.anchor.setTo(0.5,0);
         }
     }
     else if (yMove == 0) {
         if (xMove == 1 && tile.canGoWest(player) && board[x][y].canGoEast(player)) {
             player.pos.x += xMove;
             changed = true;
+            player.anchor.setTo(1,0.5);
         }
         if (xMove == -1 && tile.canGoEast(player) && board[x][y].canGoWest(player)) {
             player.pos.x += xMove;
             changed = true;
+            player.anchor.setTo(0,0.5);
         }
     }
     if (changed) {
@@ -1092,8 +1100,8 @@ function checkGameStatus() {
             console.log("You Lose!");
             youlose = game.add.audio('lose', volume, false);
             youlose.play();
-            gameDone.bringToTop;  
             gameDone.visible = true;
+            gameDone.bringToTop;  
             return true;
 
         } else if (player.pos.x == exit.x && player.pos.y == exit.y && memoryAmount == MEMORY_NUM) {
@@ -1102,8 +1110,8 @@ function checkGameStatus() {
             
             youwin = game.add.audio('win!',volume, false);
             youwin.play();
-            youWin.bringToTop;
             youWin.visible = true;
+            youWin.bringToTop;
             youWin.inputEnabled = true;
             youWin.events.onInputDown.add(replay,this);
             return true;
@@ -1113,8 +1121,8 @@ function checkGameStatus() {
         console.log("You Lose!");
         youlose = game.add.audio('lose', volume, false);
         youlose.play();
-        gameDone.bringToTop;
         gameDone.visible = true;
+        gameDone.bringToTop;
         return true;
     }
     return false;
