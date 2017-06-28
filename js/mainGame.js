@@ -207,11 +207,11 @@ function makeBackground() {
     game.stage.backgroundColor = "#44aaaa";
     game.scale.pageAlignHorizontally = true; game.scale.pageAlignVertically = true; game.scale.refresh();
 
-    // backgroundImage = game.add.image(game.world.centerX, game.world.centerY, 'background');
-    // backgroundImage.anchor.setTo(0.5, 0.5);
-    // backgroundImage.scale.setTo(canvas_x/backgroundImage.width,canvas_y/backgroundImage.height);
-    // backgroundImage.bringToBottom;
-    // backgroundImage.tint = 0x224422;
+    backgroundImage = game.add.image(game.world.centerX, game.world.centerY, 'background');
+    backgroundImage.anchor.setTo(0.5, 0.5);
+    backgroundImage.scale.setTo(canvas_x/backgroundImage.width,canvas_y/backgroundImage.height);
+    backgroundImage.bringToBottom;
+    backgroundImage.tint = 0x224422;
 }
 
 function memoryBoardGenerator() {
