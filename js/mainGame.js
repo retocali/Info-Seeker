@@ -4,7 +4,7 @@ var gameX = 1100;
 var gameY = 800;
 var canvas_x = window.innerWidth;
 var canvas_y = window.innerHeight;
-var scaleRatio = Math.min(canvas_x/gameX, canvas_y/gameY)*Math.pow(devicePixelRatio, 1/2);
+var scaleRatio = Math.min(canvas_x/gameX, canvas_y/gameY);//*Math.pow(devicePixelRatio, 1/2);
 
 var game = new Phaser.Game(canvas_x, canvas_y, Phaser.CANVAS, 'phaser-example', { preload: preload, create: create, update: update});
 
