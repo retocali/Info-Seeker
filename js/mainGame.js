@@ -6,7 +6,7 @@ var canvas_x = window.innerWidth;
 var canvas_y = window.innerHeight;
 var scaleRatio = Math.min(canvas_x/gameX, canvas_y/gameY)*Math.pow(devicePixelRatio, 1/2);
 
-var game = new Phaser.Game(canvas_x, canvas_y, Phaser.CANVAS, 'phaser-example', { preload: preload, create: create, update: update});
+var game = new Phaser.Game(gameX*scaleRatio, gameY*scaleRatio, Phaser.CANVAS, 'phaser-example', { preload: preload, create: create, update: update});
 
 // Sound
 var click;
