@@ -129,7 +129,7 @@ function preload() {
     game.load.image('background', 'assets/sprites/12436668-torsion-movement-op-art-abstract-illustration.jpg');
 
     // Memory Tile 
-    game.load.image('memoryTile', 'assets/sprites/memory_tile.gif');
+    game.load.image('memoryTile', 'assets/sprites/puzzle.png');
     game.load.image('memoryBoard', 'assets/sprites/memory_board.jpg')
     game.load.bitmapFont('zigFont', 'assets/zig/font/font.png','assets/zig/font/font.fnt');
 
@@ -377,7 +377,7 @@ function makeMemoryTiles() {
         memoryTile.found = false;
         memoryTiles.push(memoryTile);
         memoryTile.anchor.setTo(0.5,0.5);
-        memoryTile.scale.setTo(1.5*scaleRatio,1.5*scaleRatio);
+        memoryTile.scale.setTo(32*scaleRatio/memoryTile.width,32*scaleRatio/memoryTile.length);
         makeGuard(coord.x, coord.y);
         memoryTile.bringToTop();
     }
