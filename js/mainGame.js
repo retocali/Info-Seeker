@@ -8,6 +8,8 @@ var scaleRatio = Math.min(canvas_x/gameX, canvas_y/gameY)*Math.pow(devicePixelRa
 
 var game = new Phaser.Game(gameX*scaleRatio, gameY*scaleRatio, Phaser.CANVAS, 'phaser-example', { preload: preload, create: create, update: update});
 
+// setStyle(font = "Arial", update);
+
 // Sound
 var click;
 var background;
