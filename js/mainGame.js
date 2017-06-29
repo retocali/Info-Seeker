@@ -379,6 +379,7 @@ function makeMemoryTiles() {
         memoryTiles.push(memoryTile);
         memoryTile.anchor.setTo(0.5,0.5);
         memoryTile.scale.setTo(32*scaleRatio/memoryTile.width,32*scaleRatio/memoryTile.length);
+        memoryTile.tint = Math.floor(Math.random()*0xffffff);
         makeGuard(coord.x, coord.y);    
     }
 
@@ -572,7 +573,7 @@ function actionOnClick () {
     positionCharacter(player);
     for (let n = 0; n < MEMORY_NUM; n++) {
         memoryTiles[n].found = false;
-        memoryTiles[n].tint = 0xffffff;
+        memoryTiles[n].tint = Math.floor(Math.random()*(0xffffff));
     }
 
     click = game.add.audio('restartClick', volume);
