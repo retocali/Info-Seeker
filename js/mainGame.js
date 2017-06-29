@@ -503,6 +503,8 @@ function menuCreate(s) {
         button2.anchor.setTo(0.5,0.5);
         button3.anchor.setTo(0.5,0.5);
 
+        logo.bringToTop();
+
         function clockwise() {
             if (!rotated) {
                 rotated = s.rotateClockWise();
@@ -971,7 +973,6 @@ function yLoc(y) {
 function positionCharacter(character) {
     character.x = xLoc(character.pos.x);
     character.y = yLoc(character.pos.y);
-    character.bringToTop;
 }
 
 // Finds the exits for the various tiles
@@ -1027,7 +1028,7 @@ function checkGameStatus() {
             youlose = game.add.audio('lose', volume, false);
             youlose.play();
             gameDone.visible = true;
-            gameDone.bringToTop;  
+            gameDone.bringToTop();  
             return true;
 
         } else if (player.pos.x == exit.x && player.pos.y == exit.y && memoryAmount == MEMORY_NUM) {
@@ -1037,7 +1038,7 @@ function checkGameStatus() {
             youwin = game.add.audio('win!',volume, false);
             youwin.play();
             youWin.visible = true;
-            youWin.bringToTop;
+            youWin.bringToTop();
             youWin.inputEnabled = true;
             youWin.events.onInputDown.add(replay,this);
             return true;
@@ -1048,7 +1049,7 @@ function checkGameStatus() {
         youlose = game.add.audio('lose', volume, false);
         youlose.play();
         gameDone.visible = true;
-        gameDone.bringToTop;
+        gameDone.bringToTop();
         return true;
     }
     return false;
