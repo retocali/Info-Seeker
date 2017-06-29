@@ -130,6 +130,7 @@ function preload() {
     // Memory Tile 
     game.load.image('memoryTile', 'assets/sprites/memory_tile.gif');
     game.load.image('memoryBoard', 'assets/sprites/memory_board.jpg')
+    game.load.bitmapFont('zigFont', 'assets/zig/font/font.png','assets/zig/font/font.fnt');
 
     // Used to load entrance/exit and restart button
     game.load.image('entrix',"assets/sprites/tiles/EntranceExit.png");
@@ -174,8 +175,6 @@ function create() {
     backgroundMusic();
 
     makeUI();
-
-    addKeyboardInput();
 
 }
 
@@ -223,12 +222,7 @@ function memoryBoardGenerator() {
     rectangle.anchor.setTo(0.5,0.5);
     rectangle.scale.setTo(scaleRatio*0.1,scaleRatio*0.10);
 
-    text = game.add.text(game.world.centerX + 2.5*TILE_SIZE, game.world.centerY, "Memories: " + memoryAmount + "\n Steps: " + steps, {
-        font: "20px Comic Sans",
-        fill: "#ffffff",
-        align: "center"
-    });
-
+    text = game.add.bitmapText(game.world.centerX + 2.5*TILE_SIZE, game.world.centerY, 'zigFont', "Memories: " + memoryAmount + "\n Steps: " + steps, 18    );
     text.anchor.setTo(0.5, 0.5);
     text.scale.setTo(scaleRatio, scaleRatio);
 }
@@ -265,21 +259,6 @@ function update() {
             memory.tint = 0xffffff;
         }
     }
-
-    // Move the characters to their proper screen position
-
-    // delta += 1;
-    // if (delta == 20){
-    //     chance = Math.floor(Math.random()*3);
-    //     if (backgroundImage.tint - backgroundImage.tint < 0) {
-    //         backgroundImage.tint = Math.floor(Math.random()*0xffffff)
-    //     } else {
-    //         backgroundImage.tint -= Math.pow(16,(2*chance));
-    //     }
-        
-    //     delta = 0;
-    // }
-    // //backgroundImage.rotation += 0.001;
 }
 
 
@@ -399,7 +378,7 @@ function makeMemoryTiles() {
         memoryTile.found = false;
         memoryTiles.push(memoryTile);
         memoryTile.anchor.setTo(0.5,0.5);
-        memoryTile.scale.setTo(scaleRatio,scaleRatio);
+        memoryTile.scale.setTo(1.5*scaleRatio,1.5*scaleRatio);
         makeGuard(coord.x, coord.y);
         memoryTile.bringToTop();
     }
@@ -921,7 +900,7 @@ class ComboTile {
     joinZone(character) {
         if (character.zone) {
             if (character.zone == 1) {
-                this.zone1.push(character);    
+                this.zone1.push(character);
             } else {
                 this.zone2.push(character);
 
@@ -933,6 +912,21 @@ class ComboTile {
         } else {
             this.zone2.push(character);
             character.zone = 2;
+        }
+        positionCharacter(character);
+        this.reposition(character);
+    }
+
+    reposition(character) {
+        console.log("Repositioning");
+        if (this.canGoNorth(character)) {
+            character.position.y -= (TILE_SIZE/3-10)*scaleRatio;
+        } else if (this.canGoSouth(character)) {
+            character.position.y += (TILE_SIZE/3-10)*scaleRatio;
+        } else if (this.canGoWest(character)) {
+            character.position.x -= (TILE_SIZE/3-10)*scaleRatio;
+        } else if (this.canGoEast(character)) {
+            character.position.x += (TILE_SIZE/3-10)*scaleRatio;
         }
     }
     resetRotation() {
