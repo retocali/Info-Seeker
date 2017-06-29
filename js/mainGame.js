@@ -252,15 +252,6 @@ function update() {
         rotated = false;
         moved = false;
     }
-    for (var n = 0; n < MEMORY_NUM; n++) {
-        let memory = memoryTiles[n];
-        if (memory.found) {
-            memory.tint = 0x444444;
-        }
-        else {
-            memory.tint = 0xffffff;
-        }
-    }
 }
 
 
@@ -565,6 +556,7 @@ function actionOnClick () {
         respawnGuard(n);
         guards[n].active = true;
         guards[n].tint = 0xffffff;
+        positionCharacter(guards[n]);
     }
     for (let x = 0;  x < board.length; x++) {
         for (let y = 0; y < board[x].length; y++) {
@@ -577,9 +569,12 @@ function actionOnClick () {
     moved = false;
     steps = 0;
     memoryAmount = 0;
+    positionCharacter(player);
     for (let n = 0; n < MEMORY_NUM; n++) {
         memoryTiles[n].found = false;
+        memoryTiles[n].tint = 0xffffff;
     }
+
     click = game.add.audio('restartClick', volume);
     click.play();
     reset();
@@ -1064,6 +1059,7 @@ function checkMemoryTiles() {
         if (player.pos.x == x && player.pos.y == y && !found) {
             memoryAmount++;
             memoryTiles[n].found = true;
+            memoryTiles[n].tint = 0x444444;
             updateText();
         }
     }
