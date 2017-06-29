@@ -4,7 +4,7 @@ var gameX = 1100;
 var gameY = 800;
 var canvas_x = window.innerWidth;
 var canvas_y = window.innerHeight;
-var scaleRatio = Math.min(canvas_x/gameX, canvas_y/gameY);//*Math.pow(devicePixelRatio, 1/2);
+var scaleRatio = Math.min(canvas_x/gameX, canvas_y/gameY);
 
 var game = new Phaser.Game(gameX*scaleRatio, gameY*scaleRatio, Phaser.CANVAS, 'phaser-example', { preload: preload, create: create, update: update});
 
@@ -666,6 +666,9 @@ function movePlayer(tile) {
 
 // The bodyguard AI
 function moveGuard(guard) {
+    if (finished) {
+        return;
+    }
     let possibleMoves = possibleMovements(guard);
     if (possibleMoves.length != 0) {
         let pickedMove = possibleMoves[Math.floor(Math.random()*possibleMoves.length)];
@@ -759,9 +762,19 @@ class BasicTile {
         if (this.y == 0 || this.y == LENGTH+1) {
             return false;
         }
+        if (player.pos.x == this.x && player.pos.y == this.y) {
+            this.rotateCharacter(player, [{x:0, y:-1},{x:1, y:0},{x:0, y: 1},{x:-1, y:0} ]);
+        }
+        for (var i = 0; i < MEMORY_NUM; i++) {
+            if (guards[i].pos.x == this.x && guards[i].pos.y == this.y) {
+                this.rotateCharacter(guards[i], [{x:0, y:-1},{x:1, y:0},{x:0, y: 1},{x:-1, y:0} ]);
+            }
+        }
+
         this.rotation = (this.rotation + RIGHT_ANGLE) % FULL_CIRCLE;
         this.image.angle += RIGHT_ANGLE;
         return true;
+        
         
     }
     rotateCounterClockWise() {
@@ -769,9 +782,37 @@ class BasicTile {
         if (this.y == 0 || this.y == LENGTH+1) {
             return false;
         }
+        if (player.pos.x == this.x && player.pos.y == this.y) {
+            this.rotateCharacter(player, [{x:0, y:1},{x:1, y:0},{x:0, y:-1},{x:-1, y:0}]);
+        }
+        for (var i = 0; i < MEMORY_NUM; i++) {
+            if (guards[i].pos.x == this.x && guards[i].pos.y == this.y) {   
+                this.rotateCharacter(guards[i],  [{x:0, y:1},{x:1, y:0},{x:0, y:-1},{x:-1, y:0}]);
+            }
+        }
         this.rotation = (this.rotation - RIGHT_ANGLE + FULL_CIRCLE) % FULL_CIRCLE;
         this.image.angle -= RIGHT_ANGLE;
         return true;
+    }
+    rotateCharacter(character, circle){
+        let deltaX = (xLoc(character.pos.x)-character.position.x)/(TILE_SIZE/3-10*scaleRatio);
+        let deltaY = (yLoc(character.pos.y)-character.position.y)/(TILE_SIZE/3-10*scaleRatio);
+
+        console.log(deltaX, deltaY);
+        // Normalize fp math
+        deltaX = Math.round(deltaX); 
+        deltaY = Math.round(deltaY);
+        console.log(deltaX, deltaY);
+        // Find matching index
+        var index = -1;
+        for (var i = 0; i < circle.length; i ++) {
+            if (circle[i].x == deltaX && circle[i].y == deltaY) {
+                break;
+            }
+        }
+        positionCharacter(character);
+        character.position.x -= circle[(i+1) % circle.length].x*(TILE_SIZE/3-10*scaleRatio);
+        character.position.y -= circle[(i+1) % circle.length].y*(TILE_SIZE/3-10*scaleRatio);
     }
     moveTo(character, x, y) {
         return;
@@ -873,6 +914,23 @@ class ComboTile {
         
     }
     
+    rotateCounterClockWise() {
+        // Escape for exit/entrance
+        if (this.y == 0 || this.y == LENGTH+1) {
+            return false;
+        }
+        if (player.pos.x == this.x && player.pos.y == this.y) {
+            this.rotateCharacter(player, [{x:0, y:1},{x:1, y:0},{x:0, y:-1},{x:-1, y:0}]);
+        }
+        for (var i = 0; i < MEMORY_NUM; i++) {
+            if (guards[i].pos.x == this.x && guards[i].pos.y == this.y) {   
+                this.rotateCharacter(guards[i],  [{x:0, y:1},{x:1, y:0},{x:0, y:-1},{x:-1, y:0}]);
+            }
+        }
+        this.rotation = (this.rotation - RIGHT_ANGLE + FULL_CIRCLE) % FULL_CIRCLE;
+        this.image.angle -= RIGHT_ANGLE;
+        return true;
+    }
     rotateCharacter(character, circle){
         let deltaX = (xLoc(character.pos.x)-character.position.x)/(TILE_SIZE/3-10*scaleRatio);
         let deltaY = (yLoc(character.pos.y)-character.position.y)/(TILE_SIZE/3-10*scaleRatio);
@@ -892,23 +950,6 @@ class ComboTile {
         positionCharacter(character);
         character.position.x -= circle[(i+1) % circle.length].x*(TILE_SIZE/3-10*scaleRatio);
         character.position.y -= circle[(i+1) % circle.length].y*(TILE_SIZE/3-10*scaleRatio);
-    }
-    rotateCounterClockWise() {
-        // Escape for exit/entrance
-        if (this.y == 0 || this.y == LENGTH+1) {
-            return false;
-        }
-        if (player.pos.x == this.x && player.pos.y == this.y) {
-            this.rotateCharacter(player, [{x:0, y:1},{x:1, y:0},{x:0, y:-1},{x:-1, y:0}]);
-        }
-        for (var i = 0; i < MEMORY_NUM; i++) {
-            if (guards[i].pos.x == this.x && guards[i].pos.y == this.y) {
-                this.rotateCharacter(guards[i],  [{x:0, y:1},{x:1, y:0},{x:0, y:-1},{x:-1, y:0}]);
-            }
-        }
-        this.rotation = (this.rotation - RIGHT_ANGLE + FULL_CIRCLE) % FULL_CIRCLE;
-        this.image.angle -= RIGHT_ANGLE;
-        return true;
     }
     moveTo(character, x, y) {
          if (x == 0 && y == 1) { //Went to North Side
