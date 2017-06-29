@@ -213,7 +213,7 @@ function makeBackground() {
 
     backgroundImage = game.add.image(game.world.centerX, game.world.centerY, 'background');
     backgroundImage.anchor.setTo(0.5, 0.5);
-    backgroundImage.scale.setTo(canvas_x/backgroundImage.width,canvas_y/backgroundImage.height);
+    backgroundImage.scale.setTo(gameX*scaleRatio/backgroundImage.width,gameY*scaleRatio/backgroundImage.height);
     backgroundImage.bringToBottom;
     backgroundImage.tint = 0x101010;
 }
@@ -332,7 +332,7 @@ function makeUI() {
     //Splash screen
     logo = game.add.sprite(game.world.centerX, game.world.centerY, "logo");
     logo.anchor.setTo(0.5,0.5);
-    logo.scale.setTo(scaleRatio,scaleRatio);
+    logo.scale.setTo(gameX*scaleRatio/logo.width, gameY*scaleRatio/logo.height);
     logo.fixedtoCamera = true;
     logo.bringToTop;
     game.input.onDown.add(removeLogo, this);
