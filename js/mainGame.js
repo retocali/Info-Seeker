@@ -183,9 +183,9 @@ function create() {
 function backgroundMusic() {
 
     // Muting the BGM
-    muteBGM = game.add.button(game.world.centerX+2.5*TILE_SIZE, game.world.centerY+BOX_SIZE, 'mute');
-    muteBGM.scale.setTo(BOX_SIZE*scaleRatio/muteBGM.width, BOX_SIZE*scaleRatio/muteBGM.height);
-    muteBGM.anchor.setTo(0.5,0.5);
+    muteBGM = game.add.button(game.world.centerX+2.5*TILE_SIZE-10*scaleRatio, game.world.centerY+BOX_SIZE, 'mute');
+    muteBGM.scale.setTo(BOX_SIZE/(2*muteBGM.width), BOX_SIZE/(2*muteBGM.height));
+    muteBGM.anchor.setTo(1,0.5);
     muteBGM.inputEnabled = true;
     muteBGM.bringToBottom;
     muteBGM.events.onInputDown.add(muteFunction,this);
@@ -333,8 +333,9 @@ function makeUI() {
     restartButton.inputEnabled = true;
 
     // Instructions Button
-    instructions = game.add.button(game.world.centerX + 300*scaleRatio, +190*scaleRatio+game.world.centerY-(gameY/2)*scaleRatio, 'instructions', actionOnClick2, this);
-    instructions.scale.setTo(0.41*scaleRatio,0.41*scaleRatio);
+    instructions = game.add.button(game.world.centerX + 2.5*TILE_SIZE+10*scaleRatio, game.world.centerY+BOX_SIZE, 'instructions', actionOnClick2, this);
+    instructions.scale.setTo(BOX_SIZE/(2*instructions.width),BOX_SIZE/(2*instructions.height));
+    instructions.anchor.setTo(0,0.5);
     instructions.inputEnabled = true;
 
     //Splash screen
@@ -492,7 +493,7 @@ function menuCreate(s) {
 
         button1 = game.make.button(OFFSET, BUTTON_Y+(BOX_SIZE+MARGIN), 'rotateClock' , clockwise, this, 20, 10, 0);
         button2 = game.make.button(OFFSET, BUTTON_Y, 'rotateCounter', counterClockWise, this, 20, 10, 0);
-        button3 = game.make.button(OFFSET, BUTTON_Y-(BOX_SIZE+MARGIN), 'move', move, this, 20, 10, 0)
+        button3 = game.make.button(OFFSET, BUTTON_Y-(BOX_SIZE+MARGIN), 'move', move, this, 20, 10, 0);
      
         button1.scale.setTo(scaleRatio,scaleRatio);
         button2.scale.setTo(scaleRatio,scaleRatio);
