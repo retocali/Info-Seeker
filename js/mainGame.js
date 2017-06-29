@@ -180,8 +180,9 @@ function create() {
 function backgroundMusic() {
 
     // Muting the BGM
-    muteBGM = game.add.button(game.world.centerX + scaleRatio * 128*2.5, game.world.centerY + scaleRatio * 128, 'mute');
-    muteBGM.scale.setTo(64*scaleRatio/muteBGM.width,64*scaleRatio/muteBGM.height);
+    muteBGM = game.add.button(game.world.centerX+2.5*TILE_SIZE, game.world.centerY+BOX_SIZE, 'mute');
+    muteBGM.scale.setTo(BOX_SIZE*scaleRatio/muteBGM.width, BOX_SIZE*scaleRatio/muteBGM.height);
+    muteBGM.anchor.setTo(0.5,0.5);
     muteBGM.inputEnabled = true;
     muteBGM.bringToBottom;
     muteBGM.events.onInputDown.add(muteFunction,this);
@@ -216,10 +217,11 @@ function makeBackground() {
 
 function memoryBoardGenerator() {
 
-    rectangle = game.add.sprite(game.world.centerX + 280*scaleRatio, game.world.centerY - 60*scaleRatio, "memoryBoard");
+    rectangle = game.add.sprite(game.world.centerX + 2.5*TILE_SIZE, game.world.centerY, "memoryBoard");
+    rectangle.anchor.setTo(0.5,0.5);
     rectangle.scale.setTo(scaleRatio*0.1,scaleRatio*0.10);
 
-    text = game.add.text(game.world.centerX + 360*scaleRatio, game.world.centerY, "Memories: " + memoryAmount + "\n Steps: " + steps, {
+    text = game.add.text(game.world.centerX + 2.5*TILE_SIZE, game.world.centerY, "Memories: " + memoryAmount + "\n Steps: " + steps, {
         font: "20px Comic Sans",
         fill: "#ffffff",
         align: "center"
@@ -229,7 +231,7 @@ function memoryBoardGenerator() {
     text.scale.setTo(scaleRatio, scaleRatio);
 }
 
-var delta = 0;
+
 function update() {
 
     if (finished) {
@@ -342,7 +344,8 @@ function makePlayer() {
 function makeUI() {
 
     //Creates the restart button
-    restartButton = game.add.button(game.world.centerX + 300*scaleRatio, 100*scaleRatio+game.world.centerY-(gameY/2)*scaleRatio, 'replayImage', actionOnClick, this);
+    restartButton = game.add.button(game.world.centerX + 2.5*TILE_SIZE, game.world.centerY-BOX_SIZE, 'replayImage', actionOnClick, this);
+    restartButton.anchor.setTo(0.5,0.5);
     restartButton.scale.setTo(0.41*scaleRatio,0.41*scaleRatio);
     restartButton.inputEnabled = true;
 
