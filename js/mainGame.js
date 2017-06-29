@@ -253,7 +253,6 @@ function update() {
         moved = false;
     }
     for (var n = 0; n < MEMORY_NUM; n++) {
-        positionCharacter(guards[n])
         let memory = memoryTiles[n];
         if (memory.found) {
             memory.tint = 0x444444;
@@ -264,7 +263,6 @@ function update() {
     }
 
     // Move the characters to their proper screen position
-    positionCharacter(player);
 
     // delta += 1;
     // if (delta == 20){
@@ -413,104 +411,6 @@ function makeGuard(xpos, ypos) {
     guards.push(guard);
     board[xpos][ypos].joinZone(guard);
 }
-
-function addKeyboardInput() {
-    // Adds keyboard input
-    keyUp = game.input.keyboard.addKey(Phaser.Keyboard.UP);
-    keyUp.onDown.add(moveUp, this);
-
-    keyLeft = game.input.keyboard.addKey(Phaser.Keyboard.LEFT);
-    keyLeft.onDown.add(moveLeft, this);
-
-    keyRight= game.input.keyboard.addKey(Phaser.Keyboard.RIGHT);
-    keyRight.onDown.add(moveRight, this);
-
-    keyDown = game.input.keyboard.addKey(Phaser.Keyboard.DOWN);
-    keyDown.onDown.add(moveDown, this);
-
-    keyZ = game.input.keyboard.addKey(Phaser.Keyboard.Z);
-    keyZ.onDown.add(rotateCounterClockWise, this);
-
-    keyX = game.input.keyboard.addKey(Phaser.Keyboard.X);
-    keyX.onDown.add(rotateClockWise, this);
-
-    game.input.keyboard.removeKeyCapture(Phaser.Keyboard.UP);
-    game.input.keyboard.removeKeyCapture(Phaser.Keyboard.LEFT);
-    game.input.keyboard.removeKeyCapture(Phaser.Keyboard.DOWN);
-    game.input.keyboard.removeKeyCapture(Phaser.Keyboard.RIGHT);
-}
-
-
-/*
-     Functions that allow actions through keyboard
-*/
-
-// Functions that allow actions through keyboard
-function moveUp() {
-    if (rotated && !moved && player.pos.y > 0) {
-        moved = movePlayer(board[player.pos.x][player.pos.y-1]);
-    } else if (!rotated && cursorPos.x == -1 && cursorPos.y == -1) {
-        initializeCursor();
-    } else if (!rotated && cursorPos.y > 1) {
-        cursorPos.y--;
-        highlights(board[cursorPos.x][cursorPos.y].image)();
-    }
-}
-
-function moveDown() {
-    if (rotated && !moved && player.pos.y < board[player.pos.x].length-1) {
-        moved = movePlayer(board[player.pos.x][player.pos.y+1]);
-    } else if (!rotated && cursorPos.x == -1 && cursorPos.y == -1) {
-        initializeCursor();
-    } else if (!rotated && cursorPos.y < board[player.pos.x].length-2) {
-        cursorPos.y++;
-        highlights(board[cursorPos.x][cursorPos.y].image)();
-    }
-}
-
-function moveRight() {
-    if (rotated && !moved && player.pos.x < board.length-1) {
-        moved = movePlayer(board[player.pos.x+1][player.pos.y]);
-    } else if (!rotated && cursorPos.x == -1 && cursorPos.y == -1) {
-        initializeCursor();    
-    } else if (!rotated && cursorPos.x < board.length-1) {
-        cursorPos.x++;
-        highlights(board[cursorPos.x][cursorPos.y].image)();
-    }
-}
-
-function moveLeft() {
-    if (rotated && !moved && player.pos.x > 0) {
-        moved = movePlayer(board[player.pos.x-1][player.pos.y]);
-    } else if (!rotated && cursorPos.x == -1 && cursorPos.y == -1) {
-        initializeCursor();
-    } else if (!rotated && cursorPos.x > 0) {
-        cursorPos.x--;
-        highlights(board[cursorPos.x][cursorPos.y].image)();
-    }
-}
-
-function initializeCursor() {
-    cursorPos.x = 0;
-    cursorPos.y = 1;
-    highlights(board[cursorPos.x][cursorPos.y].image)();
-}
-
-function rotateClockWise() {
-    if (!rotated && cursorPos.x != -1) {
-        board[cursorPos.x][cursorPos.y].rotateClockWise();
-        rotated = true;
-    }
-}
-
-function rotateCounterClockWise() {
-    if (!rotated && cursorPos.x != -1) {
-        board[cursorPos.x][cursorPos.y].rotateCounterClockWise();
-        rotated = true;
-    }
-}
-
-
 
 /*
     UI Functions
@@ -728,24 +628,28 @@ function movePlayer(tile) {
         if (yMove == 1 && tile.canGoNorth(player) && board[x][y].canGoSouth(player)) {            
             player.pos.y += yMove;
             changed = true;
-            player.anchor.setTo(0.5,1);
+            positionCharacter(player);
+            player.position.y -= (TILE_SIZE/3-10)*scaleRatio;
         }
         if (yMove == -1 && tile.canGoSouth(player) && board[x][y].canGoNorth(player)) {
             player.pos.y += yMove;
             changed = true;
-            player.anchor.setTo(0.5,0);
+            positionCharacter(player);
+            player.position.y += (TILE_SIZE/3-10)*scaleRatio;
         }
     }
     else if (yMove == 0) {
         if (xMove == 1 && tile.canGoWest(player) && board[x][y].canGoEast(player)) {
             player.pos.x += xMove;
             changed = true;
-            player.anchor.setTo(1,0.5);
+            positionCharacter(player);
+            player.position.x -= (TILE_SIZE/3-10)*scaleRatio;
         }
         if (xMove == -1 && tile.canGoEast(player) && board[x][y].canGoWest(player)) {
             player.pos.x += xMove;
             changed = true;
-            player.anchor.setTo(0,0.5);
+            positionCharacter(player);
+            player.position.x += (TILE_SIZE/3-10)*scaleRatio;
         }
     }
     if (changed) {
@@ -755,6 +659,7 @@ function movePlayer(tile) {
         checkMemoryTiles();
         updateText();
     }
+    
     return changed;
 }
 
@@ -766,6 +671,9 @@ function moveGuard(guard) {
         board[guard.pos.x][guard.pos.y].moveAway(guard)
         guard.pos.x += pickedMove.x;
         guard.pos.y += pickedMove.y;
+        positionCharacter(guard);
+        guard.position.x -= pickedMove.x*(TILE_SIZE/3-10)*scaleRatio;
+        guard.position.y -= pickedMove.y*(TILE_SIZE/3-10)*scaleRatio;
         pickedMove.tile.moveTo(guard, pickedMove.x, pickedMove.y);
     } else {
         guard.active = false;
