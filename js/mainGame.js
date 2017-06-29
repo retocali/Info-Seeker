@@ -57,13 +57,14 @@ var rotated = false;
 var WIDTH = 3;
 var LENGTH = 3;
 var MEMORY_NUM = 2;
-var COMBO_SPAWN = 0.1;
+var COMBO_SPAWN = 0.5;
 
 
 // Constants for checking directions
 var RIGHT_ANGLE = 90;
 var FLIPPED = 180;
 var FULL_CIRCLE = 360;
+var CHAR_OFFSET = TILE_SIZE/3-(10*scaleRatio);
 
 
 // Filenames
@@ -237,7 +238,7 @@ function update() {
     } else {
         finished = checkGameStatus();
     }
-
+    
     if (rotated && moved) {
         for(let n = 0; n < guards.length; n++) {
             if (!guards[n].active) {
@@ -628,13 +629,13 @@ function movePlayer(tile) {
             player.pos.y += yMove;
             changed = true;
             positionCharacter(player);
-            player.position.y -= (TILE_SIZE/3-10)*scaleRatio;
+            player.position.y -= (TILE_SIZE/3-10*scaleRatio);
         }
         if (yMove == -1 && tile.canGoSouth(player) && board[x][y].canGoNorth(player)) {
             player.pos.y += yMove;
             changed = true;
             positionCharacter(player);
-            player.position.y += (TILE_SIZE/3-10)*scaleRatio;
+            player.position.y += (TILE_SIZE/3-10*scaleRatio);
         }
     }
     else if (yMove == 0) {
@@ -642,13 +643,13 @@ function movePlayer(tile) {
             player.pos.x += xMove;
             changed = true;
             positionCharacter(player);
-            player.position.x -= (TILE_SIZE/3-10)*scaleRatio;
+            player.position.x -= (TILE_SIZE/3-10*scaleRatio);
         }
         if (xMove == -1 && tile.canGoEast(player) && board[x][y].canGoWest(player)) {
             player.pos.x += xMove;
             changed = true;
             positionCharacter(player);
-            player.position.x += (TILE_SIZE/3-10)*scaleRatio;
+            player.position.x += (TILE_SIZE/3-10*scaleRatio);
         }
     }
     if (changed) {
@@ -852,18 +853,57 @@ class ComboTile {
     }
     rotateClockWise() {
         // Escape for exit/entrance
+        
         if (this.y == 0 || this.y == LENGTH+1) {
             return false;
+        }
+
+        if (player.pos.x == this.x && player.pos.y == this.y) {
+            this.rotateCharacter(player, [{x:0, y:-1},{x:1, y:0},{x:0, y: 1},{x:-1, y:0} ]);
+        }
+        for (var i = 0; i < MEMORY_NUM; i++) {
+            if (guards[i].pos.x == this.x && guards[i].pos.y == this.y) {
+                this.rotateCharacter(guards[i], [{x:0, y:-1},{x:1, y:0},{x:0, y: 1},{x:-1, y:0} ]);
+            }
         }
         this.rotation = (this.rotation + RIGHT_ANGLE) % FULL_CIRCLE;
         this.image.angle += RIGHT_ANGLE;
         return true;
         
     }
+    
+    rotateCharacter(character, circle){
+        let deltaX = (xLoc(character.pos.x)-character.position.x)/(TILE_SIZE/3-10*scaleRatio);
+        let deltaY = (yLoc(character.pos.y)-character.position.y)/(TILE_SIZE/3-10*scaleRatio);
+
+        console.log(deltaX, deltaY);
+        // Normalize fp math
+        deltaX = Math.round(deltaX); 
+        deltaY = Math.round(deltaY);
+        console.log(deltaX, deltaY);
+        // Find matching index
+        var index = -1;
+        for (var i = 0; i < circle.length; i ++) {
+            if (circle[i].x == deltaX && circle[i].y == deltaY) {
+                break;
+            }
+        }
+        positionCharacter(character);
+        character.position.x -= circle[(i+1) % circle.length].x*(TILE_SIZE/3-10*scaleRatio);
+        character.position.y -= circle[(i+1) % circle.length].y*(TILE_SIZE/3-10*scaleRatio);
+    }
     rotateCounterClockWise() {
         // Escape for exit/entrance
         if (this.y == 0 || this.y == LENGTH+1) {
             return false;
+        }
+        if (player.pos.x == this.x && player.pos.y == this.y) {
+            this.rotateCharacter(player, [{x:0, y:1},{x:1, y:0},{x:0, y:-1},{x:-1, y:0}]);
+        }
+        for (var i = 0; i < MEMORY_NUM; i++) {
+            if (guards[i].pos.x == this.x && guards[i].pos.y == this.y) {
+                this.rotateCharacter(guards[i],  [{x:0, y:1},{x:1, y:0},{x:0, y:-1},{x:-1, y:0}]);
+            }
         }
         this.rotation = (this.rotation - RIGHT_ANGLE + FULL_CIRCLE) % FULL_CIRCLE;
         this.image.angle -= RIGHT_ANGLE;
