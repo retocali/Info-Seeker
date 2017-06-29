@@ -73,6 +73,7 @@ var entrix = "EntranceExit.png";
 var replayImage = "button_restart.png";
 var comboTileNames = ["Dead_End_2.png","Line_Combo.png","Loop_Tile_2.png"];
 var tileNames = ["Corner_Tile.png","Cross_Tile.png","DeadEnd_Tile.png", "Line_Tile.png","Tetris_Tile.png"];
+var instructions;
 
 // UI variables
 var button1;
@@ -131,9 +132,10 @@ function preload() {
     game.load.image('memoryTile', 'assets/sprites/memory_tile.gif');
     game.load.image('memoryBoard', 'assets/sprites/memory_board.jpg')
 
-    // Used to load entrance/exit and restart button
+    // Used to load entrance/exit and restart button/instructions
     game.load.image('entrix',"assets/sprites/tiles/EntranceExit.png");
     game.load.image('replayImage',"assets/sprites/button_restart.png");
+    game.load.image('instructions', "assets/sprites/instruction.png");
     
     // The sprite for the player
     game.load.image('player', "assets/sprites/Player.png");
@@ -350,10 +352,15 @@ function makeUI() {
     restartButton.scale.setTo(0.41*scaleRatio,0.41*scaleRatio);
     restartButton.inputEnabled = true;
 
+    // Instructions Button
+    instructions = game.add.button(game.world.centerX + 300*scaleRatio, +190*scaleRatio+game.world.centerY-(gameY/2)*scaleRatio, 'instructions', actionOnClick2, this);
+    instructions.scale.setTo(0.41*scaleRatio,0.41*scaleRatio);
+    instructions.inputEnabled = true;
+
     //Splash screen
     logo = game.add.sprite(game.world.centerX, game.world.centerY, "logo");
     logo.anchor.setTo(0.5,0.5);
-    logo.scale.setTo(0.18*scaleRatio,0.25*scaleRatio);
+    logo.scale.setTo(scaleRatio,scaleRatio);
     logo.fixedtoCamera = true;
     logo.bringToTop;
     game.input.onDown.add(removeLogo, this);
@@ -657,10 +664,11 @@ function menuCreate(s) {
 
 // used with the splash screen
 function removeLogo () {
-    game.input.onDown.remove(removeLogo, this);
+    // game.input.onDown.remove(removeLogo, this);
     //tried to use this to fade in/fade out the welcome...
     // game.add.tween(sprite).to( { alpha: 1 }, 2000, Phaser.Easing.Linear.None, true, 0, 1000, true);
-    logo.kill();
+    logo.visible = false;
+    instructions.inputEnabled = true;
 }
 
 // used with the restart button
@@ -691,6 +699,16 @@ function actionOnClick () {
     click.play();
     reset();
     updateText();
+}
+
+// used with the instructions button
+function actionOnClick2 () {
+
+    instructions.inputEnabled = false;
+
+    if (logo.visible == false) {
+        logo.visible = true;
+    }
 }
 
 // To make the whole game replay
