@@ -8,6 +8,8 @@ var scaleRatio = Math.min(canvas_x/gameX, canvas_y/gameY);//*Math.pow(devicePixe
 
 var game = new Phaser.Game(gameX*scaleRatio, gameY*scaleRatio, Phaser.CANVAS, 'phaser-example', { preload: preload, create: create, update: update});
 
+// setStyle(font = "Arial", update);
+
 // Sound
 var click;
 var background;
@@ -71,6 +73,7 @@ var entrix = "EntranceExit.png";
 var replayImage = "button_restart.png";
 var comboTileNames = ["Dead_End_2.png","Line_Combo.png","Loop_Tile_2.png"];
 var tileNames = ["Corner_Tile.png","Cross_Tile.png","DeadEnd_Tile.png", "Line_Tile.png","Tetris_Tile.png"];
+var instructions;
 
 // UI variables
 var button1;
@@ -128,10 +131,12 @@ function preload() {
     // Memory Tile 
     game.load.image('memoryTile', 'assets/sprites/memory_tile.gif');
     game.load.image('memoryBoard', 'assets/sprites/memory_board.jpg')
+    game.load.bitmapFont('zigFont', 'assets/zig/font/font.png','assets/zig/font/font.fnt');
 
-    // Used to load entrance/exit and restart button
+    // Used to load entrance/exit and restart button/instructions
     game.load.image('entrix',"assets/sprites/tiles/EntranceExit.png");
     game.load.image('replayImage',"assets/sprites/button_restart.png");
+    game.load.image('instructions', "assets/sprites/instruction.png");
     
     // The sprite for the player
     game.load.image('player', "assets/sprites/Player.png");
@@ -173,15 +178,14 @@ function create() {
 
     makeUI();
 
-    addKeyboardInput();
-
 }
 
 function backgroundMusic() {
 
     // Muting the BGM
-    muteBGM = game.add.button(game.world.centerX + scaleRatio * 128*2.5, game.world.centerY + scaleRatio * 128, 'mute');
-    muteBGM.scale.setTo(64*scaleRatio/muteBGM.width,64*scaleRatio/muteBGM.height);
+    muteBGM = game.add.button(game.world.centerX+2.5*TILE_SIZE-10*scaleRatio, game.world.centerY+BOX_SIZE, 'mute');
+    muteBGM.scale.setTo(BOX_SIZE/(2*muteBGM.width), BOX_SIZE/(2*muteBGM.height));
+    muteBGM.anchor.setTo(1,0.5);
     muteBGM.inputEnabled = true;
     muteBGM.bringToBottom;
     muteBGM.events.onInputDown.add(muteFunction,this);
@@ -211,25 +215,21 @@ function makeBackground() {
     backgroundImage.anchor.setTo(0.5, 0.5);
     backgroundImage.scale.setTo(canvas_x/backgroundImage.width,canvas_y/backgroundImage.height);
     backgroundImage.bringToBottom;
-    backgroundImage.tint = 0x224422;
+    backgroundImage.tint = 0x101010;
 }
 
 function memoryBoardGenerator() {
 
-    rectangle = game.add.sprite(game.world.centerX + 280*scaleRatio, game.world.centerY - 60*scaleRatio, "memoryBoard");
+    rectangle = game.add.sprite(game.world.centerX + 2.5*TILE_SIZE, game.world.centerY, "memoryBoard");
+    rectangle.anchor.setTo(0.5,0.5);
     rectangle.scale.setTo(scaleRatio*0.1,scaleRatio*0.10);
 
-    text = game.add.text(game.world.centerX + 360*scaleRatio, game.world.centerY, "Memories: " + memoryAmount + "\n Steps: " + steps, {
-        font: "20px Comic Sans",
-        fill: "#ffffff",
-        align: "center"
-    });
-
+    text = game.add.bitmapText(game.world.centerX + 2.5*TILE_SIZE, game.world.centerY, 'zigFont', "Memories: " + memoryAmount + "\n Steps: " + steps, 18    );
     text.anchor.setTo(0.5, 0.5);
     text.scale.setTo(scaleRatio, scaleRatio);
 }
 
-var delta = 0;
+
 function update() {
 
     if (finished) {
@@ -252,32 +252,6 @@ function update() {
         rotated = false;
         moved = false;
     }
-    for (var n = 0; n < MEMORY_NUM; n++) {
-        positionCharacter(guards[n])
-        let memory = memoryTiles[n];
-        if (memory.found) {
-            memory.tint = 0x444444;
-        }
-        else {
-            memory.tint = 0xffffff;
-        }
-    }
-
-    // Move the characters to their proper screen position
-    positionCharacter(player);
-
-    // delta += 1;
-    // if (delta == 20){
-    //     chance = Math.floor(Math.random()*3);
-    //     if (backgroundImage.tint - backgroundImage.tint < 0) {
-    //         backgroundImage.tint = Math.floor(Math.random()*0xffffff)
-    //     } else {
-    //         backgroundImage.tint -= Math.pow(16,(2*chance));
-    //     }
-        
-    //     delta = 0;
-    // }
-    // //backgroundImage.rotation += 0.001;
 }
 
 
@@ -344,14 +318,21 @@ function makePlayer() {
 function makeUI() {
 
     //Creates the restart button
-    restartButton = game.add.button(game.world.centerX + 300*scaleRatio, 100*scaleRatio+game.world.centerY-(gameY/2)*scaleRatio, 'replayImage', actionOnClick, this);
+    restartButton = game.add.button(game.world.centerX + 2.5*TILE_SIZE, game.world.centerY-BOX_SIZE, 'replayImage', actionOnClick, this);
+    restartButton.anchor.setTo(0.5,0.5);
     restartButton.scale.setTo(0.41*scaleRatio,0.41*scaleRatio);
     restartButton.inputEnabled = true;
+
+    // Instructions Button
+    instructions = game.add.button(game.world.centerX + 2.5*TILE_SIZE+10*scaleRatio, game.world.centerY+BOX_SIZE, 'instructions', actionOnClick2, this);
+    instructions.scale.setTo(BOX_SIZE/(2*instructions.width),BOX_SIZE/(2*instructions.height));
+    instructions.anchor.setTo(0,0.5);
+    instructions.inputEnabled = true;
 
     //Splash screen
     logo = game.add.sprite(game.world.centerX, game.world.centerY, "logo");
     logo.anchor.setTo(0.5,0.5);
-    logo.scale.setTo(0.18*scaleRatio,0.25*scaleRatio);
+    logo.scale.setTo(scaleRatio,scaleRatio);
     logo.fixedtoCamera = true;
     logo.bringToTop;
     game.input.onDown.add(removeLogo, this);
@@ -396,7 +377,7 @@ function makeMemoryTiles() {
         memoryTile.found = false;
         memoryTiles.push(memoryTile);
         memoryTile.anchor.setTo(0.5,0.5);
-        memoryTile.scale.setTo(scaleRatio,scaleRatio);
+        memoryTile.scale.setTo(1.5*scaleRatio,1.5*scaleRatio);
         makeGuard(coord.x, coord.y);
         memoryTile.bringToTop();
     }
@@ -413,104 +394,6 @@ function makeGuard(xpos, ypos) {
     guards.push(guard);
     board[xpos][ypos].joinZone(guard);
 }
-
-function addKeyboardInput() {
-    // Adds keyboard input
-    keyUp = game.input.keyboard.addKey(Phaser.Keyboard.UP);
-    keyUp.onDown.add(moveUp, this);
-
-    keyLeft = game.input.keyboard.addKey(Phaser.Keyboard.LEFT);
-    keyLeft.onDown.add(moveLeft, this);
-
-    keyRight= game.input.keyboard.addKey(Phaser.Keyboard.RIGHT);
-    keyRight.onDown.add(moveRight, this);
-
-    keyDown = game.input.keyboard.addKey(Phaser.Keyboard.DOWN);
-    keyDown.onDown.add(moveDown, this);
-
-    keyZ = game.input.keyboard.addKey(Phaser.Keyboard.Z);
-    keyZ.onDown.add(rotateCounterClockWise, this);
-
-    keyX = game.input.keyboard.addKey(Phaser.Keyboard.X);
-    keyX.onDown.add(rotateClockWise, this);
-
-    game.input.keyboard.removeKeyCapture(Phaser.Keyboard.UP);
-    game.input.keyboard.removeKeyCapture(Phaser.Keyboard.LEFT);
-    game.input.keyboard.removeKeyCapture(Phaser.Keyboard.DOWN);
-    game.input.keyboard.removeKeyCapture(Phaser.Keyboard.RIGHT);
-}
-
-
-/*
-     Functions that allow actions through keyboard
-*/
-
-// Functions that allow actions through keyboard
-function moveUp() {
-    if (rotated && !moved && player.pos.y > 0) {
-        moved = movePlayer(board[player.pos.x][player.pos.y-1]);
-    } else if (!rotated && cursorPos.x == -1 && cursorPos.y == -1) {
-        initializeCursor();
-    } else if (!rotated && cursorPos.y > 1) {
-        cursorPos.y--;
-        highlights(board[cursorPos.x][cursorPos.y].image)();
-    }
-}
-
-function moveDown() {
-    if (rotated && !moved && player.pos.y < board[player.pos.x].length-1) {
-        moved = movePlayer(board[player.pos.x][player.pos.y+1]);
-    } else if (!rotated && cursorPos.x == -1 && cursorPos.y == -1) {
-        initializeCursor();
-    } else if (!rotated && cursorPos.y < board[player.pos.x].length-2) {
-        cursorPos.y++;
-        highlights(board[cursorPos.x][cursorPos.y].image)();
-    }
-}
-
-function moveRight() {
-    if (rotated && !moved && player.pos.x < board.length-1) {
-        moved = movePlayer(board[player.pos.x+1][player.pos.y]);
-    } else if (!rotated && cursorPos.x == -1 && cursorPos.y == -1) {
-        initializeCursor();    
-    } else if (!rotated && cursorPos.x < board.length-1) {
-        cursorPos.x++;
-        highlights(board[cursorPos.x][cursorPos.y].image)();
-    }
-}
-
-function moveLeft() {
-    if (rotated && !moved && player.pos.x > 0) {
-        moved = movePlayer(board[player.pos.x-1][player.pos.y]);
-    } else if (!rotated && cursorPos.x == -1 && cursorPos.y == -1) {
-        initializeCursor();
-    } else if (!rotated && cursorPos.x > 0) {
-        cursorPos.x--;
-        highlights(board[cursorPos.x][cursorPos.y].image)();
-    }
-}
-
-function initializeCursor() {
-    cursorPos.x = 0;
-    cursorPos.y = 1;
-    highlights(board[cursorPos.x][cursorPos.y].image)();
-}
-
-function rotateClockWise() {
-    if (!rotated && cursorPos.x != -1) {
-        board[cursorPos.x][cursorPos.y].rotateClockWise();
-        rotated = true;
-    }
-}
-
-function rotateCounterClockWise() {
-    if (!rotated && cursorPos.x != -1) {
-        board[cursorPos.x][cursorPos.y].rotateCounterClockWise();
-        rotated = true;
-    }
-}
-
-
 
 /*
     UI Functions
@@ -580,6 +463,10 @@ function reset() {
 // Creates the UI for the tiles
 function menuCreate(s) {
     return function() {
+        
+        if (finished) {
+            return;
+        }
 
         var BUTTON_Y = game.world.centerY;
         var OFFSET = game.world.centerX-350*scaleRatio;
@@ -597,7 +484,7 @@ function menuCreate(s) {
 
         button1 = game.make.button(OFFSET, BUTTON_Y+(BOX_SIZE+MARGIN), 'rotateClock' , clockwise, this, 20, 10, 0);
         button2 = game.make.button(OFFSET, BUTTON_Y, 'rotateCounter', counterClockWise, this, 20, 10, 0);
-        button3 = game.make.button(OFFSET, BUTTON_Y-(BOX_SIZE+MARGIN), 'move', move, this, 20, 10, 0)
+        button3 = game.make.button(OFFSET, BUTTON_Y-(BOX_SIZE+MARGIN), 'move', move, this, 20, 10, 0);
      
         button1.scale.setTo(scaleRatio,scaleRatio);
         button2.scale.setTo(scaleRatio,scaleRatio);
@@ -606,6 +493,8 @@ function menuCreate(s) {
         button1.anchor.setTo(0.5,0.5);
         button2.anchor.setTo(0.5,0.5);
         button3.anchor.setTo(0.5,0.5);
+
+        logo.bringToTop();
 
         function clockwise() {
             if (!rotated) {
@@ -651,10 +540,11 @@ function menuCreate(s) {
 
 // used with the splash screen
 function removeLogo () {
-    game.input.onDown.remove(removeLogo, this);
+    // game.input.onDown.remove(removeLogo, this);
     //tried to use this to fade in/fade out the welcome...
     // game.add.tween(sprite).to( { alpha: 1 }, 2000, Phaser.Easing.Linear.None, true, 0, 1000, true);
-    logo.kill();
+    logo.visible = false;
+    instructions.inputEnabled = true;
 }
 
 // used with the restart button
@@ -666,6 +556,7 @@ function actionOnClick () {
         respawnGuard(n);
         guards[n].active = true;
         guards[n].tint = 0xffffff;
+        positionCharacter(guards[n]);
     }
     for (let x = 0;  x < board.length; x++) {
         for (let y = 0; y < board[x].length; y++) {
@@ -678,13 +569,26 @@ function actionOnClick () {
     moved = false;
     steps = 0;
     memoryAmount = 0;
+    positionCharacter(player);
     for (let n = 0; n < MEMORY_NUM; n++) {
         memoryTiles[n].found = false;
+        memoryTiles[n].tint = 0xffffff;
     }
+
     click = game.add.audio('restartClick', volume);
     click.play();
     reset();
     updateText();
+}
+
+// used with the instructions button
+function actionOnClick2 () {
+
+    instructions.inputEnabled = false;
+
+    if (logo.visible == false) {
+        logo.visible = true;
+    }
 }
 
 // To make the whole game replay
@@ -724,20 +628,28 @@ function movePlayer(tile) {
         if (yMove == 1 && tile.canGoNorth(player) && board[x][y].canGoSouth(player)) {            
             player.pos.y += yMove;
             changed = true;
+            positionCharacter(player);
+            player.position.y -= (TILE_SIZE/3-10)*scaleRatio;
         }
         if (yMove == -1 && tile.canGoSouth(player) && board[x][y].canGoNorth(player)) {
             player.pos.y += yMove;
             changed = true;
+            positionCharacter(player);
+            player.position.y += (TILE_SIZE/3-10)*scaleRatio;
         }
     }
     else if (yMove == 0) {
         if (xMove == 1 && tile.canGoWest(player) && board[x][y].canGoEast(player)) {
             player.pos.x += xMove;
             changed = true;
+            positionCharacter(player);
+            player.position.x -= (TILE_SIZE/3-10)*scaleRatio;
         }
         if (xMove == -1 && tile.canGoEast(player) && board[x][y].canGoWest(player)) {
             player.pos.x += xMove;
             changed = true;
+            positionCharacter(player);
+            player.position.x += (TILE_SIZE/3-10)*scaleRatio;
         }
     }
     if (changed) {
@@ -747,6 +659,7 @@ function movePlayer(tile) {
         checkMemoryTiles();
         updateText();
     }
+    
     return changed;
 }
 
@@ -758,6 +671,9 @@ function moveGuard(guard) {
         board[guard.pos.x][guard.pos.y].moveAway(guard)
         guard.pos.x += pickedMove.x;
         guard.pos.y += pickedMove.y;
+        positionCharacter(guard);
+        guard.position.x -= pickedMove.x*(TILE_SIZE/3-10)*scaleRatio;
+        guard.position.y -= pickedMove.y*(TILE_SIZE/3-10)*scaleRatio;
         pickedMove.tile.moveTo(guard, pickedMove.x, pickedMove.y);
     } else {
         guard.active = false;
@@ -1000,7 +916,7 @@ class ComboTile {
     joinZone(character) {
         if (character.zone) {
             if (character.zone == 1) {
-                this.zone1.push(character);    
+                this.zone1.push(character);
             } else {
                 this.zone2.push(character);
 
@@ -1012,6 +928,21 @@ class ComboTile {
         } else {
             this.zone2.push(character);
             character.zone = 2;
+        }
+        positionCharacter(character);
+        this.reposition(character);
+    }
+
+    reposition(character) {
+        console.log("Repositioning");
+        if (this.canGoNorth(character)) {
+            character.position.y -= (TILE_SIZE/3-10)*scaleRatio;
+        } else if (this.canGoSouth(character)) {
+            character.position.y += (TILE_SIZE/3-10)*scaleRatio;
+        } else if (this.canGoWest(character)) {
+            character.position.x -= (TILE_SIZE/3-10)*scaleRatio;
+        } else if (this.canGoEast(character)) {
+            character.position.x += (TILE_SIZE/3-10)*scaleRatio;
         }
     }
     resetRotation() {
@@ -1037,7 +968,6 @@ function yLoc(y) {
 function positionCharacter(character) {
     character.x = xLoc(character.pos.x);
     character.y = yLoc(character.pos.y);
-    character.bringToTop;
 }
 
 // Finds the exits for the various tiles
@@ -1092,8 +1022,8 @@ function checkGameStatus() {
             console.log("You Lose!");
             youlose = game.add.audio('lose', volume, false);
             youlose.play();
-            gameDone.bringToTop;  
             gameDone.visible = true;
+            gameDone.bringToTop();  
             return true;
 
         } else if (player.pos.x == exit.x && player.pos.y == exit.y && memoryAmount == MEMORY_NUM) {
@@ -1102,8 +1032,8 @@ function checkGameStatus() {
             
             youwin = game.add.audio('win!',volume, false);
             youwin.play();
-            youWin.bringToTop;
             youWin.visible = true;
+            youWin.bringToTop();
             youWin.inputEnabled = true;
             youWin.events.onInputDown.add(replay,this);
             return true;
@@ -1113,8 +1043,8 @@ function checkGameStatus() {
         console.log("You Lose!");
         youlose = game.add.audio('lose', volume, false);
         youlose.play();
-        gameDone.bringToTop;
         gameDone.visible = true;
+        gameDone.bringToTop();
         return true;
     }
     return false;
@@ -1129,6 +1059,7 @@ function checkMemoryTiles() {
         if (player.pos.x == x && player.pos.y == y && !found) {
             memoryAmount++;
             memoryTiles[n].found = true;
+            memoryTiles[n].tint = 0x444444;
             updateText();
         }
     }
