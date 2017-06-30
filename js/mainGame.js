@@ -546,11 +546,12 @@ function removeLogo () {
     // game.add.tween(sprite).to( { alpha: 1 }, 2000, Phaser.Easing.Linear.None, true, 0, 1000, true);
     logo.visible = false;
     instructions.inputEnabled = true;
+    restartButton.inputEnabled = true;
 }
 
 // used with the restart button
 function actionOnClick () {
-    
+
     finished = false;
     player.pos = {x:entrance.x, y:entrance.y};
     for (let n = 0; n < memoryTiles.length; n++) {
@@ -585,6 +586,7 @@ function actionOnClick () {
 function actionOnClick2 () {
 
     instructions.inputEnabled = false;
+    restartButton.inputEnabled = false;
 
     if (logo.visible == false) {
         logo.visible = true;
