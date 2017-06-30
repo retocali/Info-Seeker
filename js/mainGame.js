@@ -1116,7 +1116,7 @@ function checkGameStatus() {
         } else if (player.pos.x == exit.x && player.pos.y == exit.y && memoryAmount == MEMORY_NUM) {
             console.log("You Win!");
             // if its played at update, it's gonna keep playing it.... causing a bug :/
-            COMBO_SPAWN = Math.min(COMBO_SPAWN+0.1, 0.5);
+            COMBO_SPAWN = Math.min(COMBO_SPAWN+0.2, 0.6);
             youwin = game.add.audio('win!',volume, false);
             youwin.play();
             youWin.visible = true;
