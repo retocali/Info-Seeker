@@ -30,6 +30,7 @@ var memoryTiles = [];
 
 
 // Menu Variable
+var message; // To tell the person that they have moved/rotated
 var text; // this text is for the memory tiles text
 var memoryTaken;
 var rectangle;
@@ -227,9 +228,10 @@ function memoryBoardGenerator() {
     rectangle.anchor.setTo(0.5,0.5);
     rectangle.scale.setTo(scaleRatio*0.1,scaleRatio*0.10);
 
-    text = game.add.bitmapText(game.world.centerX + 2.5*TILE_SIZE, game.world.centerY, 'zigFont', "Memories: " + memoryAmount + "\n Steps: " + steps, 18    );
+    text = game.add.bitmapText(game.world.centerX + 2.5*TILE_SIZE, game.world.centerY, 'zigFont', "Memories: " + memoryAmount + "\n Steps: " + steps, 18);
     text.anchor.setTo(0.5, 0.5);
     text.scale.setTo(scaleRatio, scaleRatio);
+    message = game.add.bitmapText(game.world.centerX + 2.5*TILE_SIZE, game.world.centerY, 'zigFont', "", 18);
 }
 
 
@@ -241,6 +243,18 @@ function update() {
         finished = checkGameStatus();
     }
     
+    if (rotated) {
+        message.destroy();
+        message = game.add.bitmapText(game.world.centerX + 0.5*TILE_SIZE, game.world.centerY -2.25 *TILE_SIZE, 'zigFont', "You have rotated. \nNow move to a valid tile.", 12);
+        message.anchor.setTo(0.5, 0.5);    
+    }
+
+    if (moved) {
+        message.destroy();
+        message = game.add.bitmapText(game.world.centerX + 0.5*TILE_SIZE, game.world.centerY -2.25*TILE_SIZE, 'zigFont', "You have moved. \nPick a tile to rotate", 12);
+        message.anchor.setTo(0.5, 0.5);    
+    }
+
     if (rotated && moved) {
         for(let n = 0; n < guards.length; n++) {
             if (!guards[n].active) {
