@@ -245,13 +245,13 @@ function update() {
     
     if (rotated) {
         message.destroy();
-        message = game.add.bitmapText(game.world.centerX + 0.5*TILE_SIZE, game.world.centerY -2.25 *TILE_SIZE, 'zigFont', "YOU ROTATED. \nNow move to a valid tile.", 12);
+        message = game.add.bitmapText(game.world.centerX + 0.5*TILE_SIZE, game.world.centerY -2.25 *TILE_SIZE, 'zigFont', "YOU ROTATED. \nClick to move.", 12);
         message.anchor.setTo(0.5, 0.5);    
     }
 
     if (moved) {
         message.destroy();
-        message = game.add.bitmapText(game.world.centerX + 0.5*TILE_SIZE, game.world.centerY -2.25*TILE_SIZE, 'zigFont', "YOU MOVED. \nPick a tile to rotate.", 12);
+        message = game.add.bitmapText(game.world.centerX + 0.5*TILE_SIZE, game.world.centerY -2.25*TILE_SIZE, 'zigFont', "YOU MOVED. \nClick to rotate.", 12);
         message.anchor.setTo(0.5, 0.5);    
     }
 
