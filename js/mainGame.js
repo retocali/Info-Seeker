@@ -190,6 +190,8 @@ function backgroundMusic() {
     muteBGM.inputEnabled = true;
     muteBGM.bringToBottom;
     muteBGM.events.onInputDown.add(muteFunction,this);
+    addHighlight(muteBGM);
+    muteBGM.events.onInputUp.add(function() {muteBGM.tint = 0xffffff;}, this);
 
     background = game.add.audio('bgm', volume, true);
     background.play();
@@ -323,12 +325,16 @@ function makeUI() {
     restartButton.anchor.setTo(0.5,0.5);
     restartButton.scale.setTo(0.41*scaleRatio,0.41*scaleRatio);
     restartButton.inputEnabled = true;
+    addHighlight(restartButton);
+    restartButton.events.onInputUp.add(function() {restartButton.tint = 0xffffff;}, this);
 
     // Instructions Button
     instructions = game.add.button(game.world.centerX + 2.5*TILE_SIZE+10*scaleRatio, game.world.centerY+BOX_SIZE, 'instructions', actionOnClick2, this);
     instructions.scale.setTo(BOX_SIZE/(2*instructions.width),BOX_SIZE/(2*instructions.height));
     instructions.anchor.setTo(0,0.5);
     instructions.inputEnabled = true;
+    addHighlight(instructions);
+    instructions.events.onInputUp.add(function() {instructions.tint = 0xffffff;}, this);
 
     //Splash screen
     logo = game.add.sprite(game.world.centerX, game.world.centerY, "logo");
@@ -409,6 +415,7 @@ function updateText() {
 // Makes the buttons change color over various mouse inputs
 function addHighlight(s) {
     s.events.onInputOver.add(highlights(s), this);
+    
     s.events.onInputOut.add(normalize(s),this);
     s.events.onInputDown.add(color(s), this);
 }
@@ -418,7 +425,7 @@ function color(s) {
     return function() {
         click = game.add.audio('click', 0+volume);
         click.play();
-        s.tint = 0x00ff00;
+        s.tint = 0x00aa00;
     }
 }
 
@@ -427,7 +434,7 @@ function highlights(s) {
     return function() {
         resetHighlight();
         if (s.tint == 0xffffff) {
-            s.tint = 0x009fff;
+            s.tint = 0x00ff00;
         }
     }
 }
@@ -435,7 +442,7 @@ function highlights(s) {
 // Turns the hover tiles to normal
 function normalize(s) {
     return function() {
-        if (s.tint == 0x009fff){ 
+        if (s.tint == 0x00ff00){ 
             s.tint = 0xffffff;
         }
     }
@@ -445,11 +452,14 @@ function normalize(s) {
 function resetHighlight() {
     for (let x = 0;  x < board.length; x++) {
         for (let y = 0; y < board[x].length; y++) {
-            if (board[x][y].image.tint == 0x009fff) {
+            if (board[x][y].image.tint == 0x00ff00) {
                 board[x][y].image.tint = 0xffffff
             }
         }
     }
+    muteBGM.tint = 0xffffff;
+    restartButton.tint = 0xffffff;
+    instructions.tint = 0xffffff;
 }
 
 // Turns all tiles back to normal color
@@ -1116,7 +1126,7 @@ function checkGameStatus() {
         } else if (player.pos.x == exit.x && player.pos.y == exit.y && memoryAmount == MEMORY_NUM) {
             console.log("You Win!");
             // if its played at update, it's gonna keep playing it.... causing a bug :/
-            COMBO_SPAWN = Math.min(COMBO_SPAWN+0.1, 0.5);
+            COMBO_SPAWN = Math.min(COMBO_SPAWN+0.2, 0.6);
             youwin = game.add.audio('win!',volume, false);
             youwin.play();
             youWin.visible = true;
