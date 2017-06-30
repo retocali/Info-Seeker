@@ -219,7 +219,7 @@ function makeBackground() {
     backgroundImage.anchor.setTo(0.5, 0.5);
     backgroundImage.scale.setTo(gameX*scaleRatio/backgroundImage.width,gameY*scaleRatio/backgroundImage.height);
     backgroundImage.bringToBottom;
-    backgroundImage.tint = 0x101010;
+    backgroundImage.tint = 0x331133;
 }
 
 function memoryBoardGenerator() {
@@ -236,7 +236,7 @@ function memoryBoardGenerator() {
 
 
 function update() {
-
+    //backgroundChange();
     if (finished) {
         return;
     } else {
@@ -429,7 +429,6 @@ function updateText() {
 // Makes the buttons change color over various mouse inputs
 function addHighlight(s) {
     s.events.onInputOver.add(highlights(s), this);
-    
     s.events.onInputOut.add(normalize(s),this);
     s.events.onInputDown.add(color(s), this);
 }
@@ -1188,4 +1187,22 @@ function respawnGuard(n) {
 function rgbToHex(r, g, b) {
     return r*Math.pow(16,4)+g*Math.pow(16,2)+b;
 
+}
+function hexToRGB(hex) {
+    return { r: (hex >> 16) % 256,
+             g: (hex >> 8) % 256,
+             b: hex % 256 }
+}
+var count = 0;
+function backgroundChange() {
+    if (!(count % 10)) {
+        color = hexToRGB(backgroundImage.tint);
+        //console.log(color);
+        newR = 0x22*count/10;
+        newG = 0x00*count/10;
+        newB = 0x22*count/10;
+        //console.log(newR, newG, newB);
+        backgroundImage.tint = rgbToHex(newR, newG, newB);
+    }
+    count++;
 }
