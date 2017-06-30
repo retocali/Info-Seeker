@@ -37,6 +37,7 @@ var rectangle;
 var memoryAmount = 0; //starts off with the amount of tiles collected
 var steps = 0;
 var finished = false;
+var winning = false;
 
 //music found from https://www.dl-sounds.com/royalty-free/category/game-film/video-game/ && http://freesound.org
 //https://tutorialzine.com/2015/06/making-your-first-html5-game-with-phaser source
@@ -231,7 +232,7 @@ function memoryBoardGenerator() {
     text = game.add.bitmapText(game.world.centerX + 2.5*TILE_SIZE, game.world.centerY, 'zigFont', "Memories: " + memoryAmount + "\n Steps: " + steps, 18);
     text.anchor.setTo(0.5, 0.5);
     text.scale.setTo(scaleRatio, scaleRatio);
-    message = game.add.bitmapText(game.world.centerX + 2.5*TILE_SIZE, game.world.centerY, 'zigFont', "", 18);
+    message = game.add.bitmapText(game.world.centerX - 0.375 * TILE_SIZE, game.world.centerY - 2.5*TILE_SIZE, 'zigFont', "Collect the memory pieces\nand move to the exit.", 12);
 }
 
 
@@ -244,15 +245,37 @@ function update() {
     }
     
     if (rotated) {
-        message.destroy();
-        message = game.add.bitmapText(game.world.centerX + 0.5*TILE_SIZE, game.world.centerY -2.25 *TILE_SIZE, 'zigFont', "YOU ROTATED. \nNow move to a valid tile.", 12);
-        message.anchor.setTo(0.5, 0.5);    
+        if (winning) {
+            message.destroy();
+            message = game.add.bitmapText(game.world.centerX +0.4*TILE_SIZE , game.world.centerY -2.25 *TILE_SIZE, 'zigFont', "YAY", 12);
+            message.anchor.setTo(0.5, 0.5); 
+        }
+        else if (finished) {
+            message.destroy();
+            message = game.add.bitmapText(game.world.centerX +0.4*TILE_SIZE , game.world.centerY -2.25 *TILE_SIZE, 'zigFont', "You lost!\nPress the reset button\nto start again.", 12);
+            message.anchor.setTo(0.5, 0.5); 
+        } else {
+            message.destroy();
+            message = game.add.bitmapText(game.world.centerX + 0.5*TILE_SIZE, game.world.centerY -2.25 *TILE_SIZE, 'zigFont', "YOU ROTATED. \nClick to move.", 12);
+            message.anchor.setTo(0.5, 0.5);    
+        }
     }
 
     if (moved) {
-        message.destroy();
-        message = game.add.bitmapText(game.world.centerX + 0.5*TILE_SIZE, game.world.centerY -2.25*TILE_SIZE, 'zigFont', "YOU MOVED. \nPick a tile to rotate.", 12);
-        message.anchor.setTo(0.5, 0.5);    
+        if (winning) {
+            message.destroy();
+            message = game.add.bitmapText(game.world.centerX +0.4*TILE_SIZE , game.world.centerY -2.25 *TILE_SIZE, 'zigFont', "YAY", 12);
+            message.anchor.setTo(0.5, 0.5); 
+        }
+        else if (finished) {
+            message.destroy();
+            message = game.add.bitmapText(game.world.centerX + 0.4*TILE_SIZE, game.world.centerY -2.25 *TILE_SIZE, 'zigFont', "You lost!\nPress the reset button\nto start again.", 12);
+            message.anchor.setTo(0.5, 0.5); 
+        } else {
+            message.destroy();
+            message = game.add.bitmapText(game.world.centerX + 0.5*TILE_SIZE, game.world.centerY -2.25*TILE_SIZE, 'zigFont', "YOU MOVED. \nClick to rotate.", 12);
+            message.anchor.setTo(0.5, 0.5); 
+        }   
     }
 
     if (rotated && moved) {
@@ -1133,7 +1156,7 @@ function checkGameStatus() {
             youlose = game.add.audio('lose', volume, false);
             youlose.play();
             gameDone.visible = true;
-            gameDone.bringToTop();  
+            gameDone.bringToTop(); 
             return true;
 
         } else if (player.pos.x == exit.x && player.pos.y == exit.y && memoryAmount == MEMORY_NUM) {
@@ -1146,6 +1169,7 @@ function checkGameStatus() {
             youWin.bringToTop();
             youWin.inputEnabled = true;
             youWin.events.onInputDown.add(replay,this);
+            winning = true;
             return true;
         }
     }
@@ -1154,7 +1178,7 @@ function checkGameStatus() {
         youlose = game.add.audio('lose', volume, false);
         youlose.play();
         gameDone.visible = true;
-        gameDone.bringToTop();
+        gameDone.bringToTop(); 
         return true;
     }
     return false;
