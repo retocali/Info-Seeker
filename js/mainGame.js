@@ -37,6 +37,7 @@ var rectangle;
 var memoryAmount = 0; //starts off with the amount of tiles collected
 var steps = 0;
 var finished = false;
+var winning = false;
 
 //music found from https://www.dl-sounds.com/royalty-free/category/game-film/video-game/ && http://freesound.org
 //https://tutorialzine.com/2015/06/making-your-first-html5-game-with-phaser source
@@ -244,7 +245,12 @@ function update() {
     }
     
     if (rotated) {
-        if (finished) {
+        if (winning) {
+            message.destroy();
+            message = game.add.bitmapText(game.world.centerX +0.4*TILE_SIZE , game.world.centerY -2.25 *TILE_SIZE, 'zigFont', "YAY", 12);
+            message.anchor.setTo(0.5, 0.5); 
+        }
+        else if (finished) {
             message.destroy();
             message = game.add.bitmapText(game.world.centerX +0.4*TILE_SIZE , game.world.centerY -2.25 *TILE_SIZE, 'zigFont', "You lost!\nPress the reset button\nto start again.", 12);
             message.anchor.setTo(0.5, 0.5); 
@@ -256,7 +262,12 @@ function update() {
     }
 
     if (moved) {
-        if (finished) {
+        if (winning) {
+            message.destroy();
+            message = game.add.bitmapText(game.world.centerX +0.4*TILE_SIZE , game.world.centerY -2.25 *TILE_SIZE, 'zigFont', "YAY", 12);
+            message.anchor.setTo(0.5, 0.5); 
+        }
+        else if (finished) {
             message.destroy();
             message = game.add.bitmapText(game.world.centerX + 0.4*TILE_SIZE, game.world.centerY -2.25 *TILE_SIZE, 'zigFont', "You lost!\nPress the reset button\nto start again.", 12);
             message.anchor.setTo(0.5, 0.5); 
@@ -1159,6 +1170,7 @@ function checkGameStatus() {
             youWin.bringToTop();
             youWin.inputEnabled = true;
             youWin.events.onInputDown.add(replay,this);
+            winning = true;
             return true;
         }
     }
