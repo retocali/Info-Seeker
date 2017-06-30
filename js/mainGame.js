@@ -57,7 +57,7 @@ var rotated = false;
 var WIDTH = 3;
 var LENGTH = 3;
 var MEMORY_NUM = 2;
-var COMBO_SPAWN = 0.5;
+var COMBO_SPAWN = 0;
 
 
 // Constants for checking directions
@@ -557,7 +557,6 @@ function actionOnClick () {
         respawnGuard(n);
         guards[n].active = true;
         guards[n].tint = 0xffffff;
-        positionCharacter(guards[n]);
     }
     for (let x = 0;  x < board.length; x++) {
         for (let y = 0; y < board[x].length; y++) {
@@ -630,13 +629,13 @@ function movePlayer(tile) {
             player.pos.y += yMove;
             changed = true;
             positionCharacter(player);
-            player.position.y -= (TILE_SIZE/3-10*scaleRatio);
+            player.y -= (TILE_SIZE/3-10*scaleRatio);
         }
         if (yMove == -1 && tile.canGoSouth(player) && board[x][y].canGoNorth(player)) {
             player.pos.y += yMove;
             changed = true;
             positionCharacter(player);
-            player.position.y += (TILE_SIZE/3-10*scaleRatio);
+            player.y += (TILE_SIZE/3-10*scaleRatio);
         }
     }
     else if (yMove == 0) {
@@ -644,13 +643,13 @@ function movePlayer(tile) {
             player.pos.x += xMove;
             changed = true;
             positionCharacter(player);
-            player.position.x -= (TILE_SIZE/3-10*scaleRatio);
+            player.x -= (TILE_SIZE/3-10*scaleRatio);
         }
         if (xMove == -1 && tile.canGoEast(player) && board[x][y].canGoWest(player)) {
             player.pos.x += xMove;
             changed = true;
             positionCharacter(player);
-            player.position.x += (TILE_SIZE/3-10*scaleRatio);
+            player.x += (TILE_SIZE/3-10*scaleRatio);
         }
     }
     if (changed) {
@@ -676,8 +675,8 @@ function moveGuard(guard) {
         guard.pos.x += pickedMove.x;
         guard.pos.y += pickedMove.y;
         positionCharacter(guard);
-        guard.position.x -= pickedMove.x*(TILE_SIZE/3-10)*scaleRatio;
-        guard.position.y -= pickedMove.y*(TILE_SIZE/3-10)*scaleRatio;
+        guard.x -= pickedMove.x*(TILE_SIZE/3-10)*scaleRatio;
+        guard.y -= pickedMove.y*(TILE_SIZE/3-10)*scaleRatio;
         pickedMove.tile.moveTo(guard, pickedMove.x, pickedMove.y);
     } else {
         guard.active = false;
@@ -795,8 +794,8 @@ class BasicTile {
         return true;
     }
     rotateCharacter(character, circle){
-        let deltaX = (xLoc(character.pos.x)-character.position.x)/(TILE_SIZE/3-10*scaleRatio);
-        let deltaY = (yLoc(character.pos.y)-character.position.y)/(TILE_SIZE/3-10*scaleRatio);
+        let deltaX = (xLoc(character.pos.x)-character.x)/(TILE_SIZE/3-10*scaleRatio);
+        let deltaY = (yLoc(character.pos.y)-character.y)/(TILE_SIZE/3-10*scaleRatio);
 
         console.log(deltaX, deltaY);
         // Normalize fp math
@@ -811,8 +810,8 @@ class BasicTile {
             }
         }
         positionCharacter(character);
-        character.position.x -= circle[(i+1) % circle.length].x*(TILE_SIZE/3-10*scaleRatio);
-        character.position.y -= circle[(i+1) % circle.length].y*(TILE_SIZE/3-10*scaleRatio);
+        character.x -= circle[(i+1) % circle.length].x*(TILE_SIZE/3-10*scaleRatio);
+        character.y -= circle[(i+1) % circle.length].y*(TILE_SIZE/3-10*scaleRatio);
     }
     moveTo(character, x, y) {
         return;
@@ -932,8 +931,8 @@ class ComboTile {
         return true;
     }
     rotateCharacter(character, circle){
-        let deltaX = (xLoc(character.pos.x)-character.position.x)/(TILE_SIZE/3-10*scaleRatio);
-        let deltaY = (yLoc(character.pos.y)-character.position.y)/(TILE_SIZE/3-10*scaleRatio);
+        let deltaX = (xLoc(character.pos.x)-character.x)/(TILE_SIZE/3-10*scaleRatio);
+        let deltaY = (yLoc(character.pos.y)-character.y)/(TILE_SIZE/3-10*scaleRatio);
 
         console.log(deltaX, deltaY);
         // Normalize fp math
@@ -948,8 +947,8 @@ class ComboTile {
             }
         }
         positionCharacter(character);
-        character.position.x -= circle[(i+1) % circle.length].x*(TILE_SIZE/3-10*scaleRatio);
-        character.position.y -= circle[(i+1) % circle.length].y*(TILE_SIZE/3-10*scaleRatio);
+        character.x -= circle[(i+1) % circle.length].x*(TILE_SIZE/3-10*scaleRatio);
+        character.y -= circle[(i+1) % circle.length].y*(TILE_SIZE/3-10*scaleRatio);
     }
     moveTo(character, x, y) {
          if (x == 0 && y == 1) { //Went to North Side
@@ -978,7 +977,7 @@ class ComboTile {
             }
 
         } else {
-                console.log("Error, Player moved too much");
+            console.log("Error, Player moved too much");
         }
 
     }
@@ -1016,15 +1015,23 @@ class ComboTile {
 
     reposition(character) {
         console.log("Repositioning");
+        console.log(character.x, character.y);
         if (this.canGoNorth(character)) {
-            character.position.y -= (TILE_SIZE/3-10)*scaleRatio;
+            character.y -= TILE_SIZE/3-10*scaleRatio;
+            console.log("NORTH");
         } else if (this.canGoSouth(character)) {
-            character.position.y += (TILE_SIZE/3-10)*scaleRatio;
+            character.y += TILE_SIZE/3-10*scaleRatio;
+            console.log("SOUTH");
         } else if (this.canGoWest(character)) {
-            character.position.x -= (TILE_SIZE/3-10)*scaleRatio;
+            character.x -= TILE_SIZE/3-10*scaleRatio;
+            console.log("WEST");
         } else if (this.canGoEast(character)) {
-            character.position.x += (TILE_SIZE/3-10)*scaleRatio;
+            character.x += TILE_SIZE/3-10*scaleRatio;
+            console.log("EAST");
+        } else {
+            print("Error: Guard was not able to be positioned");
         }
+        console.log(character.x, character.y);
     }
     resetRotation() {
         this.image.angle = this.initialRotation;
@@ -1091,9 +1098,6 @@ function findComboExits(tileName) {
 
 // Used to check if the player has won or lost
 function checkGameStatus() {
-
-
-    
         
     for (var n = 0;  n < guards.length; n++) {
         let guard = guards[n];
@@ -1110,7 +1114,7 @@ function checkGameStatus() {
         } else if (player.pos.x == exit.x && player.pos.y == exit.y && memoryAmount == MEMORY_NUM) {
             console.log("You Win!");
             // if its played at update, it's gonna keep playing it.... causing a bug :/
-            
+            COMBO_SPAWN = Math.min(COMBO_SPAWN+0.1, 0.5);
             youwin = game.add.audio('win!',volume, false);
             youwin.play();
             youWin.visible = true;
@@ -1151,6 +1155,7 @@ function respawnGuard(n) {
     let xpos = memoryTiles[n].pos.x;
     let ypos = memoryTiles[n].pos.y;
     guards[n].pos = {x: xpos, y: ypos};
+    positionCharacter(guards[n]);
     board[xpos][ypos].joinZone(guards[n]);
 }
 
