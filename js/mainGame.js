@@ -85,6 +85,8 @@ var button2;
 var button3;
 var group;
 var cursorPos = {x:-1, y:-1};
+var credits;
+var creditPage;
 
 
 // UI Constants
@@ -144,6 +146,7 @@ function preload() {
     game.load.image('replayImage',"assets/sprites/button_restart.png");
     game.load.image('instructions', "assets/sprites/instruction.png");
     game.load.image('credits', "assets/sprites/credits.png");
+    game.load.image('creditPage', "assets/sprites/credits.jpg");
     
     // The sprite for the player
     game.load.image('player', "assets/sprites/Player.png");
@@ -358,12 +361,20 @@ function makeUI() {
     instructions.events.onInputUp.add(function() {instructions.tint = 0xffffff;}, this);
     
     // Credits button
-    credits = game.add.button(game.world.centerX + 2.5*TILE_SIZE+10*scaleRatio, game.world.centerY+1.65*BOX_SIZE, 'credits', actionOnClick2, this);
+    credits = game.add.button(game.world.centerX + 2.5*TILE_SIZE+10*scaleRatio, game.world.centerY+1.65*BOX_SIZE, 'credits', creditsClick, this);
     credits.scale.setTo(BOX_SIZE/(2*credits.width),BOX_SIZE/(2*credits.height));
     credits.anchor.setTo(0,0.5);
     credits.inputEnabled = true;
     addHighlight(credits);
     credits.events.onInputUp.add(function() {credits.tint = 0xffffff;}, this);
+
+    //Credits Page
+    creditPage = game.add.sprite(game.world.centerX, game.world.centerY, "creditPage");
+    creditPage.anchor.setTo(0.5,0.5);
+    creditPage.scale.setTo(gameX*scaleRatio/creditPage.width, gameY*scaleRatio/creditPage.height);
+    creditPage.fixedtoCamera = true;
+    creditPage.bringToTop();
+    creditPage.visible = false;
 
 
     //Splash screen
@@ -376,13 +387,13 @@ function makeUI() {
 
     // Game Over screen
     gameDone = game.add.sprite(game.world.centerX, game.world.centerY, 'gameover');
-    gameDone.scale.setTo(3.1*scaleRatio,3.5*scaleRatio);
+    gameDone.scale.setTo(1.2 * scaleRatio,1.2*scaleRatio);
     gameDone.anchor.setTo(0.5,0.5);
     gameDone.visible = false;
 
     // You Win! Screen
-    youWin = game.add.sprite(game.world.centerX, game.world.centerY, 'youwin');
-    youWin.scale.setTo(1.9*scaleRatio,1.7*scaleRatio);
+    youWin = game.add.sprite(-0.1*TILE_SIZE+game.world.centerX, game.world.centerY + 0.75*TILE_SIZE, 'youwin');
+    youWin.scale.setTo(1.25*scaleRatio,1.5*scaleRatio);
     youWin.anchor.setTo(0.5,0.5);
     youWin.visible = false;
     youWin.inputEnabled = false;
@@ -535,6 +546,7 @@ function menuCreate(s) {
         button3.anchor.setTo(0.5,0.5);
 
         logo.bringToTop();
+        creditPage.bringToTop();
 
         function clockwise() {
             if (!rotated) {
@@ -584,9 +596,11 @@ function removeLogo () {
     //tried to use this to fade in/fade out the welcome...
     // game.add.tween(sprite).to( { alpha: 1 }, 2000, Phaser.Easing.Linear.None, true, 0, 1000, true);
     logo.visible = false;
+    creditPage.visible = false;
     instructions.inputEnabled = true;
     restartButton.inputEnabled = true;
 }
+
 
 // used with the restart button
 function actionOnClick () {
@@ -633,6 +647,19 @@ function actionOnClick2 () {
         logo.visible = true;
         logo.bringToTop();
     }
+}
+
+function creditsClick () {
+
+    instructions.inputEnabled = false;
+    logo.bringToTop();
+    restartButton.inputEnabled = false;
+
+    if (creditPage.visible == false) {
+        creditPage.visible = true;
+        creditPage.bringtoTop();
+    }
+
 }
 
 
