@@ -348,6 +348,7 @@ function makeUI() {
     instructions.inputEnabled = true;
     addHighlight(instructions);
     instructions.events.onInputUp.add(function() {instructions.tint = 0xffffff;}, this);
+    instructions.bringToTop;
 
     //Splash screen
     logo = game.add.sprite(game.world.centerX, game.world.centerY, "logo");
@@ -609,6 +610,7 @@ function actionOnClick () {
 function actionOnClick2 () {
 
     instructions.inputEnabled = false;
+    instructions.bringToTop;
     restartButton.inputEnabled = false;
 
     if (logo.visible == false) {
