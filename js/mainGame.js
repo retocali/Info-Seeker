@@ -134,7 +134,7 @@ function preload() {
     game.load.image('logo', 'assets/sprites/welcome.jpg');
     game.load.image('gameover', 'assets/sprites/gameover.png');
     game.load.image('youwin', 'assets/sprites/youwin.png');
-    game.load.image('background', 'assets/sprites/12436668-torsion-movement-op-art-abstract-illustration.jpg');
+    game.load.image('background', 'assets/sprites/background.jpg');
 
     // Memory Tile 
     game.load.image('memoryTile', 'assets/sprites/puzzle.png');
@@ -232,7 +232,7 @@ function makeBackground() {
     backgroundImage.anchor.setTo(0.5, 0.5);
     backgroundImage.scale.setTo(gameX*scaleRatio/backgroundImage.width,gameY*scaleRatio/backgroundImage.height);
     backgroundImage.sendToBack();
-    backgroundImage.tint = 0x131313;
+    backgroundImage.tint = 0x151115;
 }
 
 function memoryBoardGenerator() {
