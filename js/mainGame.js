@@ -136,7 +136,7 @@ function preload() {
     game.load.image('gameover', 'assets/sprites/gameover.png');
     game.load.image('youwin', 'assets/sprites/youwin.png');
     game.load.image('background', 'assets/sprites/background.jpg');
-    game.load.image('help','assets/sprites/help.jpg');
+    game.load.image('helpScreen','assets/sprites/help.jpg');
 
     // Memory Tile 
     game.load.image('memoryTile', 'assets/sprites/puzzle.png');
@@ -366,17 +366,17 @@ function makeUI() {
     restartButton.events.onInputUp.add(function() {restartButton.tint = 0xffffff;}, this);
 
     // Instructions Button
-    instructions = game.add.button(game.world.centerX + 2.5*TILE_SIZE+10*scaleRatio, game.world.centerY+1.65*BOX_SIZE, 'instructions', actionOnClick2, this);
+    instructions = game.add.button(game.world.centerX + 2.5*TILE_SIZE-10*scaleRatio, game.world.centerY+1.65*BOX_SIZE, 'instructions', actionOnClick2, this);
     instructions.scale.setTo(BOX_SIZE/(2*instructions.width),BOX_SIZE/(2*instructions.height));
-    instructions.anchor.setTo(0,0.5);
+    instructions.anchor.setTo(1,0.5);
     instructions.inputEnabled = true;
     addHighlight(instructions);
     instructions.events.onInputUp.add(function() {instructions.tint = 0xffffff;}, this);
 
     // Instructions Button
-    help = game.add.button(game.world.centerX + 2.5*TILE_SIZE-10*scaleRatio, game.world.centerY+1.65*BOX_SIZE, 'help', actionOnClick2, this);
+    help = game.add.button(game.world.centerX + 2.5*TILE_SIZE+10*scaleRatio, game.world.centerY+1.65*BOX_SIZE, 'help', helpClick, this);
     help.scale.setTo(BOX_SIZE/(2*help.width),BOX_SIZE/(2*help.height));
-    help.anchor.setTo(1,0.5);
+    help.anchor.setTo(0,0.5);
     help.inputEnabled = true;
     addHighlight(help);
     help.events.onInputUp.add(function() {help.tint = 0xffffff;}, this);
@@ -398,12 +398,12 @@ function makeUI() {
     creditPage.visible = false;
 
     // Help page
-    help = game.add.sprite(game.world.centerX, game.world.centerY, "help");
-    help.anchor.setTo(0.5,0.5);
-    help.scale.setTo(gameX*scaleRatio/help.width, gameY*scaleRatio/help.height);
-    help.fixedtoCamera = true;
-    help.bringToTop();
-    help.visible = false;
+    helpScreen = game.add.sprite(game.world.centerX, game.world.centerY, "helpScreen");
+    helpScreen.anchor.setTo(0.5,0.5);
+    helpScreen.scale.setTo(gameX*scaleRatio/helpScreen.width, gameY*scaleRatio/helpScreen.height);
+    helpScreen.fixedtoCamera = true;
+    helpScreen.bringToTop();
+    helpScreen.visible = false;
 
 
     //Splash screen
@@ -626,9 +626,11 @@ function removeLogo () {
     // game.add.tween(sprite).to( { alpha: 1 }, 2000, Phaser.Easing.Linear.None, true, 0, 1000, true);
     logo.visible = false;
     creditPage.visible = false;
+    helpScreen.visible = false;
     instructions.inputEnabled = true;
     restartButton.inputEnabled = true;
     credits.inputEnabled = true;
+    help.inputEnabled = true;
 }
 
 
@@ -690,6 +692,21 @@ function creditsClick () {
     }
     credits.inputEnabled = false;
 
+}
+
+function helpClick () {
+
+    instructions.inputEnabled = false;
+    credits.inputEnabled = false;
+    restartButton.inputEnabled = false;
+    helpScreen.bringToTop();
+
+
+    if (helpScreen.visible == false) {
+        helpScreen.visible = true;
+    }
+
+    help.inputEnabled = false;
 }
 
 
