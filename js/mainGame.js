@@ -50,6 +50,7 @@ var gameDone;
 var youWin
 var logo;
 var backgroundImage;
+var help;
 
 // For keeping tracking of turns
 var moved = false;
@@ -135,6 +136,7 @@ function preload() {
     game.load.image('gameover', 'assets/sprites/gameover.png');
     game.load.image('youwin', 'assets/sprites/youwin.png');
     game.load.image('background', 'assets/sprites/background.jpg');
+    game.load.image('help','assets/sprites/help.jpg');
 
     // Memory Tile 
     game.load.image('memoryTile', 'assets/sprites/puzzle.png');
@@ -375,6 +377,14 @@ function makeUI() {
     creditPage.fixedtoCamera = true;
     creditPage.bringToTop();
     creditPage.visible = false;
+
+    // Help page
+    help = game.add.sprite(game.world.centerX, game.world.centerY, "help");
+    help.anchor.setTo(0.5,0.5);
+    help.scale.setTo(gameX*scaleRatio/help.width, gameY*scaleRatio/help.height);
+    help.fixedtoCamera = true;
+    help.bringToTop();
+    help.visible = false;
 
 
     //Splash screen
