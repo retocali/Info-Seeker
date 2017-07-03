@@ -146,6 +146,7 @@ function preload() {
     game.load.image('replayImage',"assets/sprites/button_restart.png");
     game.load.image('instructions', "assets/sprites/instruction.png");
     game.load.image('credits', "assets/sprites/credits.png");
+    game.load.image('help', "assets/sprites/help.png");
     game.load.image('creditPage', "assets/sprites/credits.jpg");
     
     // The sprite for the player
@@ -203,11 +204,15 @@ function backgroundMusic() {
     muteBGM.events.onInputUp.add(function() {muteBGM.tint = 0xffffff;}, this);
 
     // Muted button
-    mute2 = game.add.sprite(game.world.centerX+2.5*TILE_SIZE-10*scaleRatio, game.world.centerY+BOX_SIZE, "mute2");
+    mute2 = game.add.button(game.world.centerX+2.5*TILE_SIZE-10*scaleRatio, game.world.centerY+BOX_SIZE, "mute2");
     mute2.scale.setTo(BOX_SIZE/(2*mute2.width), BOX_SIZE/(2*mute2.height));
     mute2.anchor.setTo(1,0.5);
+    mute2.inputEnabled = true;
+    mute2.events.onInputDown.add(muteFunction,this);
     addHighlight(mute2);
+    mute2.events.onInputUp.add(function() {mute2.tint = 0xffffff;}, this);
     mute2.visible = false;
+
     
 
     background = game.add.audio('bgm', volume, true);
@@ -359,15 +364,23 @@ function makeUI() {
     restartButton.events.onInputUp.add(function() {restartButton.tint = 0xffffff;}, this);
 
     // Instructions Button
-    instructions = game.add.button(game.world.centerX + 2.5*TILE_SIZE+10*scaleRatio, game.world.centerY+BOX_SIZE, 'instructions', actionOnClick2, this);
+    instructions = game.add.button(game.world.centerX + 2.5*TILE_SIZE+10*scaleRatio, game.world.centerY+1.65*BOX_SIZE, 'instructions', actionOnClick2, this);
     instructions.scale.setTo(BOX_SIZE/(2*instructions.width),BOX_SIZE/(2*instructions.height));
     instructions.anchor.setTo(0,0.5);
     instructions.inputEnabled = true;
     addHighlight(instructions);
     instructions.events.onInputUp.add(function() {instructions.tint = 0xffffff;}, this);
+
+    // Instructions Button
+    help = game.add.button(game.world.centerX + 2.5*TILE_SIZE-10*scaleRatio, game.world.centerY+1.65*BOX_SIZE, 'help', actionOnClick2, this);
+    help.scale.setTo(BOX_SIZE/(2*help.width),BOX_SIZE/(2*help.height));
+    help.anchor.setTo(1,0.5);
+    help.inputEnabled = true;
+    addHighlight(help);
+    help.events.onInputUp.add(function() {help.tint = 0xffffff;}, this);
     
     // Credits button
-    credits = game.add.button(game.world.centerX + 2.5*TILE_SIZE+10*scaleRatio, game.world.centerY+1.65*BOX_SIZE, 'credits', creditsClick, this);
+    credits = game.add.button(game.world.centerX + 2.5*TILE_SIZE+10*scaleRatio, game.world.centerY+BOX_SIZE, 'credits', creditsClick, this);
     credits.scale.setTo(BOX_SIZE/(2*credits.width),BOX_SIZE/(2*credits.height));
     credits.anchor.setTo(0,0.5);
     credits.inputEnabled = true;
@@ -659,7 +672,7 @@ function actionOnClick2 () {
 function creditsClick () {
 
     instructions.inputEnabled = false;
-    logo.bringToTop();
+    creditPage.bringToTop();
     restartButton.inputEnabled = false;
 
     if (creditPage.visible == false) {
