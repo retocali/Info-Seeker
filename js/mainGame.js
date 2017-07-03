@@ -16,6 +16,7 @@ var background;
 var volume = 1; 
 var youwin;
 var muteBGM;
+var mute2;
 
 // Map related Variables
 var board;
@@ -125,6 +126,7 @@ function preload() {
 
     // Image for mute button
     game.load.image('mute', 'assets/sprites/mute.png');
+    game.load.image('mute2', 'assets/sprites/mute2.png');
 
     // Big Screens
     game.load.image('logo', 'assets/sprites/welcome.jpg');
@@ -187,6 +189,9 @@ function create() {
 function backgroundMusic() {
 
     // Muting the BGM
+
+    mute2 = game.add.sprite(game.world.centerX + TILE_SIZE, game.world.centerY, "mute2");
+    mute2.visible = false;
     muteBGM = game.add.button(game.world.centerX+2.5*TILE_SIZE-10*scaleRatio, game.world.centerY+BOX_SIZE, 'mute');
     muteBGM.scale.setTo(BOX_SIZE/(2*muteBGM.width), BOX_SIZE/(2*muteBGM.height));
     muteBGM.anchor.setTo(1,0.5);
@@ -206,8 +211,11 @@ function backgroundMusic() {
 function muteFunction() {
     if (volume) {
         background.stop();
+        mute2.visible = true;
+        mute2.bringToTop();
     } else {
         background.play();
+        mute2.visible = false;
     }
     volume = !volume;
 }
@@ -610,13 +618,14 @@ function actionOnClick () {
 function actionOnClick2 () {
 
     instructions.inputEnabled = false;
-    instructions.bringToTop;
     restartButton.inputEnabled = false;
 
     if (logo.visible == false) {
         logo.visible = true;
+        logo.bringToTop();
     }
 }
+
 
 // To make the whole game replay
 function replay() {
