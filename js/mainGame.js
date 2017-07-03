@@ -127,40 +127,41 @@ function preload() {
     game.load.audio('win!', 'assets/sounds/win.mp3');
     game.load.audio('lose', 'assets/sounds/gameover.wav');
 
-    // Image for mute button
-    game.load.image('mute', 'assets/sprites/mute.png');
-    game.load.image('mute2', 'assets/sprites/mute2.png');
+    // Buttons
+    game.load.image('mute', 'assets/sprites/buttons/mute.png');
+    game.load.image('mute2', 'assets/sprites/buttons/mute2.png');
+    game.load.image('memoryBoard', 'assets/sprites/buttons/memory_board.jpg')
+    game.load.image('replayImage',"assets/sprites/buttons/button_restart.png");
+    game.load.image('instructions', "assets/sprites/buttons/instruction.png");
+    game.load.image('credits', "assets/sprites/buttons/credits.png");
+    game.load.image('help', "assets/sprites/buttons/help.png");
+
+    // Used to load menu icons
+    game.load.image('move', "assets/sprites/buttons/Move.png");
+    game.load.image('rotateClock',"assets/sprites/buttons/Rotate_Clockwise.png");
+    game.load.image('rotateCounter',"assets/sprites/buttons/Rotate_Counter_Clockwise.png");
+
 
     // Big Screens
-    game.load.image('logo', 'assets/sprites/welcome.jpg');
-    game.load.image('gameover', 'assets/sprites/gameover.png');
-    game.load.image('youwin', 'assets/sprites/youwin.png');
-    game.load.image('background', 'assets/sprites/background.jpg');
-    game.load.image('helpScreen','assets/sprites/help.jpg');
+    game.load.image('logo', 'assets/sprites/menus/welcome.jpg');
+    game.load.image('gameover', 'assets/sprites/menus/gameover.png');
+    game.load.image('youwin', 'assets/sprites/menus/youwin.png');
+    game.load.image('background', 'assets/sprites/menus/background.jpg');
+    game.load.image('helpScreen','assets/sprites/menus/help.jpg');
+    game.load.image('creditPage', "assets/sprites/menus/credits.jpg");
 
-    // Memory Tile 
-    game.load.image('memoryTile', 'assets/sprites/puzzle.png');
-    game.load.image('memoryBoard', 'assets/sprites/memory_board.jpg')
+    // Fonts    
     game.load.bitmapFont('zigFont', 'assets/zig/font/font.png','assets/zig/font/font.fnt');
+    
+    // The sprite for the player
+    game.load.image('memoryTile', 'assets/sprites/characters/puzzle.png');
+    game.load.image('player', "assets/sprites/characters/Player.png");
+    game.load.image('guard', "assets/sprites/characters/Guard.png");
+    
 
     // Used to load entrance/exit and restart button/instructions
     game.load.image('entrix',"assets/sprites/tiles/EntranceExit.png");
-    game.load.image('replayImage',"assets/sprites/button_restart.png");
-    game.load.image('instructions', "assets/sprites/instruction.png");
-    game.load.image('credits', "assets/sprites/credits.png");
-    game.load.image('help', "assets/sprites/help.png");
-    game.load.image('creditPage', "assets/sprites/credits.jpg");
     
-    // The sprite for the player
-    game.load.image('player', "assets/sprites/Player.png");
-    game.load.image('guard', "assets/sprites/Guard.png");
-
-    // Used to load menu icons
-    game.load.image('move', "assets/sprites/Move.png");
-    game.load.image('rotateClock',"assets/sprites/Rotate_Clockwise.png");
-    game.load.image('rotateCounter',"assets/sprites/Rotate_Counter_Clockwise.png");
-
-
 
     // Used to load the images as sprites to randomly access
     for (var i = 0; i < tileNames.length; i++) {
