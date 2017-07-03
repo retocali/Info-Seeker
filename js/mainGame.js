@@ -143,6 +143,7 @@ function preload() {
     game.load.image('entrix',"assets/sprites/tiles/EntranceExit.png");
     game.load.image('replayImage',"assets/sprites/button_restart.png");
     game.load.image('instructions', "assets/sprites/instruction.png");
+    game.load.image('credits', "assets/sprites/credits.png");
     
     // The sprite for the player
     game.load.image('player', "assets/sprites/Player.png");
@@ -356,6 +357,14 @@ function makeUI() {
     addHighlight(instructions);
     instructions.events.onInputUp.add(function() {instructions.tint = 0xffffff;}, this);
     
+    // Credits button
+    credits = game.add.button(game.world.centerX + 2.5*TILE_SIZE+10*scaleRatio, game.world.centerY+1.65*BOX_SIZE, 'credits', actionOnClick2, this);
+    credits.scale.setTo(BOX_SIZE/(2*credits.width),BOX_SIZE/(2*credits.height));
+    credits.anchor.setTo(0,0.5);
+    credits.inputEnabled = true;
+    addHighlight(credits);
+    credits.events.onInputUp.add(function() {credits.tint = 0xffffff;}, this);
+
 
     //Splash screen
     logo = game.add.sprite(game.world.centerX, game.world.centerY, "logo");
