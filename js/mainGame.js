@@ -59,7 +59,7 @@ var rotated = false;
 var WIDTH = 3;
 var LENGTH = 3;
 var MEMORY_NUM = 2;
-var COMBO_SPAWN = 0;
+var COMBO_SPAWN = 0.2;
 
 
 // Constants for checking directions
@@ -87,9 +87,10 @@ var cursorPos = {x:-1, y:-1};
 
 
 // UI Constants
-var TILE_SIZE = 150*scaleRatio;
+var TILE_SIZE = 160*scaleRatio;
 var MARGIN = 12*scaleRatio;
 var BOX_SIZE = 128*scaleRatio; 
+var playerSize = 40*scaleRatio;
 
 
 
@@ -220,7 +221,7 @@ function makeBackground() {
     backgroundImage.anchor.setTo(0.5, 0.5);
     backgroundImage.scale.setTo(gameX*scaleRatio/backgroundImage.width,gameY*scaleRatio/backgroundImage.height);
     backgroundImage.bringToBottom;
-    backgroundImage.tint = 0x331133;
+    backgroundImage.tint = 0x002233;
 }
 
 function memoryBoardGenerator() {
@@ -239,44 +240,18 @@ function memoryBoardGenerator() {
 function update() {
     //backgroundChange();
     if (finished) {
+        console.log("Here!");
         return;
     } else {
         finished = checkGameStatus();
     }
     
     if (rotated) {
-        if (winning) {
-            message.destroy();
-            message = game.add.bitmapText(game.world.centerX +0.4*TILE_SIZE , game.world.centerY -2.25 *TILE_SIZE, 'zigFont', "YAY", 12);
-            message.anchor.setTo(0.5, 0.5); 
-        }
-        else if (finished) {
-            message.destroy();
-            message = game.add.bitmapText(game.world.centerX +0.4*TILE_SIZE , game.world.centerY -2.25 *TILE_SIZE, 'zigFont', "You lost!\nPress the reset button\nto start again.", 12);
-            message.anchor.setTo(0.5, 0.5); 
-        } else {
-            message.destroy();
-            message = game.add.bitmapText(game.world.centerX + 0.5*TILE_SIZE, game.world.centerY -2.25 *TILE_SIZE, 'zigFont', "YOU ROTATED. \nClick to move.", 12);
-            message.anchor.setTo(0.5, 0.5);    
-        }
+        message.text = "YOU ROTATED. \nClick to move.";
     }
-
     if (moved) {
-        if (winning) {
-            message.destroy();
-            message = game.add.bitmapText(game.world.centerX +0.4*TILE_SIZE , game.world.centerY -2.25 *TILE_SIZE, 'zigFont', "YAY", 12);
-            message.anchor.setTo(0.5, 0.5); 
-        }
-        else if (finished) {
-            message.destroy();
-            message = game.add.bitmapText(game.world.centerX + 0.4*TILE_SIZE, game.world.centerY -2.25 *TILE_SIZE, 'zigFont', "You lost!\nPress the reset button\nto start again.", 12);
-            message.anchor.setTo(0.5, 0.5); 
-        } else {
-            message.destroy();
-            message = game.add.bitmapText(game.world.centerX + 0.5*TILE_SIZE, game.world.centerY -2.25*TILE_SIZE, 'zigFont', "YOU MOVED. \nClick to rotate.", 12);
-            message.anchor.setTo(0.5, 0.5); 
-        }   
-    }
+        message.text = "YOU MOVED. \nClick to rotate.";
+    }   
 
     if (rotated && moved) {
         for(let n = 0; n < guards.length; n++) {
@@ -288,11 +263,12 @@ function update() {
                 moveGuard(guards[n]);
             }
         }
-        checkGameStatus();
         rotated = false;
         moved = false;
     }
+    finished = checkGameStatus();
 }
+
 
 
 /* 
@@ -351,7 +327,7 @@ function makePlayer() {
     player.pos = {x:entrance.x, y:entrance.y};
     player.anchor.setTo(0.5,0.5);
     player.inputEnabled = true;
-    player.scale.setTo(scaleRatio,scaleRatio);
+    player.scale.setTo(playerSize/player.width,playerSize/player.height);
 
 }
 
@@ -433,7 +409,7 @@ function makeGuard(xpos, ypos) {
     let guard = game.add.sprite(xLoc(xpos), yLoc(ypos), 'guard');
     guard.pos = {x: xpos, y: ypos};
     guard.anchor.setTo(0.5,0.5);
-    guard.scale.setTo(scaleRatio,scaleRatio);
+    guard.scale.setTo(playerSize/guard.width,playerSize/guard.width);
     guard.active = true;
     guards.push(guard);
     board[xpos][ypos].joinZone(guard);
@@ -461,7 +437,7 @@ function color(s) {
     return function() {
         click = game.add.audio('click', 0+volume);
         click.play();
-        s.tint = 0x00aa00;
+        s.tint = 0x888888;
     }
 }
 
@@ -470,7 +446,7 @@ function highlights(s) {
     return function() {
         resetHighlight();
         if (s.tint == 0xffffff) {
-            s.tint = 0x00ff00;
+            s.tint = 0xcccccc;
         }
     }
 }
@@ -478,7 +454,7 @@ function highlights(s) {
 // Turns the hover tiles to normal
 function normalize(s) {
     return function() {
-        if (s.tint == 0x00ff00){ 
+        if (s.tint == 0xcccccc){ 
             s.tint = 0xffffff;
         }
     }
@@ -488,7 +464,7 @@ function normalize(s) {
 function resetHighlight() {
     for (let x = 0;  x < board.length; x++) {
         for (let y = 0; y < board[x].length; y++) {
-            if (board[x][y].image.tint == 0x00ff00) {
+            if (board[x][y].image.tint == 0xcccccc) {
                 board[x][y].image.tint = 0xffffff
             }
         }
@@ -624,6 +600,7 @@ function actionOnClick () {
 
     click = game.add.audio('restartClick', volume);
     click.play();
+    message.text = "Collect the memory pieces\nand move to the exit.";
     reset();
     updateText();
 }
@@ -1093,11 +1070,11 @@ class ComboTile {
 */
 // Both return the coordinate value for the board index values
 function xLoc(x) {
-    return game.world.centerX+(x-1)*(TILE_SIZE+MARGIN);
+    return game.world.centerX+(x-1)*(TILE_SIZE);
 }
 
 function yLoc(y) {
-    return game.world.centerY+(y-2)*(TILE_SIZE+MARGIN);
+    return game.world.centerY+(y-2)*(TILE_SIZE);
 }
 
 // positions character on the screen
@@ -1152,19 +1129,19 @@ function checkGameStatus() {
 
         if (player.pos.x == guard.pos.x && player.pos.y == guard.pos.y 
             && board[guard.pos.x][guard.pos.y].sameZone(player, guard)) {
-            console.log("You Lose!");
             youlose = game.add.audio('lose', volume, false);
             youlose.play();
             gameDone.visible = true;
             gameDone.bringToTop(); 
+            message.text = "You lost!\nPress the reset button\nto start again.";
             return true;
 
         } else if (player.pos.x == exit.x && player.pos.y == exit.y && memoryAmount == MEMORY_NUM) {
-            console.log("You Win!");
             // if its played at update, it's gonna keep playing it.... causing a bug :/
             COMBO_SPAWN = Math.min(COMBO_SPAWN+0.2, 0.6);
             youwin = game.add.audio('win!',volume, false);
             youwin.play();
+            message.text = "YAY";
             youWin.visible = true;
             youWin.bringToTop();
             youWin.inputEnabled = true;
@@ -1174,11 +1151,11 @@ function checkGameStatus() {
         }
     }
     if (possibleMovements(player).length == 0) {
-        console.log("You Lose!");
         youlose = game.add.audio('lose', volume, false);
         youlose.play();
         gameDone.visible = true;
         gameDone.bringToTop(); 
+        message.text = "You lost!\nPress the reset button\nto start again.";
         return true;
     }
     return false;
