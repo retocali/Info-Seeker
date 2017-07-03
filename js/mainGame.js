@@ -194,8 +194,6 @@ function backgroundMusic() {
 
     // Muting the BGM
 
-    mute2 = game.add.sprite(game.world.centerX + TILE_SIZE, game.world.centerY, "mute2");
-    mute2.visible = false;
     muteBGM = game.add.button(game.world.centerX+2.5*TILE_SIZE-10*scaleRatio, game.world.centerY+BOX_SIZE, 'mute');
     muteBGM.scale.setTo(BOX_SIZE/(2*muteBGM.width), BOX_SIZE/(2*muteBGM.height));
     muteBGM.anchor.setTo(1,0.5);
@@ -203,6 +201,14 @@ function backgroundMusic() {
     muteBGM.events.onInputDown.add(muteFunction,this);
     addHighlight(muteBGM);
     muteBGM.events.onInputUp.add(function() {muteBGM.tint = 0xffffff;}, this);
+
+    // Muted button
+    mute2 = game.add.sprite(game.world.centerX+2.5*TILE_SIZE-10*scaleRatio, game.world.centerY+BOX_SIZE, "mute2");
+    mute2.scale.setTo(BOX_SIZE/(2*mute2.width), BOX_SIZE/(2*mute2.height));
+    mute2.anchor.setTo(1,0.5);
+    addHighlight(mute2);
+    mute2.visible = false;
+    
 
     background = game.add.audio('bgm', volume, true);
     background.play();
