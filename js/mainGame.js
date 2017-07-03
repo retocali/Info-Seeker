@@ -605,6 +605,7 @@ function removeLogo () {
     creditPage.visible = false;
     instructions.inputEnabled = true;
     restartButton.inputEnabled = true;
+    credits.inputEnabled = true;
 }
 
 
@@ -663,8 +664,8 @@ function creditsClick () {
 
     if (creditPage.visible == false) {
         creditPage.visible = true;
-        creditPage.bringtoTop();
     }
+    credits.inputEnabled = false;
 
 }
 
