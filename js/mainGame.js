@@ -367,15 +367,15 @@ function makeUI() {
 
     // Game Over screen
     gameDone = game.add.sprite(game.world.centerX, game.world.centerY, 'gameover');
-    gameDone.scale.setTo(3.1*scaleRatio,3.5*scaleRatio);
+    gameDone.scale.setTo(1.2 * scaleRatio,1.2*scaleRatio);
     gameDone.anchor.setTo(0.5,0.5);
     gameDone.visible = false;
 
     // You Win! Screen
-    youWin = game.add.sprite(game.world.centerX, game.world.centerY, 'youwin');
-    youWin.scale.setTo(1.9*scaleRatio,1.7*scaleRatio);
+    youWin = game.add.sprite(-0.1*TILE_SIZE+game.world.centerX, game.world.centerY + 0.75*TILE_SIZE, 'youwin');
+    youWin.scale.setTo(1.25*scaleRatio,1.5*scaleRatio);
     youWin.anchor.setTo(0.5,0.5);
-    youWin.visible = false;
+    youWin.visible = true;
     youWin.inputEnabled = false;
 }
 
