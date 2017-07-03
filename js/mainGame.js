@@ -221,7 +221,7 @@ function makeBackground() {
     backgroundImage.anchor.setTo(0.5, 0.5);
     backgroundImage.scale.setTo(gameX*scaleRatio/backgroundImage.width,gameY*scaleRatio/backgroundImage.height);
     backgroundImage.bringToBottom;
-    backgroundImage.tint = 0x002233;
+    backgroundImage.tint = 0x131313;
 }
 
 function memoryBoardGenerator() {
