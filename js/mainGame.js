@@ -191,7 +191,6 @@ function backgroundMusic() {
     muteBGM.scale.setTo(BOX_SIZE/(2*muteBGM.width), BOX_SIZE/(2*muteBGM.height));
     muteBGM.anchor.setTo(1,0.5);
     muteBGM.inputEnabled = true;
-    muteBGM.bringToBottom;
     muteBGM.events.onInputDown.add(muteFunction,this);
     addHighlight(muteBGM);
     muteBGM.events.onInputUp.add(function() {muteBGM.tint = 0xffffff;}, this);
@@ -220,7 +219,7 @@ function makeBackground() {
     backgroundImage = game.add.image(game.world.centerX, game.world.centerY, 'background');
     backgroundImage.anchor.setTo(0.5, 0.5);
     backgroundImage.scale.setTo(gameX*scaleRatio/backgroundImage.width,gameY*scaleRatio/backgroundImage.height);
-    backgroundImage.bringToBottom;
+    backgroundImage.sendToBack();
     backgroundImage.tint = 0x131313;
 }
 
@@ -233,7 +232,7 @@ function memoryBoardGenerator() {
     text = game.add.bitmapText(game.world.centerX + 2.5*TILE_SIZE, game.world.centerY, 'zigFont', "Memories: " + memoryAmount + "\n Steps: " + steps, 18);
     text.anchor.setTo(0.5, 0.5);
     text.scale.setTo(scaleRatio, scaleRatio);
-    message = game.add.bitmapText(game.world.centerX - 0.375 * TILE_SIZE, game.world.centerY - 2.5*TILE_SIZE, 'zigFont', "Collect the memory pieces\nand move to the exit.", 12);
+    message = game.add.bitmapText(game.world.centerX - 0.375 * TILE_SIZE, game.world.centerY - 2*TILE_SIZE, 'zigFont', "Collect the memory pieces\nand move to the exit.", 12);
 }
 
 
@@ -348,14 +347,14 @@ function makeUI() {
     instructions.inputEnabled = true;
     addHighlight(instructions);
     instructions.events.onInputUp.add(function() {instructions.tint = 0xffffff;}, this);
-    instructions.bringToTop;
+    
 
     //Splash screen
     logo = game.add.sprite(game.world.centerX, game.world.centerY, "logo");
     logo.anchor.setTo(0.5,0.5);
     logo.scale.setTo(gameX*scaleRatio/logo.width, gameY*scaleRatio/logo.height);
     logo.fixedtoCamera = true;
-    logo.bringToTop;
+    logo.bringToTop();
     game.input.onDown.add(removeLogo, this);
 
     // Game Over screen
@@ -610,7 +609,7 @@ function actionOnClick () {
 function actionOnClick2 () {
 
     instructions.inputEnabled = false;
-    instructions.bringToTop;
+    logo.bringToTop();
     restartButton.inputEnabled = false;
 
     if (logo.visible == false) {
