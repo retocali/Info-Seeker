@@ -117,4 +117,7 @@ game.state.add('load', loadState);
 game.state.add('main', mainState);
 game.state.add('setup',setupState);
 
+if (typeof PointerEvent == 'function') {
+    this.game.input.touch.enabled = false;
+}
 game.state.start('boot');
