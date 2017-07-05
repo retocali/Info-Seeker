@@ -36,7 +36,6 @@ var rectangle;
 var memoryAmount = 0; //starts off with the amount of tiles collected
 var steps = 0;
 var finished = false;
-var winning = false;
 
 //music found from https://www.dl-sounds.com/royalty-free/category/game-film/video-game/ && http://freesound.org
 //https://tutorialzine.com/2015/06/making-your-first-html5-game-with-phaser source

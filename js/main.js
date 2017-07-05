@@ -42,8 +42,7 @@ var mainState = {
             moved = false;
         }
         finished = checkGameStatus();
-}
-    
+    }
 };
 
 
@@ -522,18 +521,11 @@ function findComboExits(tileName) {
 
 // Used to check if the player has won or lost
 function checkGameStatus() {
-    if (finished) {
-        return finished;
-    }
     for (var n = 0;  n < guards.length; n++) {
         let guard = guards[n];
-
-        if (player.pos.x == guard.pos.x && player.pos.y == guard.pos.y 
-            && board[guard.pos.x][guard.pos.y].sameZone(player, guard)) {
+        if (player.pos.x == guard.pos.x && player.pos.y == guard.pos.y && board[guard.pos.x][guard.pos.y].sameZone(player, guard)) {
             return lose();
-
         } else if (player.pos.x == exit.x && player.pos.y == exit.y && memoryAmount == MEMORY_NUM) {
-            // if its played at update, it's gonna keep playing it.... causing a bug :/
             return win();
         }
     }
@@ -544,24 +536,34 @@ function checkGameStatus() {
 }
 
 function lose() {
+    message.text = "You lost!\nPress the reset button\nto start again.";
+    if (finished) {
+        return true;
+    }
+    // Sound
     youlose = game.add.audio('lose', volume, false);
     youlose.play();
+    // Screen
     gameDone.visible = true;
     gameDone.bringToTop(); 
-    message.text = "You lost!\nPress the reset button\nto start again.";
     return true;
 }
 
 function win() {
+    message.text = "You reached the exit! \n Press anywhere to get a new level.";
+    if (finished) {
+        return true;
+    }
     COMBO_SPAWN = Math.min(COMBO_SPAWN+0.2, 0.5);
+    //Sound
     youwin = game.add.audio('win!',volume, false);
     youwin.play();
-    message.text = "YAY";
+    // Message to player
     youWin.visible = true;
     youWin.bringToTop();
+    // Replay
     youWin.inputEnabled = true;
     youWin.events.onInputDown.add(replay,this);
-    winning = true;
     return true;
 }
 // Checks if the player has reached a memory tile
