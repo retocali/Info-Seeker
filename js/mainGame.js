@@ -50,7 +50,7 @@ var gameDone;
 var youWin
 var logo;
 var backgroundImage;
-var help;
+var replay;
 
 // For keeping tracking of turns
 var moved = false;
@@ -61,7 +61,7 @@ var rotated = false;
 var WIDTH = 3;
 var LENGTH = 3;
 var MEMORY_NUM = 2;
-var COMBO_SPAWN = 0.2;
+var COMBO_SPAWN = 0;
 
 
 // Constants for checking directions
@@ -134,7 +134,7 @@ function preload() {
     game.load.image('replayImage',"assets/sprites/buttons/button_restart.png");
     game.load.image('instructions', "assets/sprites/buttons/instruction.png");
     game.load.image('credits', "assets/sprites/buttons/credits.png");
-    game.load.image('help', "assets/sprites/buttons/help.png");
+    game.load.image('replay', "assets/sprites/buttons/replay.png");
 
     // Used to load menu icons
     game.load.image('move', "assets/sprites/buttons/Move.png");
@@ -258,14 +258,13 @@ function memoryBoardGenerator() {
     text = game.add.bitmapText(game.world.centerX + 2.5*TILE_SIZE, game.world.centerY, 'zigFont', "Memories: " + memoryAmount + "\n Steps: " + steps, 18);
     text.anchor.setTo(0.5, 0.5);
     text.scale.setTo(scaleRatio, scaleRatio);
-    message = game.add.bitmapText(game.world.centerX - 0.375 * TILE_SIZE, game.world.centerY - 2*TILE_SIZE, 'zigFont', "Collect the memory pieces\nand move to the exit.", 12);
+    message = game.add.bitmapText(game.world.centerX - 0.375 * TILE_SIZE, game.world.centerY - 2.15*TILE_SIZE, 'zigFont', "Collect the memory pieces\nand move to the exit.", 18);
 }
 
 
 function update() {
     //backgroundChange();
     if (finished) {
-        console.log("Here!");
         return;
     } else {
         finished = checkGameStatus();
@@ -358,7 +357,7 @@ function makePlayer() {
 
 function makeUI() {
 
-    //Creates the restart button
+    //Creates the reset button
     restartButton = game.add.button(game.world.centerX + 2.5*TILE_SIZE, game.world.centerY-BOX_SIZE, 'replayImage', actionOnClick, this);
     restartButton.anchor.setTo(0.5,0.5);
     restartButton.scale.setTo(0.41*scaleRatio,0.41*scaleRatio);
@@ -374,13 +373,13 @@ function makeUI() {
     addHighlight(instructions);
     instructions.events.onInputUp.add(function() {instructions.tint = 0xffffff;}, this);
 
-    // Instructions Button
-    help = game.add.button(game.world.centerX + 2.5*TILE_SIZE+10*scaleRatio, game.world.centerY+1.65*BOX_SIZE, 'help', helpClick, this);
-    help.scale.setTo(BOX_SIZE/(2*help.width),BOX_SIZE/(2*help.height));
-    help.anchor.setTo(0,0.5);
-    help.inputEnabled = true;
-    addHighlight(help);
-    help.events.onInputUp.add(function() {help.tint = 0xffffff;}, this);
+    // Make a new level Button
+    replay = game.add.button(game.world.centerX + 2.5*TILE_SIZE+10*scaleRatio, game.world.centerY+1.65*BOX_SIZE, 'replay', replay, this);
+    replay.scale.setTo(BOX_SIZE/(2*replay.width),BOX_SIZE/(2*replay.height));
+    replay.anchor.setTo(0,0.5);
+    replay.inputEnabled = true;
+    addHighlight(replay);
+    replay.events.onInputUp.add(function() {replay.tint = 0xffffff;}, this);
     
     // Credits button
     credits = game.add.button(game.world.centerX + 2.5*TILE_SIZE+10*scaleRatio, game.world.centerY+BOX_SIZE, 'credits', creditsClick, this);
@@ -631,7 +630,6 @@ function removeLogo () {
     instructions.inputEnabled = true;
     restartButton.inputEnabled = true;
     credits.inputEnabled = true;
-    help.inputEnabled = true;
 }
 
 
@@ -695,20 +693,6 @@ function creditsClick () {
 
 }
 
-function helpClick () {
-
-    instructions.inputEnabled = false;
-    credits.inputEnabled = false;
-    restartButton.inputEnabled = false;
-    helpScreen.bringToTop();
-
-
-    if (helpScreen.visible == false) {
-        helpScreen.visible = true;
-    }
-
-    help.inputEnabled = false;
-}
 
 
 // To make the whole game replay
@@ -917,11 +901,9 @@ class BasicTile {
         let deltaX = (xLoc(character.pos.x)-character.x)/(TILE_SIZE/3-10*scaleRatio);
         let deltaY = (yLoc(character.pos.y)-character.y)/(TILE_SIZE/3-10*scaleRatio);
 
-        console.log(deltaX, deltaY);
         // Normalize fp math
         deltaX = Math.round(deltaX); 
         deltaY = Math.round(deltaY);
-        console.log(deltaX, deltaY);
         // Find matching index
         var index = -1;
         for (var i = 0; i < circle.length; i ++) {
@@ -1054,11 +1036,10 @@ class ComboTile {
         let deltaX = (xLoc(character.pos.x)-character.x)/(TILE_SIZE/3-10*scaleRatio);
         let deltaY = (yLoc(character.pos.y)-character.y)/(TILE_SIZE/3-10*scaleRatio);
 
-        console.log(deltaX, deltaY);
         // Normalize fp math
         deltaX = Math.round(deltaX); 
         deltaY = Math.round(deltaY);
-        console.log(deltaX, deltaY);
+
         // Find matching index
         var index = -1;
         for (var i = 0; i < circle.length; i ++) {
@@ -1134,24 +1115,18 @@ class ComboTile {
     }
 
     reposition(character) {
-        console.log("Repositioning");
-        console.log(character.x, character.y);
         if (this.canGoNorth(character)) {
             character.y -= TILE_SIZE/3-10*scaleRatio;
-            console.log("NORTH");
         } else if (this.canGoSouth(character)) {
             character.y += TILE_SIZE/3-10*scaleRatio;
-            console.log("SOUTH");
         } else if (this.canGoWest(character)) {
             character.x -= TILE_SIZE/3-10*scaleRatio;
-            console.log("WEST");
         } else if (this.canGoEast(character)) {
             character.x += TILE_SIZE/3-10*scaleRatio;
-            console.log("EAST");
         } else {
-            print("Error: Guard was not able to be positioned");
+            print("Error: Character was not able to be positioned");
         }
-        console.log(character.x, character.y);
+
     }
     resetRotation() {
         this.image.angle = this.initialRotation;
@@ -1218,44 +1193,48 @@ function findComboExits(tileName) {
 
 // Used to check if the player has won or lost
 function checkGameStatus() {
-        
+    if (finished) {
+        return finished;
+    }
     for (var n = 0;  n < guards.length; n++) {
         let guard = guards[n];
 
         if (player.pos.x == guard.pos.x && player.pos.y == guard.pos.y 
             && board[guard.pos.x][guard.pos.y].sameZone(player, guard)) {
-            youlose = game.add.audio('lose', volume, false);
-            youlose.play();
-            gameDone.visible = true;
-            gameDone.bringToTop(); 
-            message.text = "You lost!\nPress the reset button\nto start again.";
-            return true;
+            return lose();
 
         } else if (player.pos.x == exit.x && player.pos.y == exit.y && memoryAmount == MEMORY_NUM) {
             // if its played at update, it's gonna keep playing it.... causing a bug :/
-            COMBO_SPAWN = Math.min(COMBO_SPAWN+0.2, 0.6);
-            youwin = game.add.audio('win!',volume, false);
-            youwin.play();
-            message.text = "YAY";
-            youWin.visible = true;
-            youWin.bringToTop();
-            youWin.inputEnabled = true;
-            youWin.events.onInputDown.add(replay,this);
-            winning = true;
-            return true;
+            return win();
         }
     }
     if (possibleMovements(player).length == 0) {
-        youlose = game.add.audio('lose', volume, false);
-        youlose.play();
-        gameDone.visible = true;
-        gameDone.bringToTop(); 
-        message.text = "You lost!\nPress the reset button\nto start again.";
-        return true;
+        return lose();        
     }
     return false;
 }
 
+function lose() {
+    youlose = game.add.audio('lose', volume, false);
+    youlose.play();
+    gameDone.visible = true;
+    gameDone.bringToTop(); 
+    message.text = "You lost!\nPress the reset button\nto start again.";
+    return true;
+}
+
+function win() {
+    COMBO_SPAWN = Math.min(COMBO_SPAWN+0.2, 0.5);
+    youwin = game.add.audio('win!',volume, false);
+    youwin.play();
+    message.text = "YAY";
+    youWin.visible = true;
+    youWin.bringToTop();
+    youWin.inputEnabled = true;
+    youWin.events.onInputDown.add(replay,this);
+    winning = true;
+    return true;
+}
 // Checks if the player has reached a memory tile
 function checkMemoryTiles() {
     for (let n = 0; n < MEMORY_NUM; n++) {
@@ -1278,27 +1257,4 @@ function respawnGuard(n) {
     guards[n].pos = {x: xpos, y: ypos};
     positionCharacter(guards[n]);
     board[xpos][ypos].joinZone(guards[n]);
-}
-
-function rgbToHex(r, g, b) {
-    return r*Math.pow(16,4)+g*Math.pow(16,2)+b;
-
-}
-function hexToRGB(hex) {
-    return { r: (hex >> 16) % 256,
-             g: (hex >> 8) % 256,
-             b: hex % 256 }
-}
-var count = 0;
-function backgroundChange() {
-    if (!(count % 10)) {
-        color = hexToRGB(backgroundImage.tint);
-        //console.log(color);
-        newR = 0x22*count/10;
-        newG = 0x00*count/10;
-        newB = 0x22*count/10;
-        //console.log(newR, newG, newB);
-        backgroundImage.tint = rgbToHex(newR, newG, newB);
-    }
-    count++;
 }
