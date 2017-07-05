@@ -50,7 +50,7 @@ var gameDone;
 var youWin
 var logo;
 var backgroundImage;
-var replay;
+var replayButton;
 
 // For keeping tracking of turns
 var moved = false;
@@ -62,7 +62,8 @@ var WIDTH = 3;
 var LENGTH = 3;
 var MEMORY_NUM = 2;
 var COMBO_SPAWN = 0;
-
+var DEADEND_LIMIT = 2;
+var CROSS_LIMIT = 3;
 
 // Constants for checking directions
 var RIGHT_ANGLE = 90;
@@ -300,6 +301,9 @@ function update() {
 */
 function boardGenerator() {
     // Creates the board
+    let tiles_copy = tiles.slice();
+    let deadendCount = 0;
+    let crossCount = 0;
     board = [[],[],[]];
     for (let x = 0; x < WIDTH; x++) {
         
@@ -335,8 +339,25 @@ function boardGenerator() {
             
             } else {
                 // Creates the actual sprites and adds a handler to rotate it
-                let tileName = tiles[Math.floor(Math.random()*tiles.length)];
+                let tileName = tiles_copy[Math.floor(Math.random()*tiles_copy.length)];
                 s = new BasicTile(findExits(tileName), rotation, xLoc(x), yLoc(y), tileName, x, y);
+
+                // Limit the number of deadends and crosses
+                let index = tileName.slice("tile".length, tileName.length);
+                if (tileNames[index] == "Cross_Tile.png") {
+                    crossCount++;
+                    if (crossCount == CROSS_LIMIT) {
+                        tiles_copy.splice(index, 1);
+                    }
+                } else if (tileNames[index] == "DeadEnd_Tile.png") {
+                    deadendCount++;
+                    if (deadendCount == DEADEND_LIMIT) {
+                        tiles_copy.splice(index, 1);
+                    }
+                }
+
+
+
             }
             board[x][y] = s;
             s.image.scale.setTo(TILE_SIZE/s.image.width, TILE_SIZE/s.image.height);
@@ -374,12 +395,12 @@ function makeUI() {
     instructions.events.onInputUp.add(function() {instructions.tint = 0xffffff;}, this);
 
     // Make a new level Button
-    replay = game.add.button(game.world.centerX + 2.5*TILE_SIZE+10*scaleRatio, game.world.centerY+1.65*BOX_SIZE, 'replay', replay, this);
-    replay.scale.setTo(BOX_SIZE/(2*replay.width),BOX_SIZE/(2*replay.height));
-    replay.anchor.setTo(0,0.5);
-    replay.inputEnabled = true;
-    addHighlight(replay);
-    replay.events.onInputUp.add(function() {replay.tint = 0xffffff;}, this);
+    replayButton = game.add.button(game.world.centerX + 2.5*TILE_SIZE+10*scaleRatio, game.world.centerY+1.65*BOX_SIZE, 'replay', replay, this);
+    replayButton.scale.setTo(BOX_SIZE/(2*replayButton.width),BOX_SIZE/(2*replayButton.height));
+    replayButton.anchor.setTo(0,0.5);
+    replayButton.inputEnabled = true;
+    addHighlight(replayButton);
+    replayButton.events.onInputUp.add(function() {replayButton.tint = 0xffffff;}, this);
     
     // Credits button
     credits = game.add.button(game.world.centerX + 2.5*TILE_SIZE+10*scaleRatio, game.world.centerY+BOX_SIZE, 'credits', creditsClick, this);
