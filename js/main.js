@@ -1,201 +1,59 @@
-// Canvas size and scaling relative to screen size
-
-var gameX = 1100;
-var gameY = 800;
-var canvas_x = window.innerWidth;
-var canvas_y = window.innerHeight;
-var scaleRatio = Math.min(canvas_x/gameX, canvas_y/gameY);
-
-var game = new Phaser.Game(gameX*scaleRatio, gameY*scaleRatio, Phaser.CANVAS, 'phaser-example', { preload: preload, create: create, update: update});
-
-// setStyle(font = "Arial", update);
-
-// Sound
-var click;
-var background;
-var volume = 1; 
-var youwin;
-var muteBGM;
-var mute2;
-
-// Map related Variables
-var board;
-var entrance;
-var exit;
-
-
-// Characters on the screen
-var player;
-var guards = [];
-var memoryTiles = [];
-
-
-// Menu Variable
-var message; // To tell the person that they have moved/rotated
-var text; // this text is for the memory tiles text
-var memoryTaken;
-var rectangle;
-var memoryAmount = 0; //starts off with the amount of tiles collected
-var steps = 0;
-var finished = false;
-var winning = false;
-
-//music found from https://www.dl-sounds.com/royalty-free/category/game-film/video-game/ && http://freesound.org
-//https://tutorialzine.com/2015/06/making-your-first-html5-game-with-phaser source
-//for the game over screen
-
-
-// Various Screens
-var gameDone;
-var youWin
-var logo;
-var backgroundImage;
-var replayButton;
-
-// For keeping tracking of turns
-var moved = false;
-var rotated = false;
-
-
-// Constants to for the map 
-var WIDTH = 3;
-var LENGTH = 3;
-var MEMORY_NUM = 2;
-var COMBO_SPAWN = 0;
-var DEADEND_LIMIT = 2;
-var CROSS_LIMIT = 3;
-
-// Constants for checking directions
-var RIGHT_ANGLE = 90;
-var FLIPPED = 180;
-var FULL_CIRCLE = 360;
-var CHAR_OFFSET = TILE_SIZE/3-(10*scaleRatio);
-
-
-// Filenames
-var tiles = [];
-var comboTiles = [];
-var entrix = "EntranceExit.png";
-var replayImage = "button_restart.png";
-var comboTileNames = ["Dead_End_2.png","Line_Combo.png","Loop_Tile_2.png"];
-var tileNames = ["Corner_Tile.png","Cross_Tile.png","DeadEnd_Tile.png", "Line_Tile.png","Tetris_Tile.png"];
-var instructions;
-
-// UI variables
-var button1;
-var button2;
-var button3;
-var group;
-var cursorPos = {x:-1, y:-1};
-var credits;
-var creditPage;
-
-
-// UI Constants
-var TILE_SIZE = 160*scaleRatio;
-var MARGIN = 12*scaleRatio;
-var BOX_SIZE = 128*scaleRatio; 
-var playerSize = 40*scaleRatio;
-
-
-
-// Keys 
-var keyUp;
-var keyLeft;
-var keyDown;
-var keyRight;
-var keyZ;
-var keyX;
-
-
-// Directions
-var NORTH = 0;
-var WEST = 1;
-var SOUTH = 2;
-var EAST = 3;
-var DIRECTIONS = 4;
-
 
 /*
     Phaser Functions
 */
+var mainState = {
+    create: function() {
 
-function preload() {
-    // Used to load the background music, game over and win sounds, and UI sounds
-    game.load.audio('bgm', 'assets/sounds/PuzzleTheme1.wav');
-    game.load.audio('click', 'assets/sounds/click1.wav');
-    game.load.audio('restartClick', 'assets/sounds/219472__jarredgibb__button-01.wav');
-    game.load.audio('win!', 'assets/sounds/win.mp3');
-    game.load.audio('lose', 'assets/sounds/gameover.wav');
+        makeBackground();
 
-    // // Buttons
-    // game.load.image('mute', 'assets/sprites/buttons/mute.png');
-    // game.load.image('mute2', 'assets/sprites/buttons/mute2.png');
-    // game.load.image('credits', "assets/sprites/buttons/credits.png");
-    // game.load.image('replay', "assets/sprites/buttons/replay.png");
-    // game.load.image('instructions', "assets/sprites/buttons/instruction.png");
-    game.load.spritesheet('buttons', "assets/sprites/buttons/buttons.png", 200, 200, 8);
+        boardGenerator();
 
-    game.load.image('memoryBoard', 'assets/sprites/buttons/memory_board.jpg')
-    game.load.image('replayImage',"assets/sprites/buttons/button_restart.png");
+        makePlayer();
 
-    // Used to load menu icons
-    // game.load.image('move', "assets/sprites/buttons/Move.png");
-    // game.load.image('rotateClock',"assets/sprites/buttons/Rotate_Clockwise.png");
-    // game.load.image('rotateCounter',"assets/sprites/buttons/Rotate_Counter_Clockwise.png");
+        makeMemoryTiles();
 
+        memoryBoardGenerator();
 
-    // Big Screens
-    game.load.image('logo', 'assets/sprites/menus/welcome.jpg');
-    game.load.image('gameover', 'assets/sprites/menus/gameover.png');
-    game.load.image('youwin', 'assets/sprites/menus/youwin.png');
-    game.load.image('background', 'assets/sprites/menus/background.jpg');
-    game.load.image('helpScreen','assets/sprites/menus/help.jpg');
-    game.load.image('creditPage', "assets/sprites/menus/credits.jpg");
+        backgroundMusic();
 
-    // Fonts    
-    game.load.bitmapFont('zigFont', 'assets/zig/font/font.png','assets/zig/font/font.fnt');
-    
-    // The sprite for the player
-    game.load.image('memoryTile', 'assets/sprites/characters/puzzle.png');
-    game.load.image('player', "assets/sprites/characters/Player.png");
-    game.load.image('guard', "assets/sprites/characters/Guard.png");
-    
+        makeUI();
 
-    // Used to load entrance/exit and restart button/instructions
-    game.load.image('entrix',"assets/sprites/tiles/EntranceExit.png");
-    
+    },
 
-    // Used to load the images as sprites to randomly access
-    for (var i = 0; i < tileNames.length; i++) {
-        game.load.image('tile'+i, 'assets/sprites/tiles/' + tileNames[i]);
-        tiles.push('tile'+i);
-    }
+    update: function() {
+        //backgroundChange();
+        if (finished) {
+            return;
+        } else {
+            finished = checkGameStatus();
+        }
+        
+        if (rotated) {
+            message.text = "YOU ROTATED. \nClick to move.";
+        }
+        if (moved) {
+            message.text = "YOU MOVED. \nClick to rotate.";
+        }   
 
-    // same as above but for the combo tiles
-    for (var m = 0; m < comboTileNames.length; m++) {
-        game.load.image('combo'+m, 'assets/sprites/tiles/' + comboTileNames[m]);
-        comboTiles.push('combo'+m);
-    }
+        if (rotated && moved) {
+            for(let n = 0; n < guards.length; n++) {
+                if (!guards[n].active) {
+                    respawnGuard(n);
+                    guards[n].tint = 0xffffff;
+                    guards[n].active = true;
+                } else {
+                    moveGuard(guards[n]);
+                }
+            }
+            rotated = false;
+            moved = false;
+        }
+        finished = checkGameStatus();
 }
+    
+};
 
-function create() {
-
-    makeBackground();
-
-    boardGenerator();
-
-    makePlayer();
-
-    makeMemoryTiles();
-
-    memoryBoardGenerator();
-
-    backgroundMusic();
-
-    makeUI();
-
-}
 
 function backgroundMusic() {
 
@@ -267,36 +125,6 @@ function memoryBoardGenerator() {
 }
 
 
-function update() {
-    //backgroundChange();
-    if (finished) {
-        return;
-    } else {
-        finished = checkGameStatus();
-    }
-    
-    if (rotated) {
-        message.text = "YOU ROTATED. \nClick to move.";
-    }
-    if (moved) {
-        message.text = "YOU MOVED. \nClick to rotate.";
-    }   
-
-    if (rotated && moved) {
-        for(let n = 0; n < guards.length; n++) {
-            if (!guards[n].active) {
-                respawnGuard(n);
-                guards[n].tint = 0xffffff;
-                guards[n].active = true;
-            } else {
-                moveGuard(guards[n]);
-            }
-        }
-        rotated = false;
-        moved = false;
-    }
-    finished = checkGameStatus();
-}
 
 
 
