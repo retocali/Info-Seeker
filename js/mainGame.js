@@ -128,19 +128,21 @@ function preload() {
     game.load.audio('win!', 'assets/sounds/win.mp3');
     game.load.audio('lose', 'assets/sounds/gameover.wav');
 
-    // Buttons
-    game.load.image('mute', 'assets/sprites/buttons/mute.png');
-    game.load.image('mute2', 'assets/sprites/buttons/mute2.png');
+    // // Buttons
+    // game.load.image('mute', 'assets/sprites/buttons/mute.png');
+    // game.load.image('mute2', 'assets/sprites/buttons/mute2.png');
+    // game.load.image('credits', "assets/sprites/buttons/credits.png");
+    // game.load.image('replay', "assets/sprites/buttons/replay.png");
+    // game.load.image('instructions', "assets/sprites/buttons/instruction.png");
+    game.load.spritesheet('buttons', "assets/sprites/buttons/buttons.png", 200, 200, 8);
+
     game.load.image('memoryBoard', 'assets/sprites/buttons/memory_board.jpg')
     game.load.image('replayImage',"assets/sprites/buttons/button_restart.png");
-    game.load.image('instructions', "assets/sprites/buttons/instruction.png");
-    game.load.image('credits', "assets/sprites/buttons/credits.png");
-    game.load.image('replay', "assets/sprites/buttons/replay.png");
 
     // Used to load menu icons
-    game.load.image('move', "assets/sprites/buttons/Move.png");
-    game.load.image('rotateClock',"assets/sprites/buttons/Rotate_Clockwise.png");
-    game.load.image('rotateCounter',"assets/sprites/buttons/Rotate_Counter_Clockwise.png");
+    // game.load.image('move', "assets/sprites/buttons/Move.png");
+    // game.load.image('rotateClock',"assets/sprites/buttons/Rotate_Clockwise.png");
+    // game.load.image('rotateCounter',"assets/sprites/buttons/Rotate_Counter_Clockwise.png");
 
 
     // Big Screens
@@ -199,7 +201,8 @@ function backgroundMusic() {
 
     // Muting the BGM
 
-    muteBGM = game.add.button(game.world.centerX+2.5*TILE_SIZE-10*scaleRatio, game.world.centerY+BOX_SIZE, 'mute');
+    muteBGM = game.add.button(game.world.centerX+2.5*TILE_SIZE-10*scaleRatio, game.world.centerY+BOX_SIZE, 'buttons');
+    muteBGM.frame = 2;
     muteBGM.scale.setTo(BOX_SIZE/(2*muteBGM.width), BOX_SIZE/(2*muteBGM.height));
     muteBGM.anchor.setTo(1,0.5);
     muteBGM.inputEnabled = true;
@@ -208,7 +211,8 @@ function backgroundMusic() {
     muteBGM.events.onInputUp.add(function() {muteBGM.tint = 0xffffff;}, this);
 
     // Muted button
-    mute2 = game.add.button(game.world.centerX+2.5*TILE_SIZE-10*scaleRatio, game.world.centerY+BOX_SIZE, "mute2");
+    mute2 = game.add.button(game.world.centerX+2.5*TILE_SIZE-10*scaleRatio, game.world.centerY+BOX_SIZE, 'buttons');
+    mute2.frame = 1;
     mute2.scale.setTo(BOX_SIZE/(2*mute2.width), BOX_SIZE/(2*mute2.height));
     mute2.anchor.setTo(1,0.5);
     mute2.inputEnabled = true;
@@ -387,7 +391,8 @@ function makeUI() {
     restartButton.events.onInputUp.add(function() {restartButton.tint = 0xffffff;}, this);
 
     // Instructions Button
-    instructions = game.add.button(game.world.centerX + 2.5*TILE_SIZE-10*scaleRatio, game.world.centerY+1.65*BOX_SIZE, 'instructions', actionOnClick2, this);
+    instructions = game.add.button(game.world.centerX + 2.5*TILE_SIZE-10*scaleRatio, game.world.centerY+1.65*BOX_SIZE, 'buttons', actionOnClick2, this);
+    instructions.frame = 3;
     instructions.scale.setTo(BOX_SIZE/(2*instructions.width),BOX_SIZE/(2*instructions.height));
     instructions.anchor.setTo(1,0.5);
     instructions.inputEnabled = true;
@@ -395,7 +400,7 @@ function makeUI() {
     instructions.events.onInputUp.add(function() {instructions.tint = 0xffffff;}, this);
 
     // Make a new level Button
-    replayButton = game.add.button(game.world.centerX + 2.5*TILE_SIZE+10*scaleRatio, game.world.centerY+1.65*BOX_SIZE, 'replay', replay, this);
+    replayButton = game.add.button(game.world.centerX + 2.5*TILE_SIZE+10*scaleRatio, game.world.centerY+1.65*BOX_SIZE, 'buttons', replay, this);
     replayButton.scale.setTo(BOX_SIZE/(2*replayButton.width),BOX_SIZE/(2*replayButton.height));
     replayButton.anchor.setTo(0,0.5);
     replayButton.inputEnabled = true;
@@ -403,7 +408,8 @@ function makeUI() {
     replayButton.events.onInputUp.add(function() {replayButton.tint = 0xffffff;}, this);
     
     // Credits button
-    credits = game.add.button(game.world.centerX + 2.5*TILE_SIZE+10*scaleRatio, game.world.centerY+BOX_SIZE, 'credits', creditsClick, this);
+    credits = game.add.button(game.world.centerX + 2.5*TILE_SIZE+10*scaleRatio, game.world.centerY+BOX_SIZE, 'buttons', creditsClick, this);
+    credits.frame = 4;
     credits.scale.setTo(BOX_SIZE/(2*credits.width),BOX_SIZE/(2*credits.height));
     credits.anchor.setTo(0,0.5);
     credits.inputEnabled = true;
@@ -581,12 +587,15 @@ function menuCreate(s) {
 
         reset();
 
-        group = game.add.group();
+        group = game.add.group(); 
 
-        button1 = game.make.button(OFFSET, BUTTON_Y+(BOX_SIZE+MARGIN), 'rotateClock' , clockwise, this, 20, 10, 0);
-        button2 = game.make.button(OFFSET, BUTTON_Y, 'rotateCounter', counterClockWise, this, 20, 10, 0);
-        button3 = game.make.button(OFFSET, BUTTON_Y-(BOX_SIZE+MARGIN), 'move', move, this, 20, 10, 0);
-     
+        button1 = game.make.button(OFFSET, BUTTON_Y+(BOX_SIZE+MARGIN), 'buttons' , clockwise, this);
+        button1.frame = 7;
+        button2 = game.make.button(OFFSET, BUTTON_Y, 'buttons', counterClockWise, this);
+        button2.frame = 6;
+        button3 = game.make.button(OFFSET, BUTTON_Y-(BOX_SIZE+MARGIN), 'buttons', move, this);
+        button3.frame = 5;
+
         button1.scale.setTo(scaleRatio,scaleRatio);
         button2.scale.setTo(scaleRatio,scaleRatio);
         button3.scale.setTo(scaleRatio,scaleRatio);
