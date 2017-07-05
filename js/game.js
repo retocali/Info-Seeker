@@ -116,5 +116,6 @@ var DIRECTIONS = 4;
 game.state.add('boot', bootState);
 game.state.add('load', loadState);
 game.state.add('main', mainState);
+game.state.add('setup',setupState);
 
 game.state.start('boot');
