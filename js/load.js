@@ -1,9 +1,10 @@
 var loadState = {
     preload: function() {
-        game.load.bitmapFont('zigFont', 'assets/zig/font/font.png','assets/zig/font/font.fnt');
-
-        var loadingMessage = game.add.text(game.world.centerX, game.world.centerY, "Loading ...");
         
+
+        var loadingMessage = game.add.bitmapText(game.world.centerX, game.world.centerY, 'zigFont', "Loading ...", 20);
+        loadingMessage.anchor.setTo(0.5,0.5);
+
         game.load.image('logo', 'assets/sprites/menus/welcome.jpg');
 
         loadingMessage.text = "Loading Sounds ...";
