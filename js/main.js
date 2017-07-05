@@ -15,7 +15,6 @@ var mainState = {
         makeUI();
     },
     update: function() {
-        
         if (finished) {
             return;
         } else {
