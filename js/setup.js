@@ -7,35 +7,8 @@ var setupState = {
 
 
 function backgroundMusic() {
-
-    // Muting the BGM
-
-    muteBGM = game.add.button(game.world.centerX+2.5*TILE_SIZE-10*scaleRatio, game.world.centerY+BOX_SIZE, 'buttons');
-    muteBGM.frame = 2;
-    muteBGM.scale.setTo(BOX_SIZE/(2*muteBGM.width), BOX_SIZE/(2*muteBGM.height));
-    muteBGM.anchor.setTo(1,0.5);
-    muteBGM.inputEnabled = true;
-    muteBGM.events.onInputDown.add(muteFunction,this);
-    addHighlight(muteBGM);
-    muteBGM.events.onInputUp.add(function() {muteBGM.tint = 0xffffff;}, this);
-
-    // Muted button
-    mute2 = game.add.button(game.world.centerX+2.5*TILE_SIZE-10*scaleRatio, game.world.centerY+BOX_SIZE, 'buttons');
-    mute2.frame = 1;
-    mute2.scale.setTo(BOX_SIZE/(2*mute2.width), BOX_SIZE/(2*mute2.height));
-    mute2.anchor.setTo(1,0.5);
-    mute2.inputEnabled = true;
-    mute2.events.onInputDown.add(muteFunction,this);
-    addHighlight(mute2);
-    mute2.events.onInputUp.add(function() {mute2.tint = 0xffffff;}, this);
-    mute2.visible = false;
-
-    
-
     background = game.add.audio('bgm', volume, true);
     background.play();
-    
-
 }
 
 // Mute function for the BGM
@@ -157,6 +130,26 @@ function makePlayer() {
 }
 
 function makeUI() {
+     // Muting the BGM
+    muteBGM = game.add.button(game.world.centerX+2.5*TILE_SIZE-10*scaleRatio, game.world.centerY+BOX_SIZE, 'buttons');
+    muteBGM.frame = 2;
+    muteBGM.scale.setTo(BOX_SIZE/(2*muteBGM.width), BOX_SIZE/(2*muteBGM.height));
+    muteBGM.anchor.setTo(1,0.5);
+    muteBGM.inputEnabled = true;
+    muteBGM.events.onInputDown.add(muteFunction,this);
+    addHighlight(muteBGM);
+    muteBGM.events.onInputUp.add(function() {muteBGM.tint = 0xffffff;}, this);
+
+    // Muted button
+    mute2 = game.add.button(game.world.centerX+2.5*TILE_SIZE-10*scaleRatio, game.world.centerY+BOX_SIZE, 'buttons');
+    mute2.frame = 1;
+    mute2.scale.setTo(BOX_SIZE/(2*mute2.width), BOX_SIZE/(2*mute2.height));
+    mute2.anchor.setTo(1,0.5);
+    mute2.inputEnabled = true;
+    mute2.events.onInputDown.add(muteFunction,this);
+    addHighlight(mute2);
+    mute2.events.onInputUp.add(function() {mute2.tint = 0xffffff;}, this);
+    mute2.visible = false;
 
     //Creates the reset button
     restartButton = game.add.button(game.world.centerX + 2.5*TILE_SIZE, game.world.centerY-BOX_SIZE, 'replayImage', actionOnClick, this);
@@ -454,6 +447,10 @@ function actionOnClick () {
             board[x][y].resetRotation();
         }
     }
+    button1.destroy();
+    button2.destroy();
+    button3.destroy();
+
     gameDone.visible = false;
     youWin.visible = false
     rotated = false;
