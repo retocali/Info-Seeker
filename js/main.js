@@ -551,7 +551,22 @@ function lose() {
 }
 
 function win() {
+
+    // scoring section
+    if (steps <= 20) {
+        score = 10;
+    } else if (steps <= 40) {
+        score = 5;
+    } else {
+        score = 1;
+    }
+
+    score = scoreHolder + score;
+
+    scoreText.setText("Score: " + score, 20);
+
     message.text = "You reached the exit! \nPress anywhere to \nget a new level.";
+    scoreHolder = score;
     if (finished) {
         return true;
     }
@@ -567,6 +582,7 @@ function win() {
     youWin.events.onInputDown.add(replay,this);
     return true;
 }
+
 // Checks if the player has reached a memory tile
 function checkMemoryTiles() {
     for (let n = 0; n < MEMORY_NUM; n++) {

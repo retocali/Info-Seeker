@@ -36,6 +36,7 @@ function makeBackground() {
     backgroundImage.tint = 0x151115;
 }
 
+// also the score
 function memoryBoardGenerator() {
 
     let offset = 10*scaleRatio;
@@ -50,7 +51,11 @@ function memoryBoardGenerator() {
     text.anchor.setTo(0.5, 0.5);
     text.scale.setTo(scaleRatio, scaleRatio);
     message = game.add.bitmapText(game.world.centerX - 0.875 * TILE_SIZE, game.world.centerY - 2.15*TILE_SIZE, 'zigFont', "Collect the memory pieces\nand move to the exit.", 18);
-    message.tint = 0xffff00;    
+    message.tint = 0xffff00;
+
+
+    scoreText = game.add.bitmapText(game.world.centerX - 1.75 * TILE_SIZE, game.world.centerY + 2.15*TILE_SIZE, 'zigFont', "Score: " + "0" , 20);
+    scoreText.tint = 0x99f0f9;    
 }
 
 
@@ -283,7 +288,6 @@ function makeGuard(xpos, ypos) {
 // Keeps track of memory tiles collected
 function updateText() {
     text.setText("Memories: " + memoryAmount + "\n" + "Steps: " + steps);
-
 }   
 
 // Makes the buttons change color over various mouse inputs
