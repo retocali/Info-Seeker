@@ -40,7 +40,7 @@ function memoryBoardGenerator() {
 
     let offset = 10*scaleRatio;
     let menu_Y = game.world.centerY-BOX_SIZE/2;
-    let menu_X = game.world.centerX+1.5*TILE_SIZE+3*offset;
+    let menu_X = game.world.centerX+1.75*TILE_SIZE;
 
     rectangle = game.add.sprite(menu_X,  menu_Y, "memoryBoard");
     rectangle.anchor.setTo(0.5,0.5);
@@ -137,7 +137,7 @@ function makePlayer() {
 function makeUI() {
     let offset = 10*scaleRatio;
     let menu_Y = game.world.centerY-BOX_SIZE/2;
-    let menu_X = game.world.centerX+1.5*TILE_SIZE+3*offset;
+    let menu_X = game.world.centerX+1.75*TILE_SIZE;
      // Muting the BGM
     muteBGM = game.add.button(menu_X-offset, menu_Y+BOX_SIZE , 'buttons');
     muteBGM.frame = 2;
@@ -353,7 +353,7 @@ function menuCreate(s) {
         }
 
         var BUTTON_Y = game.world.centerY+2*(BOX_SIZE+MARGIN);
-        var OFFSET = game.world.centerX+1.7*TILE_SIZE;
+        var OFFSET = game.world.centerX+1.75*TILE_SIZE;
 
 
         if (group) {    
@@ -385,7 +385,7 @@ function menuCreate(s) {
             //Move Button
             button3 = game.make.button(OFFSET, BUTTON_Y, 'buttons', move, this);
             button3.frame = 5;
-            button3.scale.setTo(3*scaleRatio/4,3*scaleRatio/4);
+            button3.scale.setTo(scaleRatio,scaleRatio);
             button3.anchor.setTo(0.5,0.5);
             addHighlight(button3);
             group.add(button3);    
