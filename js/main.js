@@ -56,8 +56,10 @@ var mainState = {
 function runAnimations() {
     for (let i = 0; i < MEMORY_NUM; i++) {
             guards[i].frame = (guards[i].frame + 1) % 4;
+            console.log("G:",guards[i].zone,guards[i].pos);
     }
     player.frame = (player.frame + 1) % 4;
+    console.log("P:",player.zone, player.pos);
 }
 
 /*
@@ -432,6 +434,7 @@ class ComboTile {
         else {
             this.zone2.splice(this.zone2.indexOf(character), 1);
         }
+        console.log(this.zone1, this.zone2);
     }
     sameZone(player, guard) {
         return this.zone1.includes(player) == this.zone1.includes(guard) ||
@@ -474,6 +477,8 @@ class ComboTile {
     resetRotation() {
         this.image.angle = this.initialRotation;
         this.rotation = this.initialRotation
+        this.zone1 = [];
+        this.zone2 = [];
     }
 }
 
@@ -538,6 +543,7 @@ function checkGameStatus() {
     for (var n = 0;  n < guards.length; n++) {
         let guard = guards[n];
         if (player.pos.x == guard.pos.x && player.pos.y == guard.pos.y && board[guard.pos.x][guard.pos.y].sameZone(player, guard)) {
+            console.log(board[guard.pos.x][guard.pos.y]);
             return lose();
         } else if (player.pos.x == exit.x && player.pos.y == exit.y && memoryAmount == MEMORY_NUM) {
             return win();
