@@ -59,8 +59,8 @@ var WIDTH = 3;
 var LENGTH = 3;
 var MEMORY_NUM = 2;
 var COMBO_SPAWN = 0;
-var DEADEND_LIMIT = 2;
-var CROSS_LIMIT = 3;
+var DEADEND_LIMIT = 1;
+var CROSS_LIMIT = 2;
 
 // Constants for checking directions
 var RIGHT_ANGLE = 90;
@@ -117,7 +117,6 @@ game.state.add('load', loadState);
 game.state.add('main', mainState);
 game.state.add('setup',setupState);
 
-if (typeof PointerEvent == 'function') {
-    this.game.input.touch.enabled = false;
-}
+//game.input.mouse.enabled = !game.device.mspointer;
+
 game.state.start('boot');
