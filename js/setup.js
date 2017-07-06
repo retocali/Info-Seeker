@@ -371,14 +371,14 @@ function menuCreate(s) {
             button1 = game.make.button(OFFSET, BUTTON_Y, 'buttons' , clockwise, this);
             button1.frame = 7;
             button1.scale.setTo(3*scaleRatio/4,3*scaleRatio/4);
-            button1.anchor.setTo(0.1,0.5);
+            button1.anchor.setTo(0.15,0.5);
             addHighlight(button1);
             group.add(button1);
 
             button2 = game.make.button(OFFSET, BUTTON_Y, 'buttons', counterClockWise, this);
             button2.frame = 6;
             button2.scale.setTo(3*scaleRatio/4,3*scaleRatio/4);
-            button2.anchor.setTo(0.9,0.5);
+            button2.anchor.setTo(0.85,0.5);
             addHighlight(button2);
             group.add(button2);
         } else {
