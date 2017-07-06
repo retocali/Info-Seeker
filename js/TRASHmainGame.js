@@ -1,6 +1,6 @@
 // Canvas size and scaling relative to screen size
 
-var gameX = 1100;
+var gameX = 1100; //RIP
 var gameY = 800;
 var canvas_x = window.innerWidth;
 var canvas_y = window.innerHeight;
