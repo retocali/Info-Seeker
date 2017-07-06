@@ -1,4 +1,4 @@
-var gameX = 1100;
+var gameX = 800;
 var gameY = 800;
 var canvas_x = window.innerWidth;
 var canvas_y = window.innerHeight;
@@ -59,8 +59,8 @@ var WIDTH = 3;
 var LENGTH = 3;
 var MEMORY_NUM = 2;
 var COMBO_SPAWN = 0;
-var DEADEND_LIMIT = 2;
-var CROSS_LIMIT = 3;
+var DEADEND_LIMIT = 1;
+var CROSS_LIMIT = 2;
 
 // Constants for checking directions
 var RIGHT_ANGLE = 90;
@@ -116,5 +116,7 @@ game.state.add('boot', bootState);
 game.state.add('load', loadState);
 game.state.add('main', mainState);
 game.state.add('setup',setupState);
+
+//game.input.mouse.enabled = !game.device.mspointer;
 
 game.state.start('boot');

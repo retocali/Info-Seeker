@@ -42,6 +42,7 @@ var mainState = {
             moved = false;
         }
         finished = checkGameStatus();
+        game.input.mouse.enabled = !game.device.mspointer
     }
 };
 
@@ -468,7 +469,7 @@ class ComboTile {
 */
 // Both return the coordinate value for the board index values
 function xLoc(x) {
-    return game.world.centerX+(x-1)*(TILE_SIZE);
+    return game.world.centerX+(x-1.5)*(TILE_SIZE);
 }
 
 function yLoc(y) {
@@ -550,7 +551,7 @@ function lose() {
 }
 
 function win() {
-    message.text = "You reached the exit! \n Press anywhere to get a new level.";
+    message.text = "You reached the exit! \nPress anywhere to \nget a new level.";
     if (finished) {
         return true;
     }
