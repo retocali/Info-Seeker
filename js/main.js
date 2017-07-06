@@ -42,6 +42,7 @@ var mainState = {
             moved = false;
         }
         finished = checkGameStatus();
+        game.input.mouse.enabled = !game.device.mspointer
     }
 };
 
