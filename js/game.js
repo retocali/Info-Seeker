@@ -1,4 +1,4 @@
-var gameX = 1100;
+var gameX = 800;
 var gameY = 800;
 var canvas_x = window.innerWidth;
 var canvas_y = window.innerHeight;

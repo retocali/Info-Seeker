@@ -38,14 +38,19 @@ function makeBackground() {
 
 function memoryBoardGenerator() {
 
-    rectangle = game.add.sprite(game.world.centerX + 2.5*TILE_SIZE, game.world.centerY, "memoryBoard");
-    rectangle.anchor.setTo(0.5,0.5);
-    rectangle.scale.setTo(scaleRatio*0.1,scaleRatio*0.10);
+    let offset = 10*scaleRatio;
+    let menu_Y = game.world.centerY-BOX_SIZE/2;
+    let menu_X = game.world.centerX+1.5*TILE_SIZE+3*offset;
 
-    text = game.add.bitmapText(game.world.centerX + 2.5*TILE_SIZE, game.world.centerY, 'zigFont', "Memories: " + memoryAmount + "\n Steps: " + steps, 18);
+    rectangle = game.add.sprite(menu_X,  menu_Y, "memoryBoard");
+    rectangle.anchor.setTo(0.5,0.5);
+    rectangle.scale.setTo(scaleRatio*0.10,scaleRatio*0.10);
+
+    text = game.add.bitmapText(menu_X,  menu_Y, 'zigFont', "Memories: " + memoryAmount + "\n Steps: " + steps, 18);
     text.anchor.setTo(0.5, 0.5);
     text.scale.setTo(scaleRatio, scaleRatio);
-    message = game.add.bitmapText(game.world.centerX - 0.375 * TILE_SIZE, game.world.centerY - 2.15*TILE_SIZE, 'zigFont', "Collect the memory pieces\nand move to the exit.", 18);
+    message = game.add.bitmapText(game.world.centerX - 0.875 * TILE_SIZE, game.world.centerY - 2.15*TILE_SIZE, 'zigFont', "Collect the memory pieces\nand move to the exit.", 18);
+    message.tint = 0xffff00;    
 }
 
 
@@ -130,8 +135,11 @@ function makePlayer() {
 }
 
 function makeUI() {
+    let offset = 10*scaleRatio;
+    let menu_Y = game.world.centerY-BOX_SIZE/2;
+    let menu_X = game.world.centerX+1.5*TILE_SIZE+3*offset;
      // Muting the BGM
-    muteBGM = game.add.button(game.world.centerX+2.5*TILE_SIZE-10*scaleRatio, game.world.centerY+BOX_SIZE, 'buttons');
+    muteBGM = game.add.button(menu_X-offset, menu_Y+BOX_SIZE , 'buttons');
     muteBGM.frame = 2;
     muteBGM.scale.setTo(BOX_SIZE/(2*muteBGM.width), BOX_SIZE/(2*muteBGM.height));
     muteBGM.anchor.setTo(1,0.5);
@@ -141,7 +149,7 @@ function makeUI() {
     muteBGM.events.onInputUp.add(function() {muteBGM.tint = 0xffffff;}, this);
 
     // Muted button
-    mute2 = game.add.button(game.world.centerX+2.5*TILE_SIZE-10*scaleRatio, game.world.centerY+BOX_SIZE, 'buttons');
+    mute2 = game.add.button(menu_X-offset,menu_Y+BOX_SIZE, 'buttons');
     mute2.frame = 1;
     mute2.scale.setTo(BOX_SIZE/(2*mute2.width), BOX_SIZE/(2*mute2.height));
     mute2.anchor.setTo(1,0.5);
@@ -152,7 +160,7 @@ function makeUI() {
     mute2.visible = false;
 
     //Creates the reset button
-    restartButton = game.add.button(game.world.centerX + 2.5*TILE_SIZE, game.world.centerY-BOX_SIZE, 'replayImage', actionOnClick, this);
+    restartButton = game.add.button(menu_X, menu_Y-BOX_SIZE, 'replayImage', actionOnClick, this);
     restartButton.anchor.setTo(0.5,0.5);
     restartButton.scale.setTo(0.41*scaleRatio,0.41*scaleRatio);
     restartButton.inputEnabled = true;
@@ -160,7 +168,7 @@ function makeUI() {
     restartButton.events.onInputUp.add(function() {restartButton.tint = 0xffffff;}, this);
 
     // Instructions Button
-    instructions = game.add.button(game.world.centerX + 2.5*TILE_SIZE-10*scaleRatio, game.world.centerY+1.65*BOX_SIZE, 'buttons', actionOnClick2, this);
+    instructions = game.add.button(menu_X-offset, menu_Y+1.65*BOX_SIZE, 'buttons', actionOnClick2, this);
     instructions.frame = 3;
     instructions.scale.setTo(BOX_SIZE/(2*instructions.width),BOX_SIZE/(2*instructions.height));
     instructions.anchor.setTo(1,0.5);
@@ -169,7 +177,7 @@ function makeUI() {
     instructions.events.onInputUp.add(function() {instructions.tint = 0xffffff;}, this);
 
     // Make a new level Button
-    replayButton = game.add.button(game.world.centerX + 2.5*TILE_SIZE+10*scaleRatio, game.world.centerY+1.65*BOX_SIZE, 'buttons', replay, this);
+    replayButton = game.add.button(menu_X+offset, menu_Y+1.65*BOX_SIZE, 'buttons', replay, this);
     replayButton.scale.setTo(BOX_SIZE/(2*replayButton.width),BOX_SIZE/(2*replayButton.height));
     replayButton.anchor.setTo(0,0.5);
     replayButton.inputEnabled = true;
@@ -177,7 +185,7 @@ function makeUI() {
     replayButton.events.onInputUp.add(function() {replayButton.tint = 0xffffff;}, this);
     
     // Credits button
-    credits = game.add.button(game.world.centerX + 2.5*TILE_SIZE+10*scaleRatio, game.world.centerY+BOX_SIZE, 'buttons', creditsClick, this);
+    credits = game.add.button(menu_X+offset, menu_Y+BOX_SIZE, 'buttons', creditsClick, this);
     credits.frame = 4;
     credits.scale.setTo(BOX_SIZE/(2*credits.width),BOX_SIZE/(2*credits.height));
     credits.anchor.setTo(0,0.5);
@@ -344,35 +352,46 @@ function menuCreate(s) {
             return;
         }
 
-        var BUTTON_Y = game.world.centerY;
-        var OFFSET = game.world.centerX-350*scaleRatio;
+        var BUTTON_Y = game.world.centerY+2*(BOX_SIZE+MARGIN);
+        var OFFSET = game.world.centerX+1.7*TILE_SIZE;
 
 
-        if (group) {
-            button1.destroy();
-            button2.destroy();
-            button3.destroy();
+        if (group) {    
+            if (button1) {button1.destroy();}
+            if (button2) {button2.destroy();}
+            if (button3) {button3.destroy();}
         }
 
         reset();
 
         group = game.add.group(); 
 
-        button1 = game.make.button(OFFSET, BUTTON_Y+(BOX_SIZE+MARGIN), 'buttons' , clockwise, this);
-        button1.frame = 7;
-        button2 = game.make.button(OFFSET, BUTTON_Y, 'buttons', counterClockWise, this);
-        button2.frame = 6;
-        button3 = game.make.button(OFFSET, BUTTON_Y-(BOX_SIZE+MARGIN), 'buttons', move, this);
-        button3.frame = 5;
+        // Rotating buttons
+        if (!rotated) {
+            button1 = game.make.button(OFFSET, BUTTON_Y, 'buttons' , clockwise, this);
+            button1.frame = 7;
+            button1.scale.setTo(3*scaleRatio/4,3*scaleRatio/4);
+            button1.anchor.setTo(0.1,0.5);
+            addHighlight(button1);
+            group.add(button1);
 
-        button1.scale.setTo(scaleRatio,scaleRatio);
-        button2.scale.setTo(scaleRatio,scaleRatio);
-        button3.scale.setTo(scaleRatio,scaleRatio);
+            button2 = game.make.button(OFFSET, BUTTON_Y, 'buttons', counterClockWise, this);
+            button2.frame = 6;
+            button2.scale.setTo(3*scaleRatio/4,3*scaleRatio/4);
+            button2.anchor.setTo(0.9,0.5);
+            addHighlight(button2);
+            group.add(button2);
+        } else {
+            //Move Button
+            button3 = game.make.button(OFFSET, BUTTON_Y, 'buttons', move, this);
+            button3.frame = 5;
+            button3.scale.setTo(3*scaleRatio/4,3*scaleRatio/4);
+            button3.anchor.setTo(0.5,0.5);
+            addHighlight(button3);
+            group.add(button3);    
 
-        button1.anchor.setTo(0.5,0.5);
-        button2.anchor.setTo(0.5,0.5);
-        button3.anchor.setTo(0.5,0.5);
-
+            button3.tint = 0x00ff00;
+        }
         logo.bringToTop();
         creditPage.bringToTop();
 
@@ -399,22 +418,13 @@ function menuCreate(s) {
 
 
         function removeGroup() {
-            button1.destroy();
-            button2.destroy();
-            button3.destroy();
+            if (button1) {button1.destroy();}
+            if (button2) {button2.destroy();}
+            if (button3) {button3.destroy();}
             reset();
             game.world.remove(group);
 
         }
-
-
-        addHighlight(button1);
-        addHighlight(button2);
-        addHighlight(button3);
-
-        group.add(button1);
-        group.add(button2);  
-        group.add(button3);
     }
 }
 
@@ -447,9 +457,9 @@ function actionOnClick () {
             board[x][y].resetRotation();
         }
     }
-    button1.destroy();
-    button2.destroy();
-    button3.destroy();
+    if (button1) {button1.destroy();}
+    if (button2) {button2.destroy();}
+    if (button3) {button3.destroy();}
 
     gameDone.visible = false;
     youWin.visible = false

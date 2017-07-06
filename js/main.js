@@ -469,7 +469,7 @@ class ComboTile {
 */
 // Both return the coordinate value for the board index values
 function xLoc(x) {
-    return game.world.centerX+(x-1)*(TILE_SIZE);
+    return game.world.centerX+(x-1.5)*(TILE_SIZE);
 }
 
 function yLoc(y) {
