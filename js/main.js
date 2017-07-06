@@ -550,7 +550,7 @@ function lose() {
 }
 
 function win() {
-    message.text = "You reached the exit! \n Press anywhere to get a new level.";
+    message.text = "You reached the exit! \nPress anywhere to \nget a new level.";
     if (finished) {
         return true;
     }
