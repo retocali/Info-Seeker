@@ -15,6 +15,7 @@ var volume = 1;
 var youwin;
 var muteBGM;
 var mute2;
+var animateCount = 0;
 
 // Map related Variables
 var board;

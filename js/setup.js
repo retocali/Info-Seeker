@@ -127,6 +127,7 @@ function makePlayer() {
 
     // Creates the player
     player = game.add.sprite(xLoc(entrance.x), yLoc(entrance.y), 'player');
+    player.frame = 0;
     player.pos = {x:entrance.x, y:entrance.y};
     player.anchor.setTo(0.5,0.5);
     player.inputEnabled = true;
@@ -268,6 +269,7 @@ function makeMemoryTiles() {
 function makeGuard(xpos, ypos) {
     // Creates the Guard
     let guard = game.add.sprite(xLoc(xpos), yLoc(ypos), 'guard');
+    guard.frame = 0;
     guard.pos = {x: xpos, y: ypos};
     guard.anchor.setTo(0.5,0.5);
     guard.scale.setTo(playerSize/guard.width,playerSize/guard.width);

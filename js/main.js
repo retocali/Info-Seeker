@@ -15,11 +15,13 @@ var mainState = {
         makeUI();
     },
     update: function() {
+        
         if (finished) {
             return;
         } else {
             finished = checkGameStatus();
         }
+        animateCount++;
         
         if (rotated) {
             message.text = "YOU ROTATED. \nClick to move.";
@@ -42,10 +44,21 @@ var mainState = {
             moved = false;
         }
         finished = checkGameStatus();
+        if (animateCount == 10) {
+            runAnimations();
+            animateCount = 0;
+        }
         game.input.mouse.enabled = !game.device.mspointer
+        
     }
 };
 
+function runAnimations() {
+    for (let i = 0; i < MEMORY_NUM; i++) {
+            guards[i].frame = (guards[i].frame + 1) % 4;
+    }
+    player.frame = (player.frame + 1) % 4;
+}
 
 /*
     Functions related to the movement characters
