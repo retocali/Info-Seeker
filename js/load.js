@@ -35,8 +35,8 @@ var loadState = {
         
         // The sprites
         game.load.image('memoryTile', 'assets/sprites/characters/puzzle.png');
-        game.load.image('player', "assets/sprites/characters/Player.png");
-        game.load.image('guard', "assets/sprites/characters/Guard.png");
+        game.load.spritesheet('player', "assets/sprites/characters/Player.png", 50, 50, 4);
+        game.load.spritesheet('guard' , "assets/sprites/characters/Guard.png" , 50, 50, 4);
         
         // Used to load entrance/exit
         game.load.image('entrix',"assets/sprites/tiles/EntranceExit.png");

@@ -15,6 +15,7 @@ var volume = 1;
 var youwin;
 var muteBGM;
 var mute2;
+var animateCount = 0;
 
 // Map related Variables
 var board;
@@ -60,7 +61,7 @@ var rotated = false;
 var WIDTH = 3;
 var LENGTH = 3;
 var MEMORY_NUM = 2;
-var COMBO_SPAWN = 0;
+var COMBO_SPAWN = 0.5;
 var DEADEND_LIMIT = 1;
 var CROSS_LIMIT = 2;
 
