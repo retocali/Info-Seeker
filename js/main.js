@@ -613,7 +613,7 @@ function checkMemoryTiles() {
         if (player.pos.x == x && player.pos.y == y && !found) {
             memoryAmount++;
             memoryTiles[n].found = true;
-            memoryTiles[n].tint = 0x444444;
+            memoryTiles[n].tint = 0x000000;
             updateText();
         }
     }
@@ -625,4 +625,5 @@ function respawnGuard(n) {
     let ypos = memoryTiles[n].pos.y;
     guards[n].pos = {x: xpos, y: ypos};
     board[xpos][ypos].joinZone(guards[n]);
+    positionCharacter(guards[n]);
 }
