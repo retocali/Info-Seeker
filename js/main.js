@@ -268,6 +268,7 @@ class BasicTile {
         return true;
     }
     joinZone(character) {
+        positionCharacter(character);
         character.zone = 1;
         return;
     }
@@ -625,5 +626,4 @@ function respawnGuard(n) {
     let ypos = memoryTiles[n].pos.y;
     guards[n].pos = {x: xpos, y: ypos};
     board[xpos][ypos].joinZone(guards[n]);
-    positionCharacter(guards[n]);
 }
