@@ -451,33 +451,37 @@ function removeLogo () {
 // used with the restart button
 function actionOnClick () {
 
+    moved = false;
+    rotated = false;
     finished = false;
+    youWin.visible = false;
+    gameDone.visible = false;
+        
+    steps = 0;
+    memoryAmount = 0;
+    
     player.pos = {x:entrance.x, y:entrance.y};
-    for (let n = 0; n < memoryTiles.length; n++) {
-        respawnGuard(n);
-        guards[n].active = true;
-        guards[n].tint = 0xffffff;
-    }
+    
     for (let x = 0;  x < board.length; x++) {
         for (let y = 0; y < board[x].length; y++) {
             board[x][y].resetRotation();
         }
     }
-    if (button1) {button1.destroy();}
-    if (button2) {button2.destroy();}
-    if (button3) {button3.destroy();}
-
-    gameDone.visible = false;
-    youWin.visible = false
-    rotated = false;
-    moved = false;
-    steps = 0;
-    memoryAmount = 0;
-    positionCharacter(player);
+    for (let n = 0; n < memoryTiles.length; n++) {
+        respawnGuard(n);
+        guards[n].active = true;
+        guards[n].tint = 0xffffff;
+    }
     for (let n = 0; n < MEMORY_NUM; n++) {
         memoryTiles[n].found = false;
         memoryTiles[n].tint = Math.floor(Math.random()*(0xffffff));
     }
+    if (button1) {button1.destroy();}
+    if (button2) {button2.destroy();}
+    if (button3) {button3.destroy();}
+
+    positionCharacter(player);
+    
 
     click = game.add.audio('restartClick', volume);
     click.play();
