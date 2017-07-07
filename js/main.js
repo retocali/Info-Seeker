@@ -56,10 +56,8 @@ var mainState = {
 function runAnimations() {
     for (let i = 0; i < MEMORY_NUM; i++) {
             guards[i].frame = (guards[i].frame + 1) % 4;
-            console.log("G:",guards[i].zone,guards[i].pos);
     }
     player.frame = (player.frame + 1) % 4;
-    console.log("P:",player.zone, player.pos);
 }
 
 /*
@@ -270,6 +268,7 @@ class BasicTile {
         return true;
     }
     joinZone(character) {
+        character.zone = 1;
         return;
     }
     resetRotation() {
@@ -322,6 +321,7 @@ class ComboTile {
                 return isExit == 2; // Should only return 1 when is Exit is 2
             } else {
                 console.log("Error: Character is not in any zone");
+                console.log(character.zone, this.zone1, this.zone2);
             }
         } else {
             return isExit != 0; // Any exit is good when you're entering
@@ -425,6 +425,7 @@ class ComboTile {
         } else {
             console.log("Error, Player moved too much");
         }
+        console.log(this.zone1, this.zone2);
 
     }
     moveAway(character) {
@@ -442,6 +443,7 @@ class ComboTile {
     }
     joinZone(character) {
         if (character.zone) {
+            console.log("Here I am");
             if (character.zone == 1) {
                 this.zone1.push(character);
             } else {
@@ -622,6 +624,5 @@ function respawnGuard(n) {
     let xpos = memoryTiles[n].pos.x;
     let ypos = memoryTiles[n].pos.y;
     guards[n].pos = {x: xpos, y: ypos};
-    positionCharacter(guards[n]);
     board[xpos][ypos].joinZone(guards[n]);
 }
