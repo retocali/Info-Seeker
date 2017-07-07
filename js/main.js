@@ -24,10 +24,10 @@ var mainState = {
         animateCount++;
         
         if (rotated) {
-            message.text = "YOU ROTATED. \nClick to move.";
+            message.text = "YOU ROTATED. \nTap/Click to move.";
         }
         if (moved) {
-            message.text = "YOU MOVED. \nClick to rotate.";
+            message.text = "YOU MOVED. \nTap/Click to rotate.";
         }   
 
         if (rotated && moved) {
@@ -547,19 +547,24 @@ function checkGameStatus() {
         let guard = guards[n];
         if (player.pos.x == guard.pos.x && player.pos.y == guard.pos.y && board[guard.pos.x][guard.pos.y].sameZone(player, guard)) {
             console.log(board[guard.pos.x][guard.pos.y]);
-            return lose();
-        } else if (player.pos.x == exit.x && player.pos.y == exit.y && memoryAmount == MEMORY_NUM) {
-            return win();
+            return lose("You've been found!");
+        } else if (player.pos.x == exit.x && player.pos.y == exit.y) {
+            if (memoryAmount == MEMORY_NUM) {
+                return win();
+            } else {
+                message.text = "You haven't collected\nall the information!";
+            }
+            
         }
     }
     if (possibleMovements(player).length == 0) {
-        return lose();        
+        return lose("You cannot move!");        
     }
     return false;
 }
 
-function lose() {
-    message.text = "You lost!\nPress reset button\nto try again.";
+function lose(string) {
+    message.text = string+"\nPress reset button\nto try again.";
     if (finished) {
         return true;
     }
@@ -626,5 +631,4 @@ function respawnGuard(n) {
     let ypos = memoryTiles[n].pos.y;
     guards[n].pos = {x: xpos, y: ypos};
     board[xpos][ypos].joinZone(guards[n]);
-    positionCharacter(guards[n]);
 }
