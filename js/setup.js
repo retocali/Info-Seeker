@@ -55,13 +55,13 @@ function memoryBoardGenerator() {
     scoreText.anchor.setTo(0.5,1);
     scoreText.tint = 0x99f0f9;    
 
-    let message_X = game.world.centerX+5*offset;
+    let message_X = game.world.centerX+6*offset;
     let message_Y = game.world.centerY - 2*TILE_SIZE-offset;
 
     
     messageRectangle = game.add.sprite(message_X,  message_Y+offset, "memoryBoard");
     messageRectangle.anchor.setTo(0.5,0.5);
-    messageRectangle.scale.setTo(scaleRatio*0.2,scaleRatio*0.10);
+    messageRectangle.scale.setTo(scaleRatio*0.22,scaleRatio*0.10);
 
     message = game.add.bitmapText(message_X, message_Y, 'zigFont', "Collect info pieces\nand reach the exit.", 18);
     message.anchor.setTo(0.5,0.5);
