@@ -47,14 +47,14 @@ function memoryBoardGenerator() {
     rectangle.anchor.setTo(0.5,0.5);
     rectangle.scale.setTo(scaleRatio*0.10,scaleRatio*0.10);
 
-    text = game.add.bitmapText(menu_X,  menu_Y, 'zigFont', "Memories: " + memoryAmount + "\n Steps: " + steps, 18);
+    text = game.add.bitmapText(menu_X,  menu_Y, 'zigFont', "Info: " + memoryAmount + "\n Steps: " + steps, 18);
     text.anchor.setTo(0.5, 0.5);
     text.scale.setTo(scaleRatio, scaleRatio);
-    message = game.add.bitmapText(game.world.centerX - 0.875 * TILE_SIZE, game.world.centerY - 2.15*TILE_SIZE, 'zigFont', "Collect the memory pieces\nand move to the exit.", 18);
+    message = game.add.bitmapText(game.world.centerX - 0.875 * TILE_SIZE, game.world.centerY - 2.15*TILE_SIZE, 'zigFont', "Collect info pieces\nand reach the exit.", 18);
     message.tint = 0xffff00;
 
 
-    scoreText = game.add.bitmapText(game.world.centerX - 1.75 * TILE_SIZE, game.world.centerY + 2.15*TILE_SIZE, 'zigFont', "Score: " + "0" , 20);
+    scoreText = game.add.bitmapText(game.world.centerX - 1.5 * TILE_SIZE, game.world.centerY + 1.9*TILE_SIZE, 'zigFont', "Score: " + "0" , 20);
     scoreText.tint = 0x99f0f9;    
 }
 
@@ -289,7 +289,7 @@ function makeGuard(xpos, ypos) {
 
 // Keeps track of memory tiles collected
 function updateText() {
-    text.setText("Memories: " + memoryAmount + "\n" + "Steps: " + steps);
+    text.setText("Info: " + memoryAmount + "\n" + "Steps: " + steps);
 }   
 
 // Makes the buttons change color over various mouse inputs

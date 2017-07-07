@@ -558,7 +558,7 @@ function checkGameStatus() {
 }
 
 function lose() {
-    message.text = "You lost!\nPress the reset button\nto start again.";
+    message.text = "You lost!\nPress reset button\nto try again.";
     if (finished) {
         return true;
     }
@@ -586,7 +586,7 @@ function win() {
 
     scoreText.setText("Score: " + score, 20);
 
-    message.text = "You reached the exit! \nPress anywhere to \nget a new level.";
+    message.text = "Level completed!\nPress anywhere for\na new level.";
     scoreHolder = score;
     if (finished) {
         return true;
