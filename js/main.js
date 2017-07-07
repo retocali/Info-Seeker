@@ -268,6 +268,7 @@ class BasicTile {
         return true;
     }
     joinZone(character) {
+        positionCharacter(character);
         character.zone = 1;
         return;
     }
@@ -613,7 +614,7 @@ function checkMemoryTiles() {
         if (player.pos.x == x && player.pos.y == y && !found) {
             memoryAmount++;
             memoryTiles[n].found = true;
-            memoryTiles[n].tint = 0x444444;
+            memoryTiles[n].tint = 0x000000;
             updateText();
         }
     }

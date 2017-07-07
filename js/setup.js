@@ -264,7 +264,7 @@ function makeMemoryTiles() {
         memoryTile.found = false;
         memoryTiles.push(memoryTile);
         memoryTile.anchor.setTo(0.5,0.5);
-        memoryTile.scale.setTo(32*scaleRatio/memoryTile.width,32*scaleRatio/memoryTile.length);
+        memoryTile.scale.setTo(BOX_SIZE/2*scaleRatio/memoryTile.width,BOX_SIZE/2*scaleRatio/memoryTile.length);
         memoryTile.tint = Math.floor(Math.random()*0xffffff);
         makeGuard(coord.x, coord.y);    
     }
