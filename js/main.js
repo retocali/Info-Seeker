@@ -574,6 +574,9 @@ function lose(string) {
     // Screen
     gameDone.visible = true;
     gameDone.bringToTop(); 
+
+    gameDone.inputEnabled = true;
+    gameDone.events.onInputDown.add(actionOnClick,this);
     return true;
 }
 
