@@ -43,19 +43,30 @@ function memoryBoardGenerator() {
     let menu_Y = game.world.centerY-BOX_SIZE/2;
     let menu_X = game.world.centerX+1.75*TILE_SIZE;
 
-    rectangle = game.add.sprite(menu_X,  menu_Y, "memoryBoard");
+    rectangle = game.add.sprite(menu_X,  menu_Y+offset, "memoryBoard");
     rectangle.anchor.setTo(0.5,0.5);
     rectangle.scale.setTo(scaleRatio*0.10,scaleRatio*0.10);
 
-    text = game.add.bitmapText(menu_X,  menu_Y, 'zigFont', "Info: " + memoryAmount + "\n Steps: " + steps, 18);
-    text.anchor.setTo(0.5, 0.5);
+    text = game.add.bitmapText(menu_X,  menu_Y, 'zigFont', "Info: " + memoryAmount + "\nSteps: " + steps, 18);
+    text.anchor.setTo(0.5, 0);
     text.scale.setTo(scaleRatio, scaleRatio);
-    message = game.add.bitmapText(game.world.centerX - 0.875 * TILE_SIZE, game.world.centerY - 2.15*TILE_SIZE, 'zigFont', "Collect info pieces\nand reach the exit.", 18);
-    message.tint = 0xffff00;
 
-
-    scoreText = game.add.bitmapText(game.world.centerX - 1.5 * TILE_SIZE, game.world.centerY + 1.9*TILE_SIZE, 'zigFont', "Score: " + "0" , 20);
+    scoreText = game.add.bitmapText(menu_X, menu_Y, 'zigFont', "Score: " + "0" , 20);
+    scoreText.anchor.setTo(0.5,1);
     scoreText.tint = 0x99f0f9;    
+
+    let message_X = game.world.centerX+6*offset;
+    let message_Y = game.world.centerY - 2*TILE_SIZE-offset;
+
+    
+    messageRectangle = game.add.sprite(message_X,  message_Y+offset, "memoryBoard");
+    messageRectangle.anchor.setTo(0.5,0.5);
+    messageRectangle.scale.setTo(scaleRatio*0.22,scaleRatio*0.10);
+
+    message = game.add.bitmapText(message_X, message_Y, 'zigFont', "Collect info pieces\nand reach the exit.", 18);
+    message.anchor.setTo(0.5,0.5);
+    message.tint = 0xefdf40;
+    
 }
 
 
@@ -264,7 +275,7 @@ function makeMemoryTiles() {
         memoryTile.found = false;
         memoryTiles.push(memoryTile);
         memoryTile.anchor.setTo(0.5,0.5);
-        memoryTile.scale.setTo(32*scaleRatio/memoryTile.width,32*scaleRatio/memoryTile.length);
+        memoryTile.scale.setTo(BOX_SIZE/2*scaleRatio/memoryTile.width,BOX_SIZE/2*scaleRatio/memoryTile.length);
         memoryTile.tint = Math.floor(Math.random()*0xffffff);
         makeGuard(coord.x, coord.y);    
     }
@@ -485,7 +496,7 @@ function actionOnClick () {
 
     click = game.add.audio('restartClick', volume);
     click.play();
-    message.text = "Collect the memory pieces\nand move to the exit.";
+    message.text = "Collect info pieces\nand reach the exit.";
     reset();
     updateText();
 }
@@ -519,7 +530,6 @@ function creditsClick () {
 
 // To make the whole game replay
 function replay() {
-    actionOnClick();
     for (let x = 0; x < WIDTH; x++) {
         for (let y = 0; y <= LENGTH + 1; y++) {    
             board[x][y].image.destroy();
